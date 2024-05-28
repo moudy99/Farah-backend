@@ -14,6 +14,6 @@ namespace Core.Entities
 
         public UserType UserType { get; set; }
 
-        public bool IsApproved { get; set; } = false;
+        public OwnerAccountStatus AccountStatus { get; set; } = OwnerAccountStatus.Pending;
     }
 }

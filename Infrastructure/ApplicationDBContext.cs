@@ -1,6 +1,8 @@
 ﻿using Core.Entities;
+using Core.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Infrastructure
 {
@@ -14,6 +16,14 @@ namespace Infrastructure
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Owner> Owners { get; set; }
         public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Hall> Halls { get; set; }
+        public DbSet<BeautyCenter> BeautyCenters { get; set; }
+        public DbSet<Photography> Photographies { get; set; }
+        public DbSet<Dresses> Dresses { get; set; }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,7 +39,7 @@ namespace Infrastructure
                 entity.Property(o => o.IDFrontImage).IsRequired();
                 entity.Property(o => o.IDBackImage).IsRequired();
                 entity.Property(o => o.UserType).IsRequired();
-                entity.Property(o => o.IsApproved).HasDefaultValue(false);
+                entity.Property(o => o.AccountStatus).HasDefaultValue(OwnerAccountStatus.Pending);
             });
 
             modelBuilder.Entity<Customer>(entity =>
