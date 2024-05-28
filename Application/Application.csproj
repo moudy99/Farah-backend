@@ -10,7 +10,6 @@
     <!-- Add folders from both branches -->
     <Folder Include="Interfaces\" />
     <Folder Include="Services\" />
-    <Folder Include="DTOS\" />
   </ItemGroup>
 
   <ItemGroup>
