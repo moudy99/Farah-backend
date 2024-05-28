@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Application.DTOS;
+using AutoMapper;
+using Core.Entities;
 
 namespace Application.Helpers
 {
@@ -7,7 +9,7 @@ namespace Application.Helpers
         public MappingProfile()
         {
             //CreateMap<TSource, TDestination>()
-
+            CreateMap<Customer,CustomerRegisterDTO>();
 
         }
     }
