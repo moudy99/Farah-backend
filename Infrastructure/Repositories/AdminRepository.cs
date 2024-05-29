@@ -17,5 +17,13 @@ namespace Infrastructure.Repositories
         {
             this.context = context;
         }
+
+        public List<Owner> GetAllOwners()
+        {
+
+            return context.Owners
+                    .ToList();
+
+        }
     }
 }

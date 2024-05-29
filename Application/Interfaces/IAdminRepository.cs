@@ -9,5 +9,6 @@ namespace Application.Interfaces
 {
     public interface IAdminRepository : IRepository<ApplicationUser>
     {
+        public List<Owner>GetAllOwners();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOS;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,14 +9,34 @@ namespace Presentation.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminService adminService;
+        private readonly IAdminService AdminService;
 
-        public AdminController(IAdminService adminService)
+        public AdminController(IAdminService _adminService)
         {
-            this.adminService = adminService;
+            AdminService = _adminService;
         }
 
-        //[HttpGet]
+        [HttpGet("owners")]
+        public ActionResult GetAllOwners() 
+        {
+            try
+            {
+                var response = AdminService.GetAllOwners();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+
+        }
 
     }
 }
