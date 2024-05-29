@@ -2,7 +2,6 @@
 using Core.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Infrastructure
 {
@@ -19,6 +18,9 @@ namespace Infrastructure
 
         public DbSet<Hall> Halls { get; set; }
         public DbSet<BeautyCenter> BeautyCenters { get; set; }
+        public DbSet<ServiceForBeautyCenter> Services { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Photography> Photographies { get; set; }
         public DbSet<Dresses> Dresses { get; set; }
 
@@ -46,8 +48,23 @@ namespace Infrastructure
             {
                 // configuration for Customer can go here
             });
+            modelBuilder.Entity<BeautyCenter>()
+           .HasMany(b => b.Services)
+           .WithOne(s => s.BeautyCenter)
+           .HasForeignKey(s => s.BeautyCenterId);
 
+            modelBuilder.Entity<BeautyCenter>()
+                .HasMany(b => b.Reviews)
+                .WithOne(r => r.BeautyCenter)
+                .HasForeignKey(r => r.BeautyCenterId);
+
+            modelBuilder.Entity<BeautyCenter>()
+                .HasMany(b => b.Appointments)
+                .WithOne(a => a.BeautyCenter)
+                .HasForeignKey(a => a.BeautyCenterId);
         }
 
     }
+
 }
+

@@ -1,6 +1,9 @@
 using Application.Helpers;
+using Application.Interfaces;
+using Application.Services;
 using Core.Entities;
 using Infrastructure;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +14,13 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         ConfigurationManager configuration = builder.Configuration;
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.MaxDepth = 64;
+                });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -26,6 +35,9 @@ public class Program
 
 
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+        builder.Services.AddScoped<IBeautyService, BeautyService>();
+        builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
+
 
         var app = builder.Build();
 
