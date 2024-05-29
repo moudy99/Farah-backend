@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240529085709_BeautyCenter")]
+    partial class BeautyCenter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +40,11 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -112,9 +120,11 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("ApplicationUsers", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Core.Entities.Appointment", b =>
@@ -448,7 +458,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
-                    b.ToTable("Customers", (string)null);
+                    b.HasDiscriminator().HasValue("Customer");
                 });
 
             modelBuilder.Entity("Core.Entities.Owner", b =>
@@ -456,7 +466,9 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
                     b.Property<int>("AccountStatus")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("IDBackImage")
                         .IsRequired()
@@ -469,7 +481,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserType")
                         .HasColumnType("int");
 
-                    b.ToTable("Owners", (string)null);
+                    b.HasDiscriminator().HasValue("Owner");
                 });
 
             modelBuilder.Entity("Core.Entities.Appointment", b =>
@@ -514,7 +526,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -523,7 +535,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -532,7 +544,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -541,13 +553,13 @@ namespace Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -556,25 +568,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Core.Entities.Customer", b =>
-                {
-                    b.HasOne("Core.Entities.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Core.Entities.Customer", "Id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Core.Entities.Owner", b =>
-                {
-                    b.HasOne("Core.Entities.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Core.Entities.Owner", "Id")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

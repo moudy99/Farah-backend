@@ -2,7 +2,6 @@
 using Core.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Infrastructure
 {
@@ -19,6 +18,9 @@ namespace Infrastructure
 
         public DbSet<Hall> Halls { get; set; }
         public DbSet<BeautyCenter> BeautyCenters { get; set; }
+        public DbSet<ServiceForBeautyCenter> Services { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Photography> Photographies { get; set; }
         public DbSet<Dresses> Dresses { get; set; }
 
@@ -31,6 +33,26 @@ namespace Infrastructure
 
             // Configure ApplicationUser
             modelBuilder.Entity<ApplicationUser>()
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<Customer>("Customer")
+                .HasValue<Owner>("Owner");
+
+            modelBuilder.Entity<Owner>(entity =>
+            {
+                entity.Property(o => o.IDFrontImage).IsRequired();
+                entity.Property(o => o.IDBackImage).IsRequired();
+                entity.Property(o => o.UserType).IsRequired();
+                entity.Property(o => o.AccountStatus).HasDefaultValue(OwnerAccountStatus.Pending);
+            });
+
+            modelBuilder.Entity<Customer>(entity =>
+            {
+                // configuration for Customer can go here
+            });
+            modelBuilder.Entity<BeautyCenter>()
+           .HasMany(b => b.Services)
+           .WithOne(s => s.BeautyCenter)
+           .HasForeignKey(s => s.BeautyCenterId);
                 .ToTable("ApplicationUsers"); // This is the base table for ApplicationUser
 
             // Configure Owner
@@ -43,7 +65,18 @@ namespace Infrastructure
                 .ToTable("Customers") // Table for Customer entity
                 .HasBaseType<ApplicationUser>();
 
+            modelBuilder.Entity<BeautyCenter>()
+                .HasMany(b => b.Reviews)
+                .WithOne(r => r.BeautyCenter)
+                .HasForeignKey(r => r.BeautyCenterId);
+
+            modelBuilder.Entity<BeautyCenter>()
+                .HasMany(b => b.Appointments)
+                .WithOne(a => a.BeautyCenter)
+                .HasForeignKey(a => a.BeautyCenterId);
         }
 
     }
+
 }
+

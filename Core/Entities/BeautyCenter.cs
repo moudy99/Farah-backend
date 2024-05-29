@@ -1,13 +1,15 @@
 ﻿using Application.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Entities
 {
     public class BeautyCenter : Service
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<ServiceForBeautyCenter> Services { get; set; }
+        public List<Review> Reviews { get; set; }
+
+        public List<Appointment> Appointments { get; set; }
+
     }
 }
