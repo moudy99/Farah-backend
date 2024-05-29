@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IAdminService:Iservices<ApplicationUser>
+    public interface IAdminService:Iservices<Owner>
     {
        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
     }
