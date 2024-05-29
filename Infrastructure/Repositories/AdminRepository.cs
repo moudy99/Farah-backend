@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class AdminRepository: Repository<ApplicationUser>, IAdminRepository
+    public class AdminRepository: Repository<Owner>, IAdminRepository
     {
         private readonly ApplicationDBContext context;
 

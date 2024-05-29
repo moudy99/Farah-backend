@@ -10,6 +10,7 @@ namespace Application.Interfaces
     {
         public List<T> GetAll();
         public T GetById(int id);
+        public T GetById(string id);
         public void Insert(T obj);
         public void Update(T obj);
         public void Delete(int id);

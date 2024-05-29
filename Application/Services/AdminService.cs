@@ -55,16 +55,19 @@ namespace Application.Services
 
         }
 
-        public ApplicationUser GetById(int id)
+
+        public Owner GetById(string id)
         {
-            throw new NotImplementedException();
+            return AdminRepository.GetById(id);
         }
 
-        public void Insert(ApplicationUser obj)
+        public void Update(Owner obj)
         {
-            //mapping  from DTO to ApplicationUser
-
-
+            AdminRepository.Update(obj);
+        }
+        public void Insert(Owner obj)
+        {
+            throw new NotImplementedException();
         }
 
         public void Save()
@@ -72,7 +75,15 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public void Update(ApplicationUser obj)
+
+
+
+        List<Owner> Iservices<Owner>.GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        Owner Iservices<Owner>.GetById(int id)
         {
             throw new NotImplementedException();
         }

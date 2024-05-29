@@ -33,6 +33,10 @@ namespace Infrastructure.Repositories
             return context.Set<T>().Find(id);
         }
 
+        public T GetById(string id)
+        {
+            return context.Set<T>().Find(id);
+        }
 
         public void Insert(T obj)
         {
