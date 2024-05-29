@@ -8,10 +8,11 @@ namespace Presentation.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IAdminRepository AdminRepository;
-        public AdminController(IAdminRepository _adminRepository)
+        private readonly IAdminService adminService;
+
+        public AdminController(IAdminService adminService)
         {
-            AdminRepository = _adminRepository;
+            this.adminService = adminService;
         }
 
         //[HttpGet]
