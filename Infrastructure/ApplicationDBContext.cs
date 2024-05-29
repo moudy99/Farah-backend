@@ -53,7 +53,6 @@ namespace Infrastructure
            .HasMany(b => b.Services)
            .WithOne(s => s.BeautyCenter)
            .HasForeignKey(s => s.BeautyCenterId);
-                .ToTable("ApplicationUsers"); // This is the base table for ApplicationUser
 
             // Configure Owner
             modelBuilder.Entity<Owner>()
