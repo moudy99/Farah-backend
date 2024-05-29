@@ -10,21 +10,27 @@ namespace Application.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly IAdminRepository adminRepository;
+        private readonly IAdminRepository AdminRepository;
 
         public AdminService(IAdminRepository adminRepository)
         {
-            this.adminRepository = adminRepository;
+            AdminRepository = adminRepository;
         }
         public void Delete(int id)
         {
             // any logic
-            adminRepository.Delete(id);
+            AdminRepository.Delete(id);
         }
 
         public List<ApplicationUser> GetAll()
         {
-            List<ApplicationUser> list= adminRepository.GetAll();
+            throw new NotImplementedException();
+        }
+
+        public List<Owner> GetAllOwners()
+        {
+            List<Owner> list= AdminRepository.GetAllOwners();
+            return list;
             //mapping from ApplicationUser to DTO
 
         }

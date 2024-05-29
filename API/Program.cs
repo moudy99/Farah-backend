@@ -1,6 +1,9 @@
 using Application.Helpers;
+using Application.Interfaces;
+using Application.Services;
 using Core.Entities;
 using Infrastructure;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +30,10 @@ public class Program
 
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
+        builder.Services.AddScoped<IAdminService,AdminService>();
+        builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+        
+        //////////////////////////////////////////////////////////
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();
