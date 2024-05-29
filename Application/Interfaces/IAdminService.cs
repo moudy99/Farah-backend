@@ -1,4 +1,5 @@
 ﻿
+using Application.DTOS;
 using Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace Application.Interfaces
 {
     public interface IAdminService:Iservices<ApplicationUser>
     {
-       public List<Owner> GetAllOwners();
+       public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
     }
 }
