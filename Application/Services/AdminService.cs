@@ -1,4 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOS;
+using Application.Helpers;
+using Application.Interfaces;
+using AutoMapper;
 using Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,10 +14,12 @@ namespace Application.Services
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository AdminRepository;
+        private readonly IMapper Mapper;
 
-        public AdminService(IAdminRepository adminRepository)
+        public AdminService(IAdminRepository adminRepository, IMapper _mapper)
         {
             AdminRepository = adminRepository;
+            Mapper = _mapper;
         }
         public void Delete(int id)
         {
@@ -27,11 +32,26 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public List<Owner> GetAllOwners()
+        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
-            List<Owner> list= AdminRepository.GetAllOwners();
-            return list;
+            List<Owner> AllOwners= AdminRepository.GetAllOwners();
+            List<OwnerDTO> Owners = Mapper.Map<List<OwnerDTO>>(AllOwners);
+
+            var paginatedList = PaginationHelper.Paginate(Owners, page, pageSize);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            var response = new CustomResponseDTO<List<OwnerDTO>>
+            {
+                Data = paginatedList.Items,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
             //mapping from ApplicationUser to DTO
+
 
         }
 

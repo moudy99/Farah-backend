@@ -17,11 +17,11 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("owners")]
-        public ActionResult GetAllOwners() 
+        public ActionResult GetAllOwners(int page=1, int pageSize = 6) 
         {
             try
             {
-                var response = AdminService.GetAllOwners();
+                var response = AdminService.GetAllOwners(page,pageSize);
                 return Ok(response);
             }
             catch (Exception ex)

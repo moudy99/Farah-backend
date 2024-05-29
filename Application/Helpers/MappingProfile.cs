@@ -10,6 +10,7 @@ namespace Application.Helpers
         {
             //CreateMap<TSource, TDestination>()
             CreateMap<Customer,CustomerRegisterDTO>();
+            CreateMap<Owner,OwnerDTO>();
 
         }
     }
