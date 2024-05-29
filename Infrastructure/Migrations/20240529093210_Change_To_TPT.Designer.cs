@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240528132532_Service")]
-    partial class Service
+    [Migration("20240529093210_Change_To_TPT")]
+    partial class Change_To_TPT
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,11 +40,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -120,11 +115,9 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("ApplicationUsers", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
@@ -356,7 +349,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
-                    b.HasDiscriminator().HasValue("Customer");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Core.Entities.Owner", b =>
@@ -364,9 +357,7 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
                     b.Property<int>("AccountStatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<string>("IDBackImage")
                         .IsRequired()
@@ -379,7 +370,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserType")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Owner");
+                    b.ToTable("Owners", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -429,6 +420,24 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Customer", b =>
+                {
+                    b.HasOne("Core.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Owner", b =>
+                {
+                    b.HasOne("Core.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Owner", "Id")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

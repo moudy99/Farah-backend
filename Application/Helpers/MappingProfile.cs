@@ -1,4 +1,4 @@
-﻿using Application.DTOS;
+using Application.DTOS;
 using AutoMapper;
 using Core.Entities;
 
@@ -8,7 +8,7 @@ namespace Application.Helpers
     {
         public MappingProfile()
         {
-            //CreateMap<TSource, TDestination>()
+            //CreateMap<TSource, TDestination
             CreateMap<Customer, CustomerRegisterDTO>();
 
             CreateMap<BeautyCenter, BeautyCenterDTO>()
@@ -37,6 +37,8 @@ namespace Application.Helpers
 
                     appointment.Services = dto.Services.Select(name => new ServiceForBeautyCenter { Name = name }).ToList();
                 });
+            CreateMap<Customer,CustomerRegisterDTO>();
+            CreateMap<Owner,OwnerDTO>();
 
         }
     }

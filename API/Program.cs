@@ -39,6 +39,10 @@ public class Program
         builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
 
 
+        builder.Services.AddScoped<IAdminService,AdminService>();
+        builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+        
+        //////////////////////////////////////////////////////////
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();

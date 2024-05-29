@@ -31,6 +31,7 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure ApplicationUser
             modelBuilder.Entity<ApplicationUser>()
                 .HasDiscriminator<string>("Discriminator")
                 .HasValue<Customer>("Customer")
@@ -52,6 +53,17 @@ namespace Infrastructure
            .HasMany(b => b.Services)
            .WithOne(s => s.BeautyCenter)
            .HasForeignKey(s => s.BeautyCenterId);
+                .ToTable("ApplicationUsers"); // This is the base table for ApplicationUser
+
+            // Configure Owner
+            modelBuilder.Entity<Owner>()
+                .ToTable("Owners") // Table for Owner entity
+                .HasBaseType<ApplicationUser>();
+
+            // Configure Customer
+            modelBuilder.Entity<Customer>()
+                .ToTable("Customers") // Table for Customer entity
+                .HasBaseType<ApplicationUser>();
 
             modelBuilder.Entity<BeautyCenter>()
                 .HasMany(b => b.Reviews)

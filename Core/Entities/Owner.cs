@@ -9,6 +9,7 @@ namespace Core.Entities
 {
     public class Owner : ApplicationUser
     {
+
         public string IDFrontImage { get; set; }
         public string IDBackImage { get; set; }
 
