@@ -29,23 +29,19 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure ApplicationUser
             modelBuilder.Entity<ApplicationUser>()
-                .HasDiscriminator<string>("Discriminator")
-                .HasValue<Customer>("Customer")
-                .HasValue<Owner>("Owner");
+                .ToTable("ApplicationUsers"); // This is the base table for ApplicationUser
 
-            modelBuilder.Entity<Owner>(entity =>
-            {
-                entity.Property(o => o.IDFrontImage).IsRequired();
-                entity.Property(o => o.IDBackImage).IsRequired();
-                entity.Property(o => o.UserType).IsRequired();
-                entity.Property(o => o.AccountStatus).HasDefaultValue(OwnerAccountStatus.Pending);
-            });
+            // Configure Owner
+            modelBuilder.Entity<Owner>()
+                .ToTable("Owners") // Table for Owner entity
+                .HasBaseType<ApplicationUser>();
 
-            modelBuilder.Entity<Customer>(entity =>
-            {
-                // configuration for Customer can go here
-            });
+            // Configure Customer
+            modelBuilder.Entity<Customer>()
+                .ToTable("Customers") // Table for Customer entity
+                .HasBaseType<ApplicationUser>();
 
         }
 
