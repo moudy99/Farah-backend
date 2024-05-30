@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IAdminRepository : IRepository<ApplicationUser>
+    public interface IAdminRepository : IRepository<Owner>
     {
         public List<Owner>GetAllOwners();
     }

@@ -51,6 +51,13 @@ namespace Infrastructure
             });
 
 
+
+            modelBuilder.Entity<BeautyCenter>()
+           .HasMany(b => b.Services)
+           .WithOne(s => s.BeautyCenter)
+           .HasForeignKey(s => s.BeautyCenterId);
+
+
             // Configure Owner
             modelBuilder.Entity<Owner>()
                 .ToTable("Owners") // Table for Owner entity
