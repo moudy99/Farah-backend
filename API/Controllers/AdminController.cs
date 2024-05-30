@@ -1,5 +1,7 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
+using Application.Services;
+using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,5 +40,90 @@ namespace Presentation.Controllers
 
         }
 
+        [HttpPost("AcceptOwner")]
+        public ActionResult AcceptOwner(string ownerId)
+        {
+            try
+            {
+                var owner = AdminService.GetById(ownerId);
+                if (owner.AccountStatus == OwnerAccountStatus.Accepted)
+                {
+                    return Conflict(new CustomResponseDTO<OwnerAccountStatus>
+                    {
+                        Data = owner.AccountStatus,
+                        Message = "Owner is already accepted",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+
+                owner.AccountStatus = OwnerAccountStatus.Accepted;
+                AdminService.Update(owner);
+
+                var response = new CustomResponseDTO<OwnerAccountStatus>
+                {
+                    Data = owner.AccountStatus,
+                    Message = "Owner accepted",
+                    Succeeded = true,
+                    Errors = null
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while accepting the owner",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPost("DeclineOwner")]
+        public ActionResult DeclineOwner(string ownerId)
+        {
+            try
+            {
+                var owner = AdminService.GetById(ownerId);
+                if (owner.AccountStatus == OwnerAccountStatus.Decline)
+                {
+                    return Conflict(new CustomResponseDTO<OwnerAccountStatus>
+                    {
+                        Data = owner.AccountStatus,
+                        Message = "Owner is already declined",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+
+                owner.AccountStatus = OwnerAccountStatus.Decline;
+                AdminService.Update(owner);
+
+                var response = new CustomResponseDTO<OwnerAccountStatus>
+                {
+                    Data = owner.AccountStatus,
+                    Message = "Owner declined",
+                    Succeeded = true,
+                    Errors = null
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while declining the owner",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
     }
+
+    
 }

@@ -10,6 +10,6 @@ namespace Core.Enums
     {
         Pending,
         Accepted,
-        decline
+        Decline
     }
 }
