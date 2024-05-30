@@ -8,38 +8,31 @@ namespace Application.Helpers
     {
         public MappingProfile()
         {
-            //CreateMap<TSource, TDestination
             CreateMap<Customer, CustomerRegisterDTO>();
 
             CreateMap<BeautyCenter, BeautyCenterDTO>()
-                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
+                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services.Select(s => new ServiceForBeautyCenterDTO { Name = s.Name, Description = s.Description, Price = (decimal)s.Price }).ToList()))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
-                .ForMember(dest => dest.Appointments, opt => opt.MapFrom(src => src.Appointments)).ReverseMap();
-
-            //CreateMap<BeautyCenterDTO, BeautyCenter>()
-            //    .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
-            //    .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
-            //    .ForMember(dest => dest.Appointments, opt => opt.MapFrom(src => src.Appointments));
+                .ForMember(dest => dest.Appointments, opt => opt.MapFrom(src => src.Appointments))
+                .ReverseMap();
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
-            // CreateMap<ServiceForBeautyCenterDTO, ServiceForBeautyCenter>();
 
             CreateMap<Review, ReviewForBeautyCenterDTO>().ReverseMap();
-            // CreateMap<ReviewForBeautyCenterDTO, Review>();
 
             CreateMap<Appointment, AppointmentForBeautyCenterDTO>()
-                            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services.Select(s => s.Name)));
+                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services.Select(s => s.Name).ToList()))
+                .ReverseMap();
 
-            CreateMap<AppointmentForBeautyCenterDTO, Appointment>()
-                .ForMember(dest => dest.Services, opt => opt.Ignore())
-                .AfterMap((dto, appointment) =>
-                {
+            CreateMap<AppointmentForBeautyCenterDTO, Appointment>().ReverseMap();
+            //.ForMember(dest => dest.Services, opt => opt.Ignore())
+            //.AfterMap((dto, appointment) =>
+            //{
+            //    appointment.Services = dto.Services.Select(name => new ServiceForBeautyCenter { Name = name }).ToList();
+            //});
 
-                    appointment.Services = dto.Services.Select(name => new ServiceForBeautyCenter { Name = name }).ToList();
-                });
-            CreateMap<Customer,CustomerRegisterDTO>();
-            CreateMap<Owner,OwnerDTO>();
-
+            CreateMap<Customer, CustomerRegisterDTO>().ReverseMap();
+            CreateMap<Owner, OwnerDTO>().ReverseMap();
         }
     }
 }
