@@ -18,15 +18,16 @@ namespace Application.Services
         }
         public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize)
         {
-            List<BeautyCenter> beautyCenters = _beautyRepository.GetAllBeautyCenters();
-            var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
-            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+            var beautyCenters = _beautyRepository.GetAllBeautyCenters();
 
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(beautyCenters);
+
+            var paginatedList = PaginationHelper.Paginate(beautyCenterDTOs, page, pageSize);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
             var response = new CustomResponseDTO<List<BeautyCenterDTO>>
             {
-                Data = beautyCenterDTOs,
+                Data = paginatedList.Items,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,
@@ -34,6 +35,26 @@ namespace Application.Services
             };
             return response;
         }
+
+
+
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name)
+        {
+            var beautyCenters = _beautyRepository.GetBeautyCenterByName(name);
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(beautyCenters);
+
+            var response = new CustomResponseDTO<List<BeautyCenterDTO>>
+            {
+                Data = beautyCenterDTOs,
+                Message = "عـــــــــاش  الله ينور",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = null
+            };
+
+            return response;
+        }
+
         public CustomResponseDTO<BeautyCenterDTO> AddBeautyCenters(BeautyCenterDTO beautyCenterDTO)
         {
             try
@@ -72,6 +93,79 @@ namespace Application.Services
                 return errorResponse;
             }
         }
+
+
+        public CustomResponseDTO<BeautyCenterDTO> UpdateBeautyCenter(BeautyCenterDTO beautyCenterDTO)
+        {
+            try
+            {
+
+                var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
+
+
+                _beautyRepository.Update(beautyCenter);
+                _beautyRepository.Save();
+
+
+                var resultDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
+
+
+                var response = new CustomResponseDTO<BeautyCenterDTO>
+                {
+                    Data = resultDTO,
+                    Message = "تم تعديل  البيوتي سنتر بنجاح",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء تعديل البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+        }
+
+        public CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id)
+        {
+            _beautyRepository.Delete(id);
+            _beautyRepository.Save();
+            try
+            {
+                var response = new CustomResponseDTO<BeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "تم حذف البيوتي سنتر بنجاح",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء حذف البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+
+        }
+
+
     }
 
 }

@@ -22,9 +22,14 @@ namespace Infrastructure.Repositories
         }
 
 
-        public List<BeautyCenter>? GetBeautyCenterByName(string name)
+        public List<BeautyCenter> GetBeautyCenterByName(string name)
         {
-            throw new NotImplementedException();
+            return context.BeautyCenters
+                          .Where(b => b.Name.Contains(name))
+                          .Include(b => b.Services)
+                          .Include(b => b.Appointments)
+                          .Include(b => b.Reviews)
+                          .ToList();
         }
     }
 }

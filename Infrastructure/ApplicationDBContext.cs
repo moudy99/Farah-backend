@@ -49,10 +49,14 @@ namespace Infrastructure
             {
                 // configuration for Customer can go here
             });
+
+
+
             modelBuilder.Entity<BeautyCenter>()
            .HasMany(b => b.Services)
            .WithOne(s => s.BeautyCenter)
            .HasForeignKey(s => s.BeautyCenterId);
+
 
             // Configure Owner
             modelBuilder.Entity<Owner>()
@@ -68,6 +72,12 @@ namespace Infrastructure
                 .HasMany(b => b.Reviews)
                 .WithOne(r => r.BeautyCenter)
                 .HasForeignKey(r => r.BeautyCenterId);
+
+            modelBuilder.Entity<BeautyCenter>()
+          .HasMany(b => b.Services)
+          .WithOne(s => s.BeautyCenter)
+          .HasForeignKey(s => s.BeautyCenterId);
+
 
             modelBuilder.Entity<BeautyCenter>()
                 .HasMany(b => b.Appointments)

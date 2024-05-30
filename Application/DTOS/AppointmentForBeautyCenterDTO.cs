@@ -6,7 +6,7 @@
         public string UserId { get; set; }
         // public int BeautyCenterId { get; set; }
 
-        public List<string> Services { get; set; }
+        public List<ServiceForBeautyCenterDTO> Services { get; set; }
         public decimal TotalPrice { get; set; }
     }
 }

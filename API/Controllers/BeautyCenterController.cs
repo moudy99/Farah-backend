@@ -32,11 +32,33 @@ namespace Presentation.Controllers
                     Data = null,
                     Message = "ايروووووووووووووور",
                     Succeeded = false,
-                    Errors = new List<string> { ex.Message }
+                    Errors = new List<string> { ex.Message, ex.StackTrace }
                 };
-                return BadRequest(errorResponse);
+                return StatusCode(500, errorResponse);
             }
         }
+
+        [HttpGet("GetBeautyCentersByName")]
+        public ActionResult GetBeautyCentersByName(string name)
+        {
+            try
+            {
+                var response = _beautyService.GetBeautyCenterByName(name);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "ايروووووووووووووور",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message, ex.StackTrace }
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+
 
         [HttpPost]
         public ActionResult AddBeautyCenter(BeautyCenterDTO beautyCenterDTO)
@@ -58,6 +80,56 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
+
+
+        [HttpPut]
+        public ActionResult UpdateBeautyCenter(BeautyCenterDTO beautyCenterDTO)
+        {
+            try
+            {
+                var response = _beautyService.UpdateBeautyCenter(beautyCenterDTO);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء تعديل البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+
+        [HttpDelete]
+        public ActionResult DeleteBeautyCenterById(int id)
+        {
+            try
+            {
+                var response = _beautyService.DeleteBeautyCenterById(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء حذف البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+
+
+
+
 
     }
 }
