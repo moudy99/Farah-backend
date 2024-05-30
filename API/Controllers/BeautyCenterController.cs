@@ -61,7 +61,7 @@ namespace Presentation.Controllers
 
 
         [HttpPost]
-        public ActionResult AddBeautyCenter(BeautyCenterDTO beautyCenterDTO)
+        public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
