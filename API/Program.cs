@@ -6,6 +6,7 @@ using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 public class Program
 {
@@ -17,7 +18,7 @@ public class Program
         builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.MaxDepth = 64;
                 });
 
@@ -39,9 +40,9 @@ public class Program
         builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
 
 
-        builder.Services.AddScoped<IAdminService,AdminService>();
+        builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-        
+
         //////////////////////////////////////////////////////////
         var app = builder.Build();
 
