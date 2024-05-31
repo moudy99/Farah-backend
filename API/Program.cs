@@ -46,8 +46,14 @@ public class Program
 
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder => builder.WithOrigins("http://localhost:4200")
+                                  .AllowAnyHeader()
+                                  .AllowAnyMethod());
+        });
 
-     
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();
@@ -74,7 +80,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseAuthorization();
-
+        app.UseCors("AllowSpecificOrigin");
         app.MapControllers();
 
         app.Run();
