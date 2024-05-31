@@ -16,7 +16,7 @@ namespace Application.DTOS
         public int SSN { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
-        public int PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string? ProfileImage { get; set; }
         public bool IsBlocked { get; set; } = false;
         public bool IsDeleted { get; set; } = false;

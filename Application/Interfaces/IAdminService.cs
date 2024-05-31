@@ -12,5 +12,7 @@ namespace Application.Interfaces
     public interface IAdminService:Iservices<Owner>
     {
        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
+        public CustomResponseDTO<object> BlockOwner(string  ownerId);
+        public CustomResponseDTO<object> UnblockOwner(string ownerId);
     }
 }

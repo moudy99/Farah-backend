@@ -40,7 +40,7 @@ namespace Presentation.Controllers
 
         }
 
-        [HttpPost("AcceptOwner")]
+        [HttpPut("AcceptOwner")]
         public ActionResult AcceptOwner(string ownerId)
         {
             try
@@ -59,6 +59,7 @@ namespace Presentation.Controllers
 
                 owner.AccountStatus = OwnerAccountStatus.Accepted;
                 AdminService.Update(owner);
+                AdminService.Save();
 
                 var response = new CustomResponseDTO<OwnerAccountStatus>
                 {
@@ -82,7 +83,7 @@ namespace Presentation.Controllers
             }
         }
 
-        [HttpPost("DeclineOwner")]
+        [HttpPut("DeclineOwner")]
         public ActionResult DeclineOwner(string ownerId)
         {
             try
@@ -101,6 +102,7 @@ namespace Presentation.Controllers
 
                 owner.AccountStatus = OwnerAccountStatus.Decline;
                 AdminService.Update(owner);
+                AdminService.Save();
 
                 var response = new CustomResponseDTO<OwnerAccountStatus>
                 {
@@ -117,6 +119,48 @@ namespace Presentation.Controllers
                 {
                     Data = null,
                     Message = "Error while declining the owner",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+
+        [HttpPut("BlockOwner")]
+        public IActionResult BlockOwner(string ownerId) 
+        {
+            try {
+                var response = AdminService.BlockOwner(ownerId);
+                return Ok(response);
+            }
+            catch (Exception ex) 
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while Blocking the owner",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPut("UnblockOwner")]
+        public IActionResult UnblockOwner(string ownerId)
+        {
+            try
+            {
+                var response = AdminService.UnblockOwner(ownerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while Unblocking the owner",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };

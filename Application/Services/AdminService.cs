@@ -27,11 +27,6 @@ namespace Application.Services
             AdminRepository.Delete(id);
         }
 
-        public List<ApplicationUser> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
             List<Owner> AllOwners= AdminRepository.GetAllOwners();
@@ -55,7 +50,6 @@ namespace Application.Services
 
         }
 
-
         public Owner GetById(string id)
         {
             return AdminRepository.GetById(id);
@@ -65,16 +59,98 @@ namespace Application.Services
         {
             AdminRepository.Update(obj);
         }
+
+        public void Save()
+        {
+            AdminRepository.Save();
+        }
+
+
+        public CustomResponseDTO<object> BlockOwner(string ownerId)
+        {
+            Owner owner = AdminRepository.GetById(ownerId);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Owner not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Owner not found" }
+                };
+            }
+
+            if (owner.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = owner.UserName,
+                    Message = "Owner is already blocked",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            owner.IsBlocked = true;
+            AdminRepository.Update(owner);
+            AdminRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = owner.UserName,
+                Message = "Owner is blocked",
+                Succeeded = true,
+                Errors = null
+            };
+        }
+        public CustomResponseDTO<object> UnblockOwner(string ownerId)
+        {
+            Owner owner = AdminRepository.GetById(ownerId);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Owner not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Owner not found" }
+                };
+            }
+
+            if (!owner.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = owner.UserName,
+                    Message = "Owner is not blocked",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            owner.IsBlocked = false;
+            AdminRepository.Update(owner);
+            AdminRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = owner.UserName,
+                Message = "Owner is unblocked",
+                Succeeded = true,
+                Errors = null
+            };
+        }
+        public List<ApplicationUser> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Insert(Owner obj)
         {
             throw new NotImplementedException();
         }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
 
 
 
@@ -87,5 +163,7 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
