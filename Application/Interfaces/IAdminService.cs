@@ -14,5 +14,7 @@ namespace Application.Interfaces
        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
         public CustomResponseDTO<object> BlockOwner(string  ownerId);
         public CustomResponseDTO<object> UnblockOwner(string ownerId);
+        public CustomResponseDTO<object> AcceptOwner(string ownerId);
+        public CustomResponseDTO<object> DeclineOwner(string ownerId);
     }
 }

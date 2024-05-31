@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
+using Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Application.Services
             AdminRepository = adminRepository;
             Mapper = _mapper;
         }
+
         public void Delete(int id)
         {
             // any logic
@@ -29,7 +31,7 @@ namespace Application.Services
 
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
-            List<Owner> AllOwners= AdminRepository.GetAllOwners();
+            List<Owner> AllOwners = AdminRepository.GetAllOwners();
             List<OwnerDTO> Owners = Mapper.Map<List<OwnerDTO>>(AllOwners);
 
             var paginatedList = PaginationHelper.Paginate(Owners, page, pageSize);
@@ -45,9 +47,6 @@ namespace Application.Services
             };
 
             return response;
-            //mapping from ApplicationUser to DTO
-
-
         }
 
         public Owner GetById(string id)
@@ -64,7 +63,6 @@ namespace Application.Services
         {
             AdminRepository.Save();
         }
-
 
         public CustomResponseDTO<object> BlockOwner(string ownerId)
         {
@@ -104,6 +102,7 @@ namespace Application.Services
                 Errors = null
             };
         }
+
         public CustomResponseDTO<object> UnblockOwner(string ownerId)
         {
             Owner owner = AdminRepository.GetById(ownerId);
@@ -142,6 +141,85 @@ namespace Application.Services
                 Errors = null
             };
         }
+
+        public CustomResponseDTO<object> AcceptOwner(string ownerId)
+        {
+            Owner owner = AdminRepository.GetById(ownerId);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Owner not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Owner not found" }
+                };
+            }
+
+            if (owner.AccountStatus == OwnerAccountStatus.Accepted)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = owner.AccountStatus,
+                    Message = "Owner is already accepted",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            owner.AccountStatus = OwnerAccountStatus.Accepted;
+            AdminRepository.Update(owner);
+            AdminRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = owner.AccountStatus,
+                Message = "Owner accepted",
+                Succeeded = true,
+                Errors = null
+            };
+        }
+
+        public CustomResponseDTO<object> DeclineOwner(string ownerId)
+        {
+            Owner owner = AdminRepository.GetById(ownerId);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Owner not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Owner not found" }
+                };
+            }
+
+            if (owner.AccountStatus == OwnerAccountStatus.Decline)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = owner.AccountStatus,
+                    Message = "Owner is already declined",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            owner.AccountStatus = OwnerAccountStatus.Decline;
+            AdminRepository.Update(owner);
+            AdminRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = owner.AccountStatus,
+                Message = "Owner declined",
+                Succeeded = true,
+                Errors = null
+            };
+        }
+
         public List<ApplicationUser> GetAll()
         {
             throw new NotImplementedException();
@@ -152,8 +230,6 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-
-
         List<Owner> Iservices<Owner>.GetAll()
         {
             throw new NotImplementedException();
@@ -163,7 +239,5 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
-
-
     }
 }
