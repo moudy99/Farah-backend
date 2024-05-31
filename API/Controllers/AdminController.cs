@@ -18,11 +18,23 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("owners")]
-        public ActionResult GetAllOwners(int page = 1, int pageSize = 6)
+        public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try
             {
-                var response = AdminService.GetAllOwners(page, pageSize);
+                var response = AdminService.GetFilteredOwners(status, isBlocked, page, pageSize);
+
+                if (response.Data == null)
+                {
+                    return NotFound(new CustomResponseDTO<List<OwnerDTO>>
+                    {
+                        Data = null,
+                        Message = "No owners found with the given criteria",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+
                 return Ok(response);
             }
             catch (Exception ex)
@@ -36,7 +48,6 @@ namespace Presentation.Controllers
                 };
                 return BadRequest(errorResponse);
             }
-
         }
 
         [HttpPut("AcceptOwner")]

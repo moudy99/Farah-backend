@@ -31,10 +31,41 @@ namespace Application.Services
 
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
-            List<Owner> AllOwners = AdminRepository.GetAllOwners();
-            List<OwnerDTO> Owners = Mapper.Map<List<OwnerDTO>>(AllOwners);
+            List<Owner> allOwners = AdminRepository.GetAllOwners();
+            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(allOwners);
 
-            var paginatedList = PaginationHelper.Paginate(Owners, page, pageSize);
+            var paginatedList = PaginationHelper.Paginate(owners, page, pageSize);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            var response = new CustomResponseDTO<List<OwnerDTO>>
+            {
+                Data = paginatedList.Items,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
+        }
+
+        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
+        {
+            List<Owner> filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
+
+            if (!filteredOwners.Any())
+            {
+                return new CustomResponseDTO<List<OwnerDTO>>
+                {
+                    Data = null,
+                    Message = "No owners found with the given criteria",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(filteredOwners);
+            var paginatedList = PaginationHelper.Paginate(owners, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
             var response = new CustomResponseDTO<List<OwnerDTO>>
