@@ -7,6 +7,7 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+
 public class Program
 {
     public static async Task Main(string[] args)
@@ -32,7 +33,11 @@ public class Program
 
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddScoped<IBeautyService, BeautyService>();
+        builder.Services.AddScoped<IShopDressesService, ShopDressesService>();
         builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
+
+        builder.Services.AddScoped<IShopDressesRepository, ShopDressesRepository>();
+
 
 
         builder.Services.AddScoped<IAdminService, AdminService>();
