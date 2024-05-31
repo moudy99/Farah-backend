@@ -84,8 +84,8 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-        app.UseAuthorization();
         app.UseCors("AllowSpecificOrigin");
+        app.UseAuthorization();
         app.MapControllers();
 
         app.Run();
