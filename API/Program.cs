@@ -14,12 +14,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         ConfigurationManager configuration = builder.Configuration;
 
-        builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                    options.JsonSerializerOptions.MaxDepth = 64;
-                });
+        builder.Services.AddControllers();
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -39,9 +35,9 @@ public class Program
         builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
 
 
-        builder.Services.AddScoped<IAdminService,AdminService>();
+        builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-        
+
         //////////////////////////////////////////////////////////
         var app = builder.Build();
 

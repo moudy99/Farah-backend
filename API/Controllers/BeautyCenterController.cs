@@ -44,7 +44,12 @@ namespace Presentation.Controllers
             try
             {
                 var response = _beautyService.GetBeautyCenterByName(name);
-                return Ok(response);
+                if (response.Data.Count > 0)
+                {
+                    return Ok(response);
+                }
+                return StatusCode(500, "No Beauty Center match with this name");
+
             }
             catch (Exception ex)
             {
