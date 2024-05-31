@@ -1,6 +1,5 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Application.Services;
 using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +18,11 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("owners")]
-        public ActionResult GetAllOwners(int page=1, int pageSize = 6) 
+        public ActionResult GetAllOwners(int page = 1, int pageSize = 6)
         {
             try
             {
-                var response = AdminService.GetAllOwners(page,pageSize);
+                var response = AdminService.GetAllOwners(page, pageSize);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -45,29 +44,7 @@ namespace Presentation.Controllers
         {
             try
             {
-                var owner = AdminService.GetById(ownerId);
-                if (owner.AccountStatus == OwnerAccountStatus.Accepted)
-                {
-                    return Conflict(new CustomResponseDTO<OwnerAccountStatus>
-                    {
-                        Data = owner.AccountStatus,
-                        Message = "Owner is already accepted",
-                        Succeeded = false,
-                        Errors = null
-                    });
-                }
-
-                owner.AccountStatus = OwnerAccountStatus.Accepted;
-                AdminService.Update(owner);
-                AdminService.Save();
-
-                var response = new CustomResponseDTO<OwnerAccountStatus>
-                {
-                    Data = owner.AccountStatus,
-                    Message = "Owner accepted",
-                    Succeeded = true,
-                    Errors = null
-                };
+                var response = AdminService.AcceptOwner(ownerId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -88,29 +65,7 @@ namespace Presentation.Controllers
         {
             try
             {
-                var owner = AdminService.GetById(ownerId);
-                if (owner.AccountStatus == OwnerAccountStatus.Decline)
-                {
-                    return Conflict(new CustomResponseDTO<OwnerAccountStatus>
-                    {
-                        Data = owner.AccountStatus,
-                        Message = "Owner is already declined",
-                        Succeeded = false,
-                        Errors = null
-                    });
-                }
-
-                owner.AccountStatus = OwnerAccountStatus.Decline;
-                AdminService.Update(owner);
-                AdminService.Save();
-
-                var response = new CustomResponseDTO<OwnerAccountStatus>
-                {
-                    Data = owner.AccountStatus,
-                    Message = "Owner declined",
-                    Succeeded = true,
-                    Errors = null
-                };
+                var response = AdminService.DeclineOwner(ownerId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -126,20 +81,20 @@ namespace Presentation.Controllers
             }
         }
 
-
         [HttpPut("BlockOwner")]
-        public IActionResult BlockOwner(string ownerId) 
+        public IActionResult BlockOwner(string ownerId)
         {
-            try {
+            try
+            {
                 var response = AdminService.BlockOwner(ownerId);
                 return Ok(response);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while Blocking the owner",
+                    Message = "Error while blocking the owner",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -160,7 +115,7 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while Unblocking the owner",
+                    Message = "Error while unblocking the owner",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -168,6 +123,4 @@ namespace Presentation.Controllers
             }
         }
     }
-
-    
 }
