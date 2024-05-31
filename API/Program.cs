@@ -6,6 +6,7 @@ using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 
 public class Program
@@ -15,7 +16,15 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         ConfigurationManager configuration = builder.Configuration;
 
+
         builder.Services.AddControllers();
+
+        builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.MaxDepth = 64;
+                });
 
 
         builder.Services.AddEndpointsApiExplorer();
@@ -43,7 +52,7 @@ public class Program
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
-        //////////////////////////////////////////////////////////
+     
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();
