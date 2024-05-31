@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
+using Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,22 @@ namespace Infrastructure.Repositories
             return context.Owners
                     .ToList();
 
+        }
+        public List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
+        {
+            var query = context.Owners.AsQueryable();
+
+            if (status.HasValue)
+            {
+                query = query.Where(o => o.AccountStatus == status.Value);
+            }
+
+            if (isBlocked.HasValue)
+            {
+                query = query.Where(o => o.IsBlocked == isBlocked.Value);
+            }
+
+            return query.ToList();
         }
     }
 }
