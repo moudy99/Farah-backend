@@ -15,12 +15,16 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         ConfigurationManager configuration = builder.Configuration;
 
+
+        builder.Services.AddControllers();
+
         builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.MaxDepth = 64;
                 });
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -43,7 +47,7 @@ public class Program
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
-        //////////////////////////////////////////////////////////
+     
         var app = builder.Build();
 
         using var scope = app.Services.CreateScope();
