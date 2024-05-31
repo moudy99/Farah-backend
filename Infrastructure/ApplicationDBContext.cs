@@ -22,7 +22,8 @@ namespace Infrastructure
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Photography> Photographies { get; set; }
-        public DbSet<Dresses> Dresses { get; set; }
+        public DbSet<ShopDresses> ShopDresses { get; set; }
+        public DbSet<Dress> Dresses { get; set; }
 
 
 

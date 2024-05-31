@@ -55,6 +55,24 @@ namespace Application.Services
             return response;
         }
 
+
+
+        public CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id)
+        {
+            var beautyCenter = _beautyRepository.GetById(id);
+            var beautyCenterDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
+
+            var response = new CustomResponseDTO<BeautyCenterDTO>
+            {
+                Data = beautyCenterDTO,
+                Message = "عـــــــــاش  الله ينور",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = null
+            };
+
+            return response;
+        }
         public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO)
         {
             try

@@ -18,6 +18,9 @@ namespace Application.Helpers
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
 
+            CreateMap<ShopDresses, ShopDressesDTo>().ReverseMap();
+            CreateMap<Dress, DressDto>().ReverseMap();
+
             CreateMap<Review, ReviewForBeautyCenterDTO>().ReverseMap();
             CreateMap<BeautyCenter, AddBeautyCenterDTO>().ReverseMap();
 
