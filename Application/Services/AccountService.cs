@@ -16,43 +16,45 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<CustomResponseDTO<AuthUserDTO>> OwnerRegisterAsync(OwnerRegisterDTO RegisterModel)
+        public async Task<CustomResponseDTO<AuthUserDTO>> OwnerRegisterAsync(OwnerRegisterDTO registerModel)
         {
-            var owner = _mapper.Map<Owner>(RegisterModel);
+            var owner = _mapper.Map<Owner>(registerModel);
+            var registrationResult = await _accountRepository.OwnerRegisterAsync(owner, registerModel);
 
-            var registrationResult = await _accountRepository.OwnerRegisterAsync(owner, RegisterModel);
-
-            if (registrationResult.IsAuthenticated)
+            return new CustomResponseDTO<AuthUserDTO>
             {
-                return new CustomResponseDTO<AuthUserDTO>
-                {
-                    Data = registrationResult,
-                    Message = "Registration successful",
-                    Succeeded = true,
-                    Errors = null
-                };
-
-            }
-            else
-            {
-                return new CustomResponseDTO<AuthUserDTO>
-                {
-                    Data = null,
-                    Message = registrationResult.Message,
-                    Succeeded = false,
-                    Errors = null
-                };
-            }
+                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Message = registrationResult.Message,
+                Succeeded = registrationResult.IsAuthenticated,
+                Errors = registrationResult.Errors
+            };
         }
 
-        public async Task<CustomResponseDTO<AuthUserDTO>> CustomerRegisterAsync(CustomerRegisterDTO RegisterModel)
+        public async Task<CustomResponseDTO<AuthUserDTO>> CustomerRegisterAsync(CustomerRegisterDTO registerModel)
         {
-            throw new NotImplementedException();
+            var customer = _mapper.Map<Customer>(registerModel);
+            var registrationResult = await _accountRepository.CustomerRegisterAsync(customer, registerModel);
+
+            return new CustomResponseDTO<AuthUserDTO>
+            {
+                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Message = registrationResult.Message,
+                Succeeded = registrationResult.IsAuthenticated,
+                Errors = registrationResult.Errors
+            };
         }
 
         public async Task<CustomResponseDTO<AuthUserDTO>> Login(LoginUserDTO loginUser)
         {
-            throw new NotImplementedException();
+            var LoginResult = await _accountRepository.Login(loginUser);
+            return new CustomResponseDTO<AuthUserDTO>
+            {
+                Data = LoginResult.IsAuthenticated ? LoginResult : null,
+                Message = LoginResult.Message,
+                Succeeded = LoginResult.IsAuthenticated,
+                Errors = LoginResult.Errors
+            };
         }
     }
+
 }

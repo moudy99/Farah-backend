@@ -35,8 +35,8 @@ namespace Application.Helpers
             //    appointment.Services = dto.Services.Select(name => new ServiceForBeautyCenter { Name = name }).ToList();
             //});
 
-            CreateMap<Customer, CustomerRegisterDTO>().ReverseMap();
             CreateMap<OwnerRegisterDTO, Owner>();
+            CreateMap<CustomerRegisterDTO, Customer>();
             CreateMap<Owner, OwnerDTO>().ReverseMap();
 
         }
