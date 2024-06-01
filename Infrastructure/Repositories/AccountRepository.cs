@@ -112,9 +112,9 @@ namespace Infrastructure.Repositories
             };
         }
 
-        public async Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel)
+        public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(userEmail);
             if (user == null)
             {
                 return IdentityResult.Failed(new IdentityError { Description = "User not found" });
@@ -125,15 +125,15 @@ namespace Infrastructure.Repositories
                 return IdentityResult.Failed(new IdentityError { Description = "Security question answer is incorrect" });
             }
 
-            if (changePasswordModel.OldPassword == changePasswordModel.NewPassword)
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "New password cannot be the same as the old password" });
-            }
-
             var passwordVerificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordModel.OldPassword);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return IdentityResult.Failed(new IdentityError { Description = "Old password is incorrect" });
+            }
+
+            if (changePasswordModel.OldPassword == changePasswordModel.NewPassword)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "New password cannot be the same as the old password" });
             }
 
             return await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
