@@ -39,6 +39,12 @@ namespace Application.Helpers
             CreateMap<CustomerRegisterDTO, Customer>();
             CreateMap<Owner, OwnerDTO>().ReverseMap();
 
+            CreateMap<Governorate, GovernorateDTO>();
+            CreateMap<GovernorateDTO, Governorate>();
+
+            CreateMap<City, CityDTO>();
+            CreateMap<CityDTO, City>();
+
         }
     }
 }
