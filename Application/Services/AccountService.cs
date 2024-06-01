@@ -56,9 +56,9 @@ namespace Application.Services
             };
         }
 
-        public async Task<CustomResponseDTO<bool>> ChangePasswordAsync(ChangePasswordDTO changePasswordModel, string userId)
+        public async Task<CustomResponseDTO<bool>> ChangePasswordAsync(ChangePasswordDTO changePasswordModel, string userEmail)
         {
-            var result = await _accountRepository.ChangePasswordAsync(userId, changePasswordModel);
+            var result = await _accountRepository.ChangePasswordAsync(userEmail, changePasswordModel);
 
             return new CustomResponseDTO<bool>
             {
