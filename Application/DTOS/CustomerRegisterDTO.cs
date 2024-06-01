@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOS
+﻿namespace Application.DTOS
 {
-    internal class CustomerRegisterDTO
+    public class CustomerRegisterDTO
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

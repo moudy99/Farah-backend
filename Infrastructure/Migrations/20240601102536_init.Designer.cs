@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240531141013_ClassDresses")]
-    partial class ClassDresses
+    [Migration("20240601102536_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -199,19 +199,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("Core.Entities.Dresses", b =>
+            modelBuilder.Entity("Core.Entities.Dress", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("City")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GovernorateID")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsForRent")
                         .HasColumnType("bit");
@@ -219,18 +217,19 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsSaled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("OpeningHours")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ShopDescription")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("ID");
+                    b.Property<int>("ShopId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShopId");
 
                     b.ToTable("Dresses");
                 });
@@ -344,6 +343,36 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BeautyCenterId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OpeningHours")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShopDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ShopDresses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -524,6 +553,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("BeautyCenter");
                 });
 
+            modelBuilder.Entity("Core.Entities.Dress", b =>
+                {
+                    b.HasOne("Core.Entities.ShopDresses", "Shop")
+                        .WithMany("Dresses")
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
+                });
+
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
@@ -631,6 +671,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.Navigation("Dresses");
                 });
 #pragma warning restore 612, 618
         }

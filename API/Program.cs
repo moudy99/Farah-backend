@@ -4,8 +4,11 @@ using Application.Services;
 using Core.Entities;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 
@@ -48,27 +51,62 @@ public class Program
         builder.Services.AddScoped<IShopDressesRepository, ShopDressesRepository>();
 
 
-
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<IAccountService, AccountService>();
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
-                builder => builder.WithOrigins("http://localhost:4200")
+                builder => builder
+                                    .AllowAnyOrigin()
                                   .AllowAnyHeader()
                                   .AllowAnyMethod());
         });
 
+
+
+        //JWT => Map app settings to the JWT helper class
+        // authentication services
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = "http://localhost:49475",
+                ValidAudience = "http://localhost:4200",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0uB1C+Kd1K+UPqBPTJRrYCzbAryqyHnAyyBDHMIU94w="))
+            };
+        });
+
+
+
+
+        //----------------------------------------------------------
+
+
         var app = builder.Build();
+
+
 
         using var scope = app.Services.CreateScope();
         var services = scope.ServiceProvider;
         var dbContext = services.GetRequiredService<ApplicationDBContext>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         try
         {
             await dbContext.Database.MigrateAsync();
             await DataSeeding.AddDateSeeding(dbContext);
+            await RoleInitializer.SeedRolesAsync(roleManager);
         }
         catch (Exception ex)
         {
@@ -82,9 +120,11 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseRouting();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseCors("AllowSpecificOrigin");
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 
