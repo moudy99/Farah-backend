@@ -7,7 +7,8 @@
         public string UserName { get; set; }
         public string Email { get; set; }
         public int SSN { get; set; }
-        public string Address { get; set; }
+        public int GovID { get; set; }
+        public int CityID { get; set; }
         public string Password { get; set; }
         public string YourFavirotePerson { get; set; }
     }

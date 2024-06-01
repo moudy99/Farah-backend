@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Infrastructure.Repositories
 {
@@ -13,7 +12,6 @@ namespace Infrastructure.Repositories
         {
             this.context = context;
         }
-        [Authorize(Roles = "Admin")]
         public List<Owner> GetAllOwners()
         {
 
