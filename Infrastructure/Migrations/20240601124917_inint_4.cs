@@ -1,16 +1,19 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ClassDresses : Migration
+    public partial class inint_4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "Address",
+                table: "AspNetUsers");
+
             migrationBuilder.AlterColumn<int>(
                 name: "UserType",
                 table: "Owners",
@@ -52,69 +55,6 @@ namespace Infrastructure.Migrations
                 oldNullable: true,
                 oldDefaultValue: 0);
 
-            migrationBuilder.AddColumn<int>(
-                name: "City",
-                table: "Dresses",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "GovernorateID",
-                table: "Dresses",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "IsForRent",
-                table: "Dresses",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "IsSaled",
-                table: "Dresses",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "OpeningHours",
-                table: "Dresses",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<string>(
-                name: "ShopDescription",
-                table: "Dresses",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "ShopName",
-                table: "Dresses",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<int>(
-                name: "City",
-                table: "BeautyCenters",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "Gove",
-                table: "BeautyCenters",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
             migrationBuilder.AlterColumn<string>(
                 name: "Discriminator",
                 table: "AspNetUsers",
@@ -124,46 +64,32 @@ namespace Infrastructure.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(21)",
                 oldMaxLength: 21);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CityID",
+                table: "AspNetUsers",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "GovID",
+                table: "AspNetUsers",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "City",
-                table: "Dresses");
+                name: "CityID",
+                table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "GovernorateID",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "IsForRent",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "IsSaled",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "OpeningHours",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "ShopDescription",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "ShopName",
-                table: "Dresses");
-
-            migrationBuilder.DropColumn(
-                name: "City",
-                table: "BeautyCenters");
-
-            migrationBuilder.DropColumn(
-                name: "Gove",
-                table: "BeautyCenters");
+                name: "GovID",
+                table: "AspNetUsers");
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserType",
@@ -210,6 +136,13 @@ namespace Infrastructure.Migrations
                 oldType: "nvarchar(21)",
                 oldMaxLength: 21,
                 oldNullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Address",
+                table: "AspNetUsers",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
     }
 }

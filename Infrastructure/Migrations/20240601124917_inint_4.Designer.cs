@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240528132532_Service")]
-    partial class Service
+    [Migration("20240601124917_inint_4")]
+    partial class inint_4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,16 +33,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CityID")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Discriminator")
-                        .IsRequired()
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
@@ -56,6 +54,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GovID")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
@@ -122,9 +123,35 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
+                    b.UseTptMappingStrategy();
+                });
 
-                    b.UseTphMappingStrategy();
+            modelBuilder.Entity("Core.Entities.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
@@ -134,6 +161,20 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gove")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -160,15 +201,37 @@ namespace Infrastructure.Migrations
                     b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("Core.Entities.Dresses", b =>
+            modelBuilder.Entity("Core.Entities.Dress", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasKey("ID");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsForRent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSaled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ShopId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShopId");
 
                     b.ToTable("Dresses");
                 });
@@ -217,6 +280,101 @@ namespace Infrastructure.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Photographies");
+                });
+
+            modelBuilder.Entity("Core.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OpeningHours")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShopDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ShopDresses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -356,6 +514,8 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
+                    b.ToTable("Customers", (string)null);
+
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
@@ -379,7 +539,57 @@ namespace Infrastructure.Migrations
                     b.Property<int>("UserType")
                         .HasColumnType("int");
 
+                    b.ToTable("Owners", (string)null);
+
                     b.HasDiscriminator().HasValue("Owner");
+                });
+
+            modelBuilder.Entity("Core.Entities.Appointment", b =>
+                {
+                    b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
+                        .WithMany("Appointments")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Dress", b =>
+                {
+                    b.HasOne("Core.Entities.ShopDresses", "Shop")
+                        .WithMany("Dresses")
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("Core.Entities.Review", b =>
+                {
+                    b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
+                        .WithMany("Reviews")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
+                {
+                    b.HasOne("Core.Entities.Appointment", null)
+                        .WithMany("Services")
+                        .HasForeignKey("AppointmentId");
+
+                    b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
+                        .WithMany("Services")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BeautyCenter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -387,7 +597,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -396,7 +606,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -405,7 +615,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -414,13 +624,13 @@ namespace Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -429,8 +639,45 @@ namespace Infrastructure.Migrations
                     b.HasOne("Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Customer", b =>
+                {
+                    b.HasOne("Core.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Owner", b =>
+                {
+                    b.HasOne("Core.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Owner", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Appointment", b =>
+                {
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.Navigation("Dresses");
                 });
 #pragma warning restore 612, 618
         }

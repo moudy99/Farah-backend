@@ -1,16 +1,11 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Infrastructure.Repositories
 {
-    public class AdminRepository: Repository<Owner>, IAdminRepository
+    public class AdminRepository : Repository<Owner>, IAdminRepository
     {
         private readonly ApplicationDBContext context;
 
@@ -18,7 +13,7 @@ namespace Infrastructure.Repositories
         {
             this.context = context;
         }
-
+        [Authorize(Roles = "Admin")]
         public List<Owner> GetAllOwners()
         {
 
