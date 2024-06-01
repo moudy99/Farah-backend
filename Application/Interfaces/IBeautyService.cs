@@ -4,10 +4,11 @@ namespace Application.Interfaces
 {
     public interface IBeautyService
     {
-        // object AddBeautyCenters(BeautyCenterDTO beautyCenterDTO);
+
         CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
 
         CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
+        CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id);
         CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO);
         CustomResponseDTO<BeautyCenterDTO> UpdateBeautyCenter(BeautyCenterDTO beautyCenterDTO);
 

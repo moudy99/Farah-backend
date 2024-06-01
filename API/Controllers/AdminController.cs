@@ -2,10 +2,10 @@
 using Application.Interfaces;
 using Application.Services;
 using Core.Enums;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Presentation.Controllers
+namespace Presentation.Controllersa
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,8 +17,8 @@ namespace Presentation.Controllers
         {
             AdminService = _adminService;
         }
-
         [HttpGet("owners")]
+        [Authorize]
         public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try

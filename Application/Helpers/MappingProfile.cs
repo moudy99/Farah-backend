@@ -18,6 +18,9 @@ namespace Application.Helpers
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
 
+            CreateMap<ShopDresses, ShopDressesDTo>().ReverseMap();
+            CreateMap<Dress, DressDto>().ReverseMap();
+
             CreateMap<Review, ReviewForBeautyCenterDTO>().ReverseMap();
             CreateMap<BeautyCenter, AddBeautyCenterDTO>().ReverseMap();
 
@@ -32,9 +35,11 @@ namespace Application.Helpers
             //    appointment.Services = dto.Services.Select(name => new ServiceForBeautyCenter { Name = name }).ToList();
             //});
 
-            CreateMap<Customer, CustomerRegisterDTO>().ReverseMap();
+            CreateMap<OwnerRegisterDTO, Owner>();
+            CreateMap<CustomerRegisterDTO, Customer>();
             CreateMap<Owner, OwnerDTO>().ReverseMap();
             CreateMap<ApplicationUser, ApplicationUserDTO>().ReverseMap();
+
 
         }
     }
