@@ -42,5 +42,12 @@ namespace Infrastructure.Repositories
 
             return query.ToList();
         }
+
+        public List<ApplicationUser> SearchUsersByName(string name)
+        {
+            return context.Users
+                           .Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name))
+                           .ToList();
+        }
     }
 }

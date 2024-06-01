@@ -34,6 +34,8 @@ namespace Application.Helpers
 
             CreateMap<Customer, CustomerRegisterDTO>().ReverseMap();
             CreateMap<Owner, OwnerDTO>().ReverseMap();
+            CreateMap<ApplicationUser, ApplicationUserDTO>().ReverseMap();
+
         }
     }
 }

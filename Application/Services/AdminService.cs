@@ -22,7 +22,31 @@ namespace Application.Services
             AdminRepository = adminRepository;
             Mapper = _mapper;
         }
+        public CustomResponseDTO<OwnerDTO> GetOwnerById(string ownerId)
+        {
+            Owner owner = AdminRepository.GetById(ownerId);
 
+            if (owner == null)
+            {
+                return new CustomResponseDTO<OwnerDTO>
+                {
+                    Data = null,
+                    Message = "Owner not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Owner not found" }
+                };
+            }
+
+            OwnerDTO ownerDTO = Mapper.Map<OwnerDTO>(owner);
+
+            return new CustomResponseDTO<OwnerDTO>
+            {
+                Data = ownerDTO,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null
+            };
+        }
         public void Delete(int id)
         {
             // any logic
@@ -48,7 +72,29 @@ namespace Application.Services
 
             return response;
         }
+        public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name)
+        {
+            var users = AdminRepository.SearchUsersByName(name);
+            if (users == null || users.Count == 0)
+            {
+                return new CustomResponseDTO<List<ApplicationUserDTO>>
+                {
+                    Data = null,
+                    Message = "No users found",
+                    Succeeded = false,
+                    Errors = new List<string> { "No users match the search criteria" }
+                };
+            }
 
+            var userDTOs = Mapper.Map<List<ApplicationUserDTO>>(users);
+            return new CustomResponseDTO<List<ApplicationUserDTO>>
+            {
+                Data = userDTOs,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null
+            };
+        }
         public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
         {
             List<Owner> filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
