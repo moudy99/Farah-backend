@@ -57,6 +57,13 @@ public class Program
         builder.Services.AddScoped<IAccountService, AccountService>();
         builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
+        builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
+        builder.Services.AddScoped<IGovernorateServices, GovernorateServices>();
+
+        builder.Services.AddScoped<ICityRepository, CityRepository>();
+        builder.Services.AddScoped<ICityServices, CityServices>();
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
@@ -147,8 +154,8 @@ public class Program
         try
         {
             await dbContext.Database.MigrateAsync();
-            await DataSeeding.AddDateSeeding(dbContext);
             await RoleInitializer.SeedRolesAsync(roleManager);
+            await GovernorateCityInitializer.AddDateSeeding(dbContext);
         }
         catch (Exception ex)
         {

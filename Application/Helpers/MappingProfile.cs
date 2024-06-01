@@ -41,6 +41,12 @@ namespace Application.Helpers
             CreateMap<ApplicationUser, ApplicationUserDTO>().ReverseMap();
 
 
+            CreateMap<Governorate, GovernorateDTO>();
+            CreateMap<GovernorateDTO, Governorate>();
+
+            CreateMap<City, CityDTO>();
+            CreateMap<CityDTO, City>();
+
         }
     }
 }
