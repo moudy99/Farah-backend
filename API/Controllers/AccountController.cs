@@ -1,6 +1,7 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +14,14 @@ namespace Presentation.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration config;
         private readonly IAccountService _accountService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService)
+        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, UserManager<ApplicationUser> userManager)
         {
             userManager = _userManager;
             config = _config;
             _accountService = accountService;
+            this._userManager = userManager;
         }
 
         [HttpPost("ownerRegister")]
@@ -82,10 +85,24 @@ namespace Presentation.Controllers
             }
         }
 
-        //public async Task<ActionResult> ChangePassword(ChangePasswordDTO changePasswordDto)
-        //{
 
-        //}
+        [HttpPost("changePassword")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDTO changePasswordDto)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            var response = await _accountService.ChangePasswordAsync(changePasswordDto, user.Id);
+
+            if (response.Succeeded)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(new { message = response.Message, errors = response.Errors });
+            }
+        }
 
     }
 }

@@ -112,9 +112,31 @@ namespace Infrastructure.Repositories
             };
         }
 
-        public async Task<IdentityResult> ChangePassword(ApplicationUser user, ChangePasswordDTO changePasswordModel)
+        public async Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+            }
+
+            if (user.YourFavirotePerson != changePasswordModel.SecurityQuestionAnswer)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Security question answer is incorrect" });
+            }
+
+            if (changePasswordModel.OldPassword == changePasswordModel.NewPassword)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "New password cannot be the same as the old password" });
+            }
+
+            var passwordVerificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordModel.OldPassword);
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Old password is incorrect" });
+            }
+
+            return await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
         }
 
 
@@ -142,11 +164,13 @@ namespace Infrastructure.Repositories
             var durationDaysString = _configuration["JWT:DurationDays"];
 
             var jwtSecurityToken = new JwtSecurityToken(
-                issuer: _configuration["JWT:IssuerIss"],
+                issuer: _configuration["JWT:Issuer"],
                 audience: _configuration["JWT:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddDays(30),
-                signingCredentials: signingCredentials);
+                signingCredentials: signingCredentials
+            );
+
 
             return jwtSecurityToken;
         }
