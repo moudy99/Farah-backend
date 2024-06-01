@@ -1,6 +1,7 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Core.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllersa
@@ -16,6 +17,7 @@ namespace Presentation.Controllersa
             AdminService = _adminService;
         }
         [HttpGet("owners")]
+        [Authorize]
         public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try

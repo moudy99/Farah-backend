@@ -9,7 +9,7 @@ namespace Application.Interfaces
         public Task<AuthUserDTO> OwnerRegisterAsync(Owner owner, OwnerRegisterDTO registerDto);
         public Task<AuthUserDTO> CustomerRegisterAsync(Customer customer, CustomerRegisterDTO RegisterModel);
         public Task<AuthUserDTO> Login(LoginUserDTO loginUser);
-        public Task<IdentityResult> ChangePassword(ApplicationUser user, ChangePasswordDTO changePasswordModel);
+        public Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel);
 
     }
 }

@@ -55,6 +55,20 @@ namespace Application.Services
                 Errors = LoginResult.Errors
             };
         }
+
+        public async Task<CustomResponseDTO<bool>> ChangePasswordAsync(ChangePasswordDTO changePasswordModel, string userId)
+        {
+            var result = await _accountRepository.ChangePasswordAsync(userId, changePasswordModel);
+
+            return new CustomResponseDTO<bool>
+            {
+                Data = result.Succeeded,
+                Message = result.Succeeded ? "Password changed successfully" : "Password change failed",
+                Succeeded = result.Succeeded,
+                Errors = result.Succeeded ? null : result.Errors.Select(e => e.Description).ToList()
+            };
+        }
     }
+
 
 }
