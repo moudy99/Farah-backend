@@ -1,5 +1,6 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
+using Application.Services;
 using Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,6 +51,30 @@ namespace Presentation.Controllersa
             }
         }
 
+        [HttpGet("GetOwnerById/{ownerId}")]
+        public IActionResult GetOwnerById(string ownerId)
+        {
+            var response = AdminService.GetOwnerById(ownerId);
+
+            if (!response.Succeeded)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
+        [HttpGet("SearchUsersByName")]
+        public IActionResult SearchUsersByName(string name)
+        {
+            var response = AdminService.SearchUsersByName(name);
+
+            if (!response.Succeeded)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
         [HttpPut("AcceptOwner")]
         public ActionResult AcceptOwner(string ownerId)
         {

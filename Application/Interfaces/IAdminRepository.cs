@@ -12,5 +12,6 @@ namespace Application.Interfaces
     {
         public List<Owner>GetAllOwners();
         List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
+        public List<ApplicationUser> SearchUsersByName(string name);
     }
 }
