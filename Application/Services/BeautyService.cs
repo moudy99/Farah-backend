@@ -73,13 +73,14 @@ namespace Application.Services
 
             return response;
         }
-        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO)
+        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO, string OwnerID)
         {
             try
             {
-
+                beautyCenterDTO.OwnerID = OwnerID;
+                
                 var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
-
+                
 
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();

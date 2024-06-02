@@ -95,10 +95,6 @@ namespace Infrastructure
           .HasForeignKey(s => s.BeautyCenterId);
 
 
-            modelBuilder.Entity<BeautyCenter>()
-                .HasMany(b => b.Appointments)
-                .WithOne(a => a.BeautyCenter)
-                .HasForeignKey(a => a.BeautyCenterId);
 
             modelBuilder.Entity<Service>()
                         .HasOne(s => s.Owner)
