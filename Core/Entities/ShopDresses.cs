@@ -4,6 +4,7 @@ namespace Core.Entities
 {
     public class ShopDresses : Service
     {
+
         public string ShopName { get; set; }
         public string ShopDescription { get; set; }
 

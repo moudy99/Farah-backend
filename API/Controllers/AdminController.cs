@@ -18,7 +18,6 @@ namespace Presentation.Controllersa
             AdminService = _adminService;
         }
         [HttpGet("owners")]
-        [Authorize]
         public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try

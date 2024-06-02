@@ -1,4 +1,5 @@
-﻿using Core.Enums;
+﻿using Application.Helpers;
+using Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace Core.Entities
         public UserType UserType { get; set; }
 
         public OwnerAccountStatus AccountStatus { get; set; } = OwnerAccountStatus.Pending;
+        public List<Service> Services { get; set; }
     }
 }

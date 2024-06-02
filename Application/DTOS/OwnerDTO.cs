@@ -17,7 +17,6 @@ namespace Application.DTOS
         public bool IsBlocked { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
         public string YourFavirotePerson { get; set; }
-
         public string IDFrontImage { get; set; }
         public string IDBackImage { get; set; }
 

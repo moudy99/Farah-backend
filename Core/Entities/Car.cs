@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    internal class Car
+    public class Car : Service
     {
+
     }
 }

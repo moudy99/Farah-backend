@@ -9,5 +9,6 @@ namespace Core.Entities
 {
     public class Hall : Service
     {
+
     }
 }

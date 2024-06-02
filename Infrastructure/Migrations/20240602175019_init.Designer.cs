@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240601214838_addGovAndCityMigration")]
-    partial class addGovAndCityMigration
+    [Migration("20240602175019_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,27 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Application.Helpers.Service", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("OwnerID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OwnerID");
+
+                    b.ToTable("Services");
+
+                    b.UseTptMappingStrategy();
+                });
 
             modelBuilder.Entity("Core.Entities.ApplicationUser", b =>
                 {
@@ -39,10 +60,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -154,33 +171,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("City")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Gove")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("BeautyCenters");
-                });
-
             modelBuilder.Entity("Core.Entities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -256,32 +246,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Governorates");
                 });
 
-            modelBuilder.Entity("Core.Entities.Hall", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Halls");
-                });
-
-            modelBuilder.Entity("Core.Entities.Photography", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Photographies");
-                });
-
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -344,37 +308,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BeautyCenterId");
 
-                    b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("City")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GovernorateID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("OpeningHours")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ShopDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("ShopDresses");
+                    b.ToTable("servicesForBeautyCenter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -510,13 +444,77 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
+                {
+                    b.HasBaseType("Application.Helpers.Service");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gove")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("BeautyCenters", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.HasBaseType("Application.Helpers.Service");
+
+                    b.ToTable("Cars", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Entities.Hall", b =>
+                {
+                    b.HasBaseType("Application.Helpers.Service");
+
+                    b.ToTable("Halls", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Entities.Photography", b =>
+                {
+                    b.HasBaseType("Application.Helpers.Service");
+
+                    b.ToTable("Photograph", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.HasBaseType("Application.Helpers.Service");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OpeningHours")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShopDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("ShopDresses", (string)null);
+                });
+
             modelBuilder.Entity("Core.Entities.Customer", b =>
                 {
                     b.HasBaseType("Core.Entities.ApplicationUser");
 
                     b.ToTable("Customers", (string)null);
-
-                    b.HasDiscriminator().HasValue("Customer");
                 });
 
             modelBuilder.Entity("Core.Entities.Owner", b =>
@@ -540,8 +538,17 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.ToTable("Owners", (string)null);
+                });
 
-                    b.HasDiscriminator().HasValue("Owner");
+            modelBuilder.Entity("Application.Helpers.Service", b =>
+                {
+                    b.HasOne("Core.Entities.Owner", "Owner")
+                        .WithMany("Services")
+                        .HasForeignKey("OwnerID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Core.Entities.Appointment", b =>
@@ -584,7 +591,7 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("AppointmentId");
 
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany("Services")
+                        .WithMany("servicesForBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -643,6 +650,51 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
+                {
+                    b.HasOne("Application.Helpers.Service", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.BeautyCenter", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.HasOne("Application.Helpers.Service", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Car", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Hall", b =>
+                {
+                    b.HasOne("Application.Helpers.Service", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Hall", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.Photography", b =>
+                {
+                    b.HasOne("Application.Helpers.Service", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.Photography", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.ShopDresses", b =>
+                {
+                    b.HasOne("Application.Helpers.Service", null)
+                        .WithOne()
+                        .HasForeignKey("Core.Entities.ShopDresses", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Core.Entities.Customer", b =>
                 {
                     b.HasOne("Core.Entities.ApplicationUser", null)
@@ -672,12 +724,17 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Reviews");
 
-                    b.Navigation("Services");
+                    b.Navigation("servicesForBeautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.ShopDresses", b =>
                 {
                     b.Navigation("Dresses");
+                });
+
+            modelBuilder.Entity("Core.Entities.Owner", b =>
+                {
+                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }
