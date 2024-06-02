@@ -8,6 +8,7 @@
         public string Email { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
+        public string AccountStatus { get; set; }
         public DateTime ExpireTIme { get; set; }
         public List<string> Errors { get; set; }
     }

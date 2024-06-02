@@ -65,7 +65,7 @@ namespace Presentation.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult> Register(LoginUserDTO loginUserModel)
+        public async Task<ActionResult> Login(LoginUserDTO loginUserModel)
         {
             if (!ModelState.IsValid)
             {
