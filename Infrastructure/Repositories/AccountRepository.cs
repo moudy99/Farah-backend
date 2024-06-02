@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -33,11 +34,12 @@ namespace Infrastructure.Repositories
                 return new AuthUserDTO() { Message = "Email is already registered" };
             }
 
-            if (await _userManager.FindByNameAsync(user.UserName) is not null)
+            if (await _context.Users.AnyAsync(u => u.SSN == user.SSN))
             {
-                return new AuthUserDTO() { Message = "Username is already registered" };
+                return new AuthUserDTO() { Message = "SSN is already registered" };
             }
 
+            user.UserName = GenerateUsernameFromEmail(user.Email);
             var result = await _userManager.CreateAsync(user, password);
 
             if (result.Succeeded)
@@ -79,17 +81,23 @@ namespace Infrastructure.Repositories
         {
             return await RegisterUserAsync(customer, registerDto.Password, RolesEnum.Customer.ToString());
         }
-
         public async Task<AuthUserDTO> Login(LoginUserDTO loginUser)
         {
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
             if (user != null)
             {
-
                 bool found = await _userManager.CheckPasswordAsync(user, loginUser.Password);
                 if (found)
                 {
-                    // Generate Token 
+                    var checkUserType = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+                    Owner owner = null;
+
+                    if (checkUserType == "Owner")
+                    {
+                        owner = await _context.Owners.FirstOrDefaultAsync(u => u.Id == user.Id);
+                    }
+
+                    // Generate Token
                     var securityToken = await CreateJwtToken(user);
                     return new AuthUserDTO()
                     {
@@ -99,16 +107,16 @@ namespace Infrastructure.Repositories
                         Email = user.Email,
                         ExpireTIme = securityToken.ValidTo,
                         Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-                        Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()
+                        Role = checkUserType,
+                        AccountStatus = owner?.AccountStatus.ToString()
                     };
                 }
-
             }
+
             return new AuthUserDTO()
             {
-                Message = "Login Failed",
-                IsAuthenticated = false,
-                Errors = new List<string> { "Email or Password is incorrect" }
+                Message = "Login failed: Invalid email or password",
+                IsAuthenticated = false
             };
         }
 
@@ -139,6 +147,10 @@ namespace Infrastructure.Repositories
             return await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
         }
 
+        private string GenerateUsernameFromEmail(string email)
+        {
+            return email.ToLower();
+        }
 
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {
