@@ -16,7 +16,6 @@ namespace Infrastructure.Repositories
         {
             return context.BeautyCenters
                           .Include(b => b.servicesForBeautyCenter)
-                          .Include(b => b.Appointments)
                           .Include(b => b.Reviews)
                           .ToList();
         }
@@ -27,7 +26,6 @@ namespace Infrastructure.Repositories
             return context.BeautyCenters
                           .Where(b => b.Name.Contains(name))
                           .Include(b => b.servicesForBeautyCenter)
-                          .Include(b => b.Appointments)
                           .Include(b => b.Reviews)
                           .ToList();
         }

@@ -13,7 +13,6 @@ namespace Application.Helpers
             CreateMap<BeautyCenter, BeautyCenterDTO>()
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.servicesForBeautyCenter.Select(s => new ServiceForBeautyCenterDTO { Name = s.Name, Description = s.Description, Price = (decimal)s.Price }).ToList()))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
-                .ForMember(dest => dest.Appointments, opt => opt.MapFrom(src => src.Appointments))
                 .ReverseMap();
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
