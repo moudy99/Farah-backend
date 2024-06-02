@@ -1,8 +1,10 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -11,6 +13,7 @@ namespace Presentation.Controllers
     public class BeautyCenterController : ControllerBase
     {
         private readonly IBeautyService _beautyService;
+
 
         private readonly UserManager<ApplicationUser> userManager;
 
@@ -100,12 +103,14 @@ namespace Presentation.Controllers
 
 
         [HttpPost]
-        public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
-        { 
-            string OwnerID = userManager.GetUserId(User);
+        [Authorize]
+        public async Task<ActionResult> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        {
+            string OwnerID = User.FindFirstValue("uid");
+
             try
             {
-                var response = _beautyService.AddBeautyCenters(beautyCenterDTO,OwnerID);
+                var response = _beautyService.AddBeautyCenters(beautyCenterDTO, OwnerID);
                 return Ok(response);
             }
             catch (Exception ex)
