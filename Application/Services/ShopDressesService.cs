@@ -106,25 +106,37 @@ namespace Application.Services
         }
 
 
-        public CustomResponseDTO<ShopDressesDTo> UpdateShopDress(ShopDressesDTo shopDressesDTo)
+        public CustomResponseDTO<ShopDressesDTo> UpdateShopDress(ShopDressesDTo shopDressesDTo, int id)
         {
             try
             {
+                // Retrieve the existing ShopDress from the database
+                var shopDress = _shopRepository.GetById(id);
+                if (shopDress == null)
+                {
+                    return new CustomResponseDTO<ShopDressesDTo>
+                    {
+                        Data = null,
+                        Message = "محل الفساتين غير موجود",
+                        Succeeded = false,
+                        Errors = new List<string> { "Shop dress not found" }
+                    };
+                }
 
-                var shopDress = _mapper.Map<ShopDresses>(shopDressesDTo);
+                // Map changes from the DTO to the existing entity
+                _mapper.Map(shopDressesDTo, shopDress);
 
-
+                // Update the existing entity in the repository
                 _shopRepository.Update(shopDress);
                 _shopRepository.Save();
 
-
+                // Map the updated entity back to the DTO
                 var resultDTO = _mapper.Map<ShopDressesDTo>(shopDress);
-
 
                 var response = new CustomResponseDTO<ShopDressesDTo>
                 {
                     Data = resultDTO,
-                    Message = "تم تعديل   محل الفساتين بنجاح",
+                    Message = "تم تعديل محل الفساتين بنجاح",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null
@@ -137,13 +149,14 @@ namespace Application.Services
                 var errorResponse = new CustomResponseDTO<ShopDressesDTo>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء تعديل البيوتي سنتر",
+                    Message = "حدث خطأ أثناء تعديل محل الفساتين",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return errorResponse;
             }
         }
+
 
         public CustomResponseDTO<ShopDressesDTo> DeleteShopDressById(int id)
         {
