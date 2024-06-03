@@ -10,7 +10,7 @@
         public int City { get; set; }
         public List<ServiceForBeautyCenterDTO> Services { get; set; }
         public List<ReviewForBeautyCenterDTO> Reviews { get; set; }
-        public DateTime Appointment { get; set; }
+        //public DateTime Appointment { get; set; }
 
     }
 }

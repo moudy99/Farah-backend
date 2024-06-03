@@ -103,6 +103,14 @@ namespace Presentation.Controllers
 
 
         [HttpPost]
+
+        public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        {
+            //string OwnerID = userManager.GetUserId(User);
+            try
+            {
+                var response = _beautyService.AddBeautyCenters(beautyCenterDTO);
+
         [Authorize]
         public async Task<ActionResult> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
@@ -111,6 +119,7 @@ namespace Presentation.Controllers
             try
             {
                 var response = _beautyService.AddBeautyCenters(beautyCenterDTO, OwnerID);
+
                 return Ok(response);
             }
             catch (Exception ex)

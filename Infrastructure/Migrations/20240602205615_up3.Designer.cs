@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240602205615_up3")]
+    partial class up3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,28 +246,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Governorates");
                 });
 
-            modelBuilder.Entity("Core.Entities.Portfolio", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PhotographerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PhotographerId");
-
-                    b.ToTable("Portfolio");
-                });
-
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -295,37 +276,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BeautyCenterId");
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("Core.Entities.ReviewsPhoto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PhotoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PhotographyID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PhotographyID");
-
-                    b.ToTable("ReviewsPhoto");
                 });
 
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
@@ -626,17 +576,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shop");
                 });
 
-            modelBuilder.Entity("Core.Entities.Portfolio", b =>
-                {
-                    b.HasOne("Core.Entities.Photography", "Photographer")
-                        .WithMany("Images")
-                        .HasForeignKey("PhotographerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Photographer");
-                });
-
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
@@ -646,17 +585,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("BeautyCenter");
-                });
-
-            modelBuilder.Entity("Core.Entities.ReviewsPhoto", b =>
-                {
-                    b.HasOne("Core.Entities.Photography", "Photography")
-                        .WithMany("Reviews")
-                        .HasForeignKey("PhotographyID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Photography");
                 });
 
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
@@ -798,13 +726,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("servicesForBeautyCenter");
-                });
-
-            modelBuilder.Entity("Core.Entities.Photography", b =>
-                {
-                    b.Navigation("Images");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Core.Entities.ShopDresses", b =>

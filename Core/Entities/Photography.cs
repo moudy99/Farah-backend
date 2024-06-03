@@ -1,14 +1,10 @@
 ﻿using Application.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Entities
 {
     public class Photography : Service
     {
-
+        public List<ReviewsPhoto> Reviews { get; set; }
+        public List<Portfolio> Images { get; set; }
     }
 }
