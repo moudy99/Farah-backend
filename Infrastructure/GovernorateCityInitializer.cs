@@ -8,7 +8,6 @@ namespace Infrastructure
     {
         public static async Task AddDateSeeding(ApplicationDBContext context)
         {
-            ClearExistingData(context);
 
             await SeedGovernorates(context);
             await SeedCities(context);
