@@ -1,12 +1,5 @@
 ﻿using Application.Interfaces;
 
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
@@ -18,10 +11,12 @@ namespace Infrastructure.Repositories
         }
         public void Delete(int id)
         {
-            T t = GetById(id);
-            Update(t);
+            var obj = context.Set<T>().Find(id);
+            if (obj != null)
+            {
+                context.Set<T>().Remove(obj);
+            }
         }
-
         public List<T> GetAll()
         {
 
