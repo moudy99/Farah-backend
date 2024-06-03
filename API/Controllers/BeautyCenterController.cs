@@ -101,11 +101,11 @@ namespace Presentation.Controllers
 
         [HttpPost]
         public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
-        { 
-            string OwnerID = userManager.GetUserId(User);
+        {
+            //string OwnerID = userManager.GetUserId(User);
             try
             {
-                var response = _beautyService.AddBeautyCenters(beautyCenterDTO,OwnerID);
+                var response = _beautyService.AddBeautyCenters(beautyCenterDTO);
                 return Ok(response);
             }
             catch (Exception ex)

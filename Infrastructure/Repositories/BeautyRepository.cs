@@ -21,6 +21,7 @@ namespace Infrastructure.Repositories
         }
 
 
+
         public List<BeautyCenter> GetBeautyCenterByName(string name)
         {
             return context.BeautyCenters
