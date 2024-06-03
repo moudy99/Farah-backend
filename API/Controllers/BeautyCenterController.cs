@@ -4,6 +4,7 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -104,10 +105,11 @@ namespace Presentation.Controllers
         [Authorize]
         public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
-            string OwnerID = userManager.GetUserId(User);
+            string OwnerID = User.FindFirstValue("uid");
             try
             {
-                var response = _beautyService.AddBeautyCenters(beautyCenterDTO, OwnerID);
+                beautyCenterDTO.OwnerID = OwnerID;
+                var response = _beautyService.AddBeautyCenters(beautyCenterDTO);
                 return Ok(response);
             }
             catch (Exception ex)
