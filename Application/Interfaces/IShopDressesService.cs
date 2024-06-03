@@ -11,7 +11,7 @@ namespace Application.Interfaces
 
         CustomResponseDTO<ShopDressesDTo> GetShopDressesById(int id);
         CustomResponseDTO<ShopDressesDTo> AddShopDress(ShopDressesDTo ShopDress);
-        CustomResponseDTO<ShopDressesDTo> UpdateShopDress(ShopDressesDTo ShopDress);
+        CustomResponseDTO<ShopDressesDTo> UpdateShopDress(ShopDressesDTo ShopDress, int id);
 
         CustomResponseDTO<ShopDressesDTo> DeleteShopDressById(int id);
     }

@@ -1,6 +1,10 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
+using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -9,31 +13,14 @@ namespace Presentation.Controllers
     public class ShopDressesController : ControllerBase
     {
         private readonly IShopDressesService _dressesService;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public ShopDressesController(IShopDressesService dressesService)
+        public ShopDressesController(IShopDressesService dressesService, UserManager<ApplicationUser> _userManager)
         {
             _dressesService = dressesService;
+            userManager = _userManager;
         }
-        [HttpPost]
-        public ActionResult AddShopDresses(ShopDressesDTo shopDresseDto)
-        {
-            try
-            {
-                var response = _dressesService.AddShopDress(shopDresseDto);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new CustomResponseDTO<List<string>>
-                {
-                    Data = null,
-                    Message = "حدث خطأ أثناء إضافة  محل الفساتين ",
-                    Succeeded = false,
-                    Errors = new List<string> { ex.Message }
-                };
-                return BadRequest(errorResponse);
-            }
-        }
+
 
         [HttpGet]
         public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10)
@@ -45,7 +32,7 @@ namespace Presentation.Controllers
                 {
                     return Ok(response);
                 }
-                return StatusCode(500, "No Beauty Center match with this name");
+                return StatusCode(500, "No Beauty Center just added");
             }
             catch (Exception ex)
             {
@@ -115,13 +102,15 @@ namespace Presentation.Controllers
                 return StatusCode(500, errorResponse);
             }
         }
-
-        [HttpPut]
-        public ActionResult UpdateShopDress(ShopDressesDTo shopDressesDTo)
+        [HttpPost]
+        [Authorize]
+        public ActionResult AddShopDresses(ShopDressesDTo shopDresseDto)
         {
+            string OwnerID = User.FindFirstValue("uid");
             try
             {
-                var response = _dressesService.UpdateShopDress(shopDressesDTo);
+                shopDresseDto.OwnerID = OwnerID;
+                var response = _dressesService.AddShopDress(shopDresseDto);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -129,7 +118,31 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء تعديل  محل الفساتين",
+                    Message = "حدث خطأ أثناء إضافة  محل الفساتين ",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+        [HttpPut]
+        [Authorize]
+
+        public ActionResult UpdateShopDress(ShopDressesDTo shopDressesDTo, int id)
+        {
+            string OwnerID = User.FindFirstValue("uid");
+            try
+            {
+                shopDressesDTo.OwnerID = OwnerID;
+                var response = _dressesService.UpdateShopDress(shopDressesDTo, id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء تعديل محل الفساتين",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -138,7 +151,9 @@ namespace Presentation.Controllers
         }
 
 
+
         [HttpDelete]
+        [Authorize]
         public ActionResult DeleteShopDressById(int id)
         {
             try
