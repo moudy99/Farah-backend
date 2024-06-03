@@ -140,34 +140,6 @@ namespace Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("BeautyCenterId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BeautyCenterId");
-
-                    b.ToTable("Appointments");
-                });
-
             modelBuilder.Entity("Core.Entities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -339,9 +311,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("Appointment")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("AppointmentId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BeautyCenterId")
                         .HasColumnType("int");
 
@@ -356,8 +325,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
 
                     b.HasIndex("BeautyCenterId");
 
@@ -604,17 +571,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
-                {
-                    b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany()
-                        .HasForeignKey("BeautyCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BeautyCenter");
-                });
-
             modelBuilder.Entity("Core.Entities.Dress", b =>
                 {
                     b.HasOne("Core.Entities.ShopDresses", "Shop")
@@ -661,10 +617,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
                 {
-                    b.HasOne("Core.Entities.Appointment", null)
-                        .WithMany("Services")
-                        .HasForeignKey("AppointmentId");
-
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
                         .WithMany("servicesForBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
@@ -786,11 +738,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("Core.Entities.Owner", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
-                {
-                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>

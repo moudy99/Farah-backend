@@ -32,7 +32,7 @@ namespace Presentation.Controllers
                 {
                     return Ok(response);
                 }
-                return StatusCode(500, "No Beauty Center match with this name");
+                return StatusCode(500, "No Beauty Center Added");
             }
             catch (Exception ex)
             {
@@ -128,11 +128,14 @@ namespace Presentation.Controllers
 
 
         [HttpPut]
-        public ActionResult UpdateBeautyCenter(BeautyCenterDTO beautyCenterDTO)
+        [Authorize]
+        public ActionResult UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
+            string OwnerID = User.FindFirstValue("uid");
             try
             {
-                var response = _beautyService.UpdateBeautyCenter(beautyCenterDTO);
+                beautyCenterDTO.OwnerID = OwnerID;
+                var response = _beautyService.UpdateBeautyCenter(beautyCenterDTO, id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -149,7 +152,9 @@ namespace Presentation.Controllers
         }
 
 
+
         [HttpDelete]
+        [Authorize]
         public ActionResult DeleteBeautyCenterById(int id)
         {
             try
@@ -169,6 +174,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
 
 

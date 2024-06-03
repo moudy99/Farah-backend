@@ -114,22 +114,42 @@ namespace Application.Services
         }
 
 
-        public CustomResponseDTO<BeautyCenterDTO> UpdateBeautyCenter(BeautyCenterDTO beautyCenterDTO)
+        public CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
             try
             {
 
-                var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
+                var beautyCenter = _beautyRepository.GetById(id);
+                if (beautyCenter == null)
+                {
+                    return new CustomResponseDTO<AddBeautyCenterDTO>
+                    {
+                        Data = null,
+                        Message = "البيوتي سنتر غير موجود",
+                        Succeeded = false,
+                        Errors = new List<string> { "Beauty center not found" }
+                    };
+                }
+
+
+                beautyCenter.Name = beautyCenterDTO.Name;
+                beautyCenter.Description = beautyCenterDTO.Description;
+                beautyCenter.Gove = beautyCenterDTO.Gove;
+                beautyCenter.OwnerID = beautyCenterDTO.OwnerID;
+                beautyCenter.City = beautyCenterDTO.City;
+
+
+                beautyCenter.servicesForBeautyCenter
+                    = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
 
                 _beautyRepository.Update(beautyCenter);
                 _beautyRepository.Save();
 
+                // Map the updated entity back to the DTO
+                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
 
-                var resultDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
-
-
-                var response = new CustomResponseDTO<BeautyCenterDTO>
+                var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = resultDTO,
                     Message = "تم تعديل  البيوتي سنتر بنجاح",
@@ -142,7 +162,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء تعديل البيوتي سنتر",
@@ -153,12 +173,14 @@ namespace Application.Services
             }
         }
 
+
         public CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id)
         {
-            _beautyRepository.Delete(id);
-            _beautyRepository.Save();
             try
             {
+                _beautyRepository.Delete(id);
+                _beautyRepository.Save();
+
                 var response = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
@@ -181,8 +203,8 @@ namespace Application.Services
                 };
                 return errorResponse;
             }
-
         }
+
 
 
 
