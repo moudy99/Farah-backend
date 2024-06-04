@@ -1,4 +1,5 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using Application.Services;
 using Core.Enums;
@@ -17,6 +18,14 @@ namespace Presentation.Controllersa
         {
             AdminService = _adminService;
         }
+
+        [HttpGet("AllServices")]
+        public IActionResult Get()
+        {
+            List<Service> services = AdminService.GetAllServices();
+            return Ok(services);
+        }
+
         [HttpGet("owners")]
         public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {

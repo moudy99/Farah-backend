@@ -49,6 +49,7 @@ namespace Infrastructure
 
 
 
+
             modelBuilder.Entity<BeautyCenter>()
            .HasMany(b => b.servicesForBeautyCenter)
            .WithOne(s => s.BeautyCenter)

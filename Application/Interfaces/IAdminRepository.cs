@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Application.Helpers;
+using Core.Entities;
 using Core.Enums;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Application.Interfaces
     public interface IAdminRepository : IRepository<Owner>
     {
         public List<Owner>GetAllOwners();
+        public List<Service>GetAllServices();
+
         List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
         public List<ApplicationUser> SearchUsersByName(string name);
     }

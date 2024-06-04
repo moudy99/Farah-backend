@@ -1,6 +1,7 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -99,6 +100,8 @@ namespace Presentation.Controllers
         [HttpPost]
         public ActionResult AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
+            var OwnerID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             try
             {
                 var response = _beautyService.AddBeautyCenters(beautyCenterDTO);
