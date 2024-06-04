@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -345,28 +344,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Appointments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BeautyCenterId = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appointments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Appointments_BeautyCenters_BeautyCenterId",
-                        column: x => x.BeautyCenterId,
-                        principalTable: "BeautyCenters",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
@@ -385,6 +362,72 @@ namespace Infrastructure.Migrations
                         name: "FK_Reviews_BeautyCenters_BeautyCenterId",
                         column: x => x.BeautyCenterId,
                         principalTable: "BeautyCenters",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "servicesForBeautyCenter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Appointment = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    BeautyCenterId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_servicesForBeautyCenter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
+                        column: x => x.BeautyCenterId,
+                        principalTable: "BeautyCenters",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Portfolio",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotographerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Portfolio", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Portfolio_Photograph_PhotographerId",
+                        column: x => x.PhotographerId,
+                        principalTable: "Photograph",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReviewsPhoto",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    PhotoId = table.Column<int>(type: "int", nullable: false),
+                    PhotographyID = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReviewsPhoto", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReviewsPhoto_Photograph_PhotographyID",
+                        column: x => x.PhotographyID,
+                        principalTable: "Photograph",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.NoAction);
                 });
@@ -412,39 +455,6 @@ namespace Infrastructure.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.NoAction);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "servicesForBeautyCenter",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    BeautyCenterId = table.Column<int>(type: "int", nullable: false),
-                    AppointmentId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_servicesForBeautyCenter", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_servicesForBeautyCenter_Appointments_AppointmentId",
-                        column: x => x.AppointmentId,
-                        principalTable: "Appointments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
-                        column: x => x.BeautyCenterId,
-                        principalTable: "BeautyCenters",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appointments_BeautyCenterId",
-                table: "Appointments",
-                column: "BeautyCenterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -491,19 +501,24 @@ namespace Infrastructure.Migrations
                 column: "ShopId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Portfolio_PhotographerId",
+                table: "Portfolio",
+                column: "PhotographerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_BeautyCenterId",
                 table: "Reviews",
                 column: "BeautyCenterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReviewsPhoto_PhotographyID",
+                table: "ReviewsPhoto",
+                column: "PhotographyID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_OwnerID",
                 table: "Services",
                 column: "OwnerID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_servicesForBeautyCenter_AppointmentId",
-                table: "servicesForBeautyCenter",
-                column: "AppointmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_servicesForBeautyCenter_BeautyCenterId",
@@ -548,10 +563,13 @@ namespace Infrastructure.Migrations
                 name: "Halls");
 
             migrationBuilder.DropTable(
-                name: "Photograph");
+                name: "Portfolio");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "ReviewsPhoto");
 
             migrationBuilder.DropTable(
                 name: "servicesForBeautyCenter");
@@ -563,7 +581,7 @@ namespace Infrastructure.Migrations
                 name: "ShopDresses");
 
             migrationBuilder.DropTable(
-                name: "Appointments");
+                name: "Photograph");
 
             migrationBuilder.DropTable(
                 name: "BeautyCenters");

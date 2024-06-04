@@ -14,7 +14,6 @@ namespace Core.Entities
         public List<ServiceForBeautyCenter> servicesForBeautyCenter { get; set; }
         public List<Review> Reviews { get; set; }
 
-        public List<Appointment> Appointments { get; set; }
 
     }
 }
