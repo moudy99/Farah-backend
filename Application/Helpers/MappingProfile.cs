@@ -33,6 +33,14 @@ namespace Application.Helpers
                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
                .ForMember(dest => dest.Images, opt => opt.Ignore()).ReverseMap();
 
+
+            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
+               .ForMember(dest => dest.Services,
+               opt => opt.MapFrom(src => src.ServicesForBeautyCenter.
+               Select(s => new ServiceForBeautyCenterDTO
+               { Name = s.Name, Description = s.Description, Price = (decimal)s.Price, Appointment = (DateTime)s.Appointment }).ToList()))
+               .ReverseMap();
+
             //  CreateMap<AddBeautyCenterDTO, BeautyCenter>()
             //.ForMember(dest => dest.ServicesForBeautyCenter, opt => opt.MapFrom(src => src.Services));
 
