@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOS
 {
-    public class ShopDressesDTo : ServiceDTO
+    public class ShopDressesDTo
     {
         public string ShopName { get; set; }
         public string ShopDescription { get; set; }

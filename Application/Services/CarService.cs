@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOS;
+using Application.Helpers;
+using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
 using System;
@@ -21,9 +23,36 @@ namespace Application.Services
             carRepository = _carRepository;
 
         }
-        public List<Car> GetAll()
+
+        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize)
         {
-            return carRepository.GetAll();
+            var allCars = carRepository.GetAll();
+            if (!allCars.Any())
+            {
+                return new CustomResponseDTO<List<CarDTO>>
+                {
+                    Data = new List<CarDTO>(),
+                    Message = "No cars found",
+                    Succeeded = false,
+                    Errors = new List<string> { "No data" },
+                    PaginationInfo = null
+                };
+            }
+
+            var cars = Mapper.Map<List<CarDTO>>(allCars);
+
+            var paginatedList = PaginationHelper.Paginate(cars, page, pageSize);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            return new CustomResponseDTO<List<CarDTO>>
+            {
+                Data = paginatedList.Items,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
         }
 
 
@@ -55,6 +84,11 @@ namespace Application.Services
         }
 
         public void Update(Car obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Car> GetAll()
         {
             throw new NotImplementedException();
         }

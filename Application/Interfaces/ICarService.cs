@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Application.DTOS;
+using Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Application.Interfaces
 {
     public interface ICarService : Iservices<Car>
     {
-
+        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize);
     }
 }

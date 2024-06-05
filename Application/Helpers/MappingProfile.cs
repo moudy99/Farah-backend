@@ -46,6 +46,12 @@ namespace Application.Helpers
             CreateMap<City, CityDTO>();
             CreateMap<CityDTO, City>();
 
+
+            CreateMap<Car, CarDTO>()
+           .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()));
+
+            CreateMap<CarDTO, Car>()
+                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
         }
     }
 }
