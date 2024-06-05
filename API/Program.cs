@@ -58,6 +58,11 @@ public class Program
         builder.Services.AddScoped<ICityRepository, CityRepository>();
         builder.Services.AddScoped<ICityServices, CityServices>();
 
+
+        builder.Services.AddScoped<ICarService, CarService>();
+        builder.Services.AddScoped<ICarRepository, CarRepository>();
+
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",

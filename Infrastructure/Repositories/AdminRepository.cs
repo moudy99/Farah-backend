@@ -1,4 +1,5 @@
-﻿using Application.Helpers;
+﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
@@ -63,6 +64,7 @@ namespace Infrastructure.Repositories
 
             return query.ToList();
         }
+
 
         public List<ApplicationUser> SearchUsersByName(string name)
         {
