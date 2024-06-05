@@ -2,9 +2,14 @@
 using Application.Helpers;
 using Application.Interfaces;
 using Application.Services;
+using AutoMapper;
+using AutoMapper.Internal;
+using Azure;
+using Core.Entities;
 using Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Presentation.Controllersa
 {
@@ -13,16 +18,20 @@ namespace Presentation.Controllersa
     public class AdminController : ControllerBase
     {
         private readonly IAdminService AdminService;
+        private readonly IMapper _mapper;
 
-        public AdminController(IAdminService _adminService)
+        public AdminController(IAdminService _adminService, IMapper mapper)
         {
             AdminService = _adminService;
+            _mapper = mapper;
         }
 
-        [HttpGet("AllServices")]
-        public IActionResult Get()
+        [HttpGet("Services")]
+        public ActionResult GetAllServices() 
         {
-            List<Service> services = AdminService.GetAllServices();
+            var services = AdminService.GetAllServices();
+
+
             return Ok(services);
         }
 

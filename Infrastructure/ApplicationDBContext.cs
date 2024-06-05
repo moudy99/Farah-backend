@@ -25,6 +25,10 @@ namespace Infrastructure
         public DbSet<Photography> Photographies { get; set; }
         public DbSet<ShopDresses> ShopDresses { get; set; }
         public DbSet<Dress> Dresses { get; set; }
+        public DbSet<Car> Cars { get; set; }
+        public DbSet<CarPicture> CarPictures { get; set; }
+
+
 
 
 
@@ -33,6 +37,10 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Car>()
+                        .HasMany(c => c.Pictures)
+                        .WithOne(p => p.Car)
+                        .HasForeignKey(p => p.CarID);
 
             modelBuilder.Entity<Owner>(entity =>
             {

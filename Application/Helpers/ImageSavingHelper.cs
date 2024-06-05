@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Application.Helpers
 {
@@ -6,7 +9,7 @@ namespace Application.Helpers
     {
         private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-        public static async Task<List<string>> SaveImagesAsync(List<IFormFile> files, string folderName)
+        public static List<string> SaveImages(List<IFormFile> files, string folderName)
         {
             List<string> imageNames = new List<string>();
 
@@ -17,7 +20,6 @@ namespace Application.Helpers
 
             var uploads = Path.Combine(BasePath, "Images", folderName);
 
-
             if (!Directory.Exists(uploads))
             {
                 Directory.CreateDirectory(uploads);
@@ -27,16 +29,12 @@ namespace Application.Helpers
             {
                 if (file.Length > 0)
                 {
-
                     string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-
                     var filePath = Path.Combine(uploads, uniqueFileName);
-
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await file.CopyToAsync(fileStream);
+                        file.CopyTo(fileStream);
                     }
 
                     imageNames.Add(uniqueFileName);
