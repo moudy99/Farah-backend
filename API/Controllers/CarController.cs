@@ -1,10 +1,10 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Application.Services;
-using Azure;
 using Core.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -13,23 +13,21 @@ namespace Presentation.Controllers
     public class CarController : ControllerBase
     {
         private readonly ICarService carService;
-        public CarController(ICarService _carService) 
-        { 
+
+        public CarController(ICarService _carService)
+        {
             carService = _carService;
         }
 
         [HttpGet("Cars")]
-        public IActionResult GetAllCars(int page, int pageSize)
+        public IActionResult GetAllCars(int page = 1, int pageSize = 6)
         {
-
-
-
             try
             {
                 var response = carService.GetAllCars(page, pageSize);
                 if (response.Data == null)
                 {
-                    return NotFound(new CustomResponseDTO<List<OwnerDTO>>
+                    return NotFound(new CustomResponseDTO<List<CarDTO>>
                     {
                         Data = null,
                         Message = "No Cars Found",
@@ -44,7 +42,38 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while Retrieve The Cars",
+                    Message = "Error while retrieving the cars",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPost("AddCar")]
+        public IActionResult AddCar( CarDTO carDto) // Use FromForm to handle file uploads
+        {
+            string OwnerID = User.FindFirstValue("uid");
+
+            try
+            {
+                carDto.OwnerID = OwnerID;
+                var car = carService.AddCar(carDto);
+
+                return Ok(new CustomResponseDTO<CarDTO>
+                {
+                    Data = car,
+                    Message = "Car added successfully",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while adding the car",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };

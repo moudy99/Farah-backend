@@ -13,7 +13,6 @@ namespace Application.Interfaces
     {
         public List<Service> GetAllServices();
         public List<Owner>GetAllOwners();
-        public List<Service>GetAllServices();
 
         List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
         public List<ApplicationUser> SearchUsersByName(string name);

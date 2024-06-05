@@ -48,9 +48,12 @@ namespace Application.Helpers
             CreateMap<CityDTO, City>();
 
 
+            // Map Car to CarDTO, handling the Pictures and PictureUrls properties separately
             CreateMap<Car, CarDTO>()
-           .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()));
+                .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+                .ForMember(dest => dest.Pictures, opt => opt.Ignore());
 
+            // Map CarDTO to Car, converting PictureUrls to CarPicture entities
             CreateMap<CarDTO, Car>()
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
         }

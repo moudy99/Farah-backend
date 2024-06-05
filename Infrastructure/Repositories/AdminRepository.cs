@@ -65,23 +65,6 @@ namespace Infrastructure.Repositories
             return query.ToList();
         }
 
-        public List<Service> GetAllServices()
-        {
-
-            var hallServices = context.Halls.ToList<Service>();
-
-
-            var beautyCenterServices = context.BeautyCenters.ToList<Service>();
-            var ShopServices = context.ShopDresses.ToList<Service>();
-
-
-            var allServices = hallServices
-                .Concat(ShopServices)
-                .Concat(beautyCenterServices)
-                .ToList();
-
-            return allServices;
-        }
 
         public List<ApplicationUser> SearchUsersByName(string name)
         {

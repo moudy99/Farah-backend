@@ -55,7 +55,19 @@ namespace Application.Services
 
         }
 
+        public CarDTO AddCar(CarDTO carDto)
+        {
+            var car = Mapper.Map<Car>(carDto);
 
+            var imagePaths = ImageHelper.SaveImages(carDto.Pictures, "Cars");
+            car.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
+            carDto.PictureUrls = imagePaths;
+
+            carRepository.Insert(car);
+            carRepository.Save();
+
+            return Mapper.Map<CarDTO>(car);
+        }
         public void Delete(int id)
         {
             throw new NotImplementedException();
