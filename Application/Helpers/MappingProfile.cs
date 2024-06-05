@@ -9,7 +9,7 @@ namespace Application.Helpers
         public MappingProfile()
         {
             CreateMap<Customer, CustomerRegisterDTO>();
-
+            CreateMap<ShopDresses, ShopDressesDTo>();
             CreateMap<BeautyCenter, BeautyCenterDTO>()
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.servicesForBeautyCenter.Select(s => new ServiceForBeautyCenterDTO { Name = s.Name, Description = s.Description, Price = (decimal)s.Price }).ToList()))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))

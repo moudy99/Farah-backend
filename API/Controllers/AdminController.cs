@@ -1,9 +1,14 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Application.Services;
+using AutoMapper;
+using AutoMapper.Internal;
+using Azure;
+using Core.Entities;
 using Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Presentation.Controllersa
 {
@@ -12,11 +17,23 @@ namespace Presentation.Controllersa
     public class AdminController : ControllerBase
     {
         private readonly IAdminService AdminService;
+        private readonly IMapper _mapper;
 
-        public AdminController(IAdminService _adminService)
+        public AdminController(IAdminService _adminService, IMapper mapper)
         {
             AdminService = _adminService;
+            _mapper = mapper;
         }
+
+        [HttpGet("Services")]
+        public ActionResult GetAllServices() 
+        {
+            var services = AdminService.GetAllServices();
+
+
+            return Ok(services);
+        }
+
         [HttpGet("owners")]
         public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {

@@ -316,5 +316,10 @@ namespace Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public List<Service> GetAllServices()
+        {
+            return AdminRepository.GetAllServices();
+        }
     }
 }
