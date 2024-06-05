@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Application.DTOS
+﻿namespace Application.DTOS
 {
-    public class AddBeautyCenterDTO
+    public class Add2
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -10,9 +8,7 @@ namespace Application.DTOS
         public int Gove { get; set; }
         public string OwnerID { get; set; }
         public int City { get; set; }
-        public List<IFormFile> Images { get; set; }
+        public List<string> Images { get; set; }
         public List<ServiceForBeautyCenterDTO> Services { get; set; }
-
-
     }
 }

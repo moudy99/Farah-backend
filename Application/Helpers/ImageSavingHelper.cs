@@ -17,7 +17,6 @@ namespace Application.Helpers
 
             var uploads = Path.Combine(BasePath, "Images", folderName);
 
-
             if (!Directory.Exists(uploads))
             {
                 Directory.CreateDirectory(uploads);
@@ -27,12 +26,8 @@ namespace Application.Helpers
             {
                 if (file.Length > 0)
                 {
-
                     string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-
                     var filePath = Path.Combine(uploads, uniqueFileName);
-
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
@@ -45,5 +40,7 @@ namespace Application.Helpers
 
             return imageNames;
         }
+
+
     }
 }
