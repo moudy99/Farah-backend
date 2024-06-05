@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -74,31 +75,19 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
-                var folderName = "BeautyCenterImages";
-
-                // Save images
-                var savedImages = await ImageHelper.SaveImagesAsync(beautyCenterDTO.Images, folderName);
-
-                var addBeautyCenter = new Add2
-                {
-                    Name = beautyCenterDTO.Name,
-                    Description = beautyCenterDTO.Description,
-                    Gove = beautyCenterDTO.Gove,
-                    City = beautyCenterDTO.City,
-                    Images = savedImages,
-                    Services = beautyCenterDTO.Services
-                };
-
-                var beautyCenter = _mapper.Map<BeautyCenter>(addBeautyCenter);
+                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
+                var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
+                beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
+                beautyCenterDTO.ImageUrls = imagePaths;
 
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(addBeautyCenter);
+                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
 
                 var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
@@ -110,6 +99,20 @@ namespace Application.Services
                 };
 
                 return response;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Log inner exception details
+                var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+
+                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { innerExceptionMessage }
+                };
+                return errorResponse;
             }
             catch (Exception ex)
             {
@@ -125,11 +128,11 @@ namespace Application.Services
         }
 
 
+
         public CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
             try
             {
-
                 var beautyCenter = _beautyRepository.GetById(id);
                 if (beautyCenter == null)
                 {
@@ -142,17 +145,17 @@ namespace Application.Services
                     };
                 }
 
-
+                // Update the existing beautyCenter entity with new values from the DTO
                 beautyCenter.Name = beautyCenterDTO.Name;
                 beautyCenter.Description = beautyCenterDTO.Description;
                 beautyCenter.Gove = beautyCenterDTO.Gove;
-                beautyCenter.OwnerID = beautyCenterDTO.OwnerID;
                 beautyCenter.City = beautyCenterDTO.City;
+                beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
-
-                beautyCenter.ServicesForBeautyCenter
-                    = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
-
+                // Save new images and update image paths
+                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
+                beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
+                beautyCenterDTO.ImageUrls = imagePaths;
 
                 _beautyRepository.Update(beautyCenter);
                 _beautyRepository.Save();
@@ -163,7 +166,7 @@ namespace Application.Services
                 var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = resultDTO,
-                    Message = "تم تعديل  البيوتي سنتر بنجاح",
+                    Message = "تم تعديل البيوتي سنتر بنجاح",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null

@@ -18,22 +18,23 @@ namespace Application.Helpers
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
                 .ReverseMap();
 
+
+
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
-
-            //CreateMap<ImagesBeautyCenter, ImagesBeautyCenterDto>()
-            // .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-            // .ReverseMap();
-
 
             CreateMap<ShopDresses, ShopDressesDTo>().ReverseMap();
             CreateMap<Dress, DressDto>().ReverseMap();
 
             CreateMap<Review, ReviewForBeautyCenterDTO>().ReverseMap();
 
-            CreateMap<BeautyCenter, Add2>()
-         .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter)).ReverseMap();
 
 
+            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
+               .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
+               .ForMember(dest => dest.Images, opt => opt.Ignore()).ReverseMap();
+
+            //  CreateMap<AddBeautyCenterDTO, BeautyCenter>()
+            //.ForMember(dest => dest.ServicesForBeautyCenter, opt => opt.MapFrom(src => src.Services));
 
             CreateMap<OwnerRegisterDTO, Owner>();
             CreateMap<CustomerRegisterDTO, Customer>();
