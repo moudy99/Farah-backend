@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Application.Helpers
 {
-    public static class ImageHelper
+    public static class ImageSavingHelper
     {
         private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-        public static List<string> SaveImages(List<IFormFile> files, string folderName)
+        public static async Task<List<string>> SaveImagesAsync(List<IFormFile> files, string folderName)
         {
             List<string> imageNames = new List<string>();
 

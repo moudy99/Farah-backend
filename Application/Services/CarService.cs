@@ -55,11 +55,11 @@ namespace Application.Services
 
         }
 
-        public CarDTO AddCar(CarDTO carDto)
+        public async Task<CarDTO> AddCar(CarDTO carDto)
         {
             var car = Mapper.Map<Car>(carDto);
 
-            var imagePaths = ImageHelper.SaveImages(carDto.Pictures, "Cars");
+            var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
             car.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
             carDto.PictureUrls = imagePaths;
 

@@ -10,7 +10,7 @@ namespace Application.DTOS
     public class CarDTO
     {
         //CarID
-        //public int ID { get; set; }
+        public int CarID { get; set; }
         public string OwnerID { get; set; }
         public string Brand { get; set; }
         public int Year { get; set; }
