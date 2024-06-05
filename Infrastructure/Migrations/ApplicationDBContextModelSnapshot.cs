@@ -30,10 +30,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Discriminator")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<string>("OwnerID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -267,6 +263,28 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Governorates");
+                });
+
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("ImagesBeautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.Portfolio", b =>
@@ -656,6 +674,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shop");
                 });
 
+
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.HasOne("Core.Entities.BeautyCenter", null)
+                        .WithMany("ImagesBeautyCenter")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+      
+
             modelBuilder.Entity("Core.Entities.CarPicture", b =>
                 {
                     b.HasOne("Core.Entities.Car", "Car")
@@ -668,6 +698,7 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Core.Entities.Dress", b =>
+
                 {
                     b.HasOne("Core.Entities.Photography", "Photographer")
                         .WithMany("Images")
@@ -703,7 +734,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany("servicesForBeautyCenter")
+                        .WithMany("ServicesForBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -827,9 +858,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
                 {
+                    b.Navigation("ImagesBeautyCenter");
+
                     b.Navigation("Reviews");
 
-                    b.Navigation("servicesForBeautyCenter");
+                    b.Navigation("ServicesForBeautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.Car", b =>

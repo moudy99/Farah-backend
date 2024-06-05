@@ -25,8 +25,12 @@ namespace Infrastructure
         public DbSet<Photography> Photographies { get; set; }
         public DbSet<ShopDresses> ShopDresses { get; set; }
         public DbSet<Dress> Dresses { get; set; }
+
+        public DbSet<ImagesBeautyCenter> ImagesBeautyCenter { get; set; }
+
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarPicture> CarPictures { get; set; }
+
 
 
 
@@ -59,7 +63,7 @@ namespace Infrastructure
 
 
             modelBuilder.Entity<BeautyCenter>()
-           .HasMany(b => b.servicesForBeautyCenter)
+           .HasMany(b => b.ServicesForBeautyCenter)
            .WithOne(s => s.BeautyCenter)
            .HasForeignKey(s => s.BeautyCenterId);
 
@@ -99,7 +103,7 @@ namespace Infrastructure
                 .HasForeignKey(r => r.BeautyCenterId);
 
             modelBuilder.Entity<BeautyCenter>()
-          .HasMany(b => b.servicesForBeautyCenter)
+          .HasMany(b => b.ServicesForBeautyCenter)
           .WithOne(s => s.BeautyCenter)
           .HasForeignKey(s => s.BeautyCenterId);
 

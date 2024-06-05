@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json.Serialization;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
 
@@ -24,12 +23,7 @@ public class Program
 
         builder.Services.AddControllers();
 
-        builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.MaxDepth = 64;
-                });
+
 
 
         builder.Services.AddEndpointsApiExplorer();

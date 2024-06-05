@@ -73,21 +73,32 @@ namespace Application.Services
 
             return response;
         }
-        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO)
+
+        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
+                var folderName = "BeautyCenterImages";
 
+                // Save images
+                var savedImages = await ImageHelper.SaveImagesAsync(beautyCenterDTO.Images, folderName);
 
-                var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
+                var addBeautyCenter = new Add2
+                {
+                    Name = beautyCenterDTO.Name,
+                    Description = beautyCenterDTO.Description,
+                    Gove = beautyCenterDTO.Gove,
+                    City = beautyCenterDTO.City,
+                    Images = savedImages,
+                    Services = beautyCenterDTO.Services
+                };
 
+                var beautyCenter = _mapper.Map<BeautyCenter>(addBeautyCenter);
 
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-
-                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
-
+                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(addBeautyCenter);
 
                 var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
@@ -139,7 +150,7 @@ namespace Application.Services
                 beautyCenter.City = beautyCenterDTO.City;
 
 
-                beautyCenter.servicesForBeautyCenter
+                beautyCenter.ServicesForBeautyCenter
                     = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
 
@@ -204,8 +215,6 @@ namespace Application.Services
                 return errorResponse;
             }
         }
-
-
 
 
     }
