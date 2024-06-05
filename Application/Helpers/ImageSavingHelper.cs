@@ -34,7 +34,7 @@ namespace Application.Helpers
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
 
                     imageNames.Add(uniqueFileName);
