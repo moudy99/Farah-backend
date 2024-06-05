@@ -22,6 +22,32 @@ namespace Infrastructure.Repositories
                     .ToList();
 
         }
+
+        public List<Service> GetAllServices()
+        {
+            var beautyCenterServices = context.Services
+                .OfType<BeautyCenter>()
+                .Include(s => s.servicesForBeautyCenter)
+                .ToList();
+
+            //var shopDressesServices = context.Services
+            //    .OfType<ShopDresses>()
+            //    .Include(s => s.Dresses)
+            //    .ToList();
+
+            var hallServices = context.Services
+                .OfType<Hall>()
+                .ToList();
+
+            // Combine all service types
+            var allServices = new List<Service>();
+            allServices.AddRange(beautyCenterServices);
+            //allServices.AddRange(shopDressesServices);
+            allServices.AddRange(hallServices);
+
+            return allServices;
+        }
+
         public List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
         {
             var query = context.Owners.AsQueryable();

@@ -1,20 +1,20 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class edit_Service : Migration
+    public partial class serviceTyp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "Appointment",
-                table: "servicesForBeautyCenter",
-                type: "datetime2",
+            migrationBuilder.AddColumn<string>(
+                name: "Discriminator",
+                table: "Services",
+                type: "nvarchar(13)",
+                maxLength: 13,
                 nullable: true);
         }
 
@@ -22,8 +22,8 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Appointment",
-                table: "servicesForBeautyCenter");
+                name: "Discriminator",
+                table: "Services");
         }
     }
 }

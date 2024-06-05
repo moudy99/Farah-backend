@@ -16,6 +16,8 @@ namespace Application.Helpers
         public string OwnerID { get; set; }
         public Owner Owner { get; set; }
 
-        public String ServiceType { get; }
+        //public String ServiceType { get; }
+
+        //public string Discriminator { get; protected set; }
     }
 }
