@@ -23,6 +23,7 @@ namespace Infrastructure
         public DbSet<Review> Reviews { get; set; }
 
         public DbSet<Photography> Photographies { get; set; }
+        public DbSet<Portfolio> ImagePhotography { get; set; }
         public DbSet<ShopDresses> ShopDresses { get; set; }
         public DbSet<Dress> Dresses { get; set; }
 

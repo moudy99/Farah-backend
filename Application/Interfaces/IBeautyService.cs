@@ -12,6 +12,6 @@ namespace Application.Interfaces
         CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO);
         CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id);
 
-        CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id);
+        CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id);
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240605120842_CarService2")]
-    partial class CarService2
+    [Migration("20240606174809_up2")]
+    partial class up2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -143,32 +143,26 @@ namespace Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("BeautyCenterId")
+                    b.Property<int>("CarID")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
-                    b.HasIndex("BeautyCenterId");
+                    b.HasIndex("CarID");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("CarPictures");
                 });
 
             modelBuilder.Entity("Core.Entities.City", b =>
@@ -200,6 +194,10 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -246,6 +244,50 @@ namespace Infrastructure.Migrations
                     b.ToTable("Governorates");
                 });
 
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("ImagesBeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Portfolio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PhotographerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhotographerId");
+
+                    b.ToTable("ImagePhotography");
+                });
+
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -278,6 +320,37 @@ namespace Infrastructure.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("Core.Entities.ReviewsPhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhotographyID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhotographyID");
+
+                    b.ToTable("ReviewsPhoto");
+                });
+
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
                 {
                     b.Property<int>("Id")
@@ -288,9 +361,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime?>("Appointment")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("AppointmentId")
-                        .HasColumnType("int");
 
                     b.Property<int>("BeautyCenterId")
                         .HasColumnType("int");
@@ -306,8 +376,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
 
                     b.HasIndex("BeautyCenterId");
 
@@ -506,6 +574,10 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Application.Helpers.Service");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.ToTable("Photograph", (string)null);
                 });
 
@@ -574,15 +646,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
                 {
-                    b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany()
-                        .HasForeignKey("BeautyCenterId")
+                    b.HasOne("Core.Entities.Car", "Car")
+                        .WithMany("Pictures")
+                        .HasForeignKey("CarID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BeautyCenter");
+                    b.Navigation("Car");
                 });
 
             modelBuilder.Entity("Core.Entities.Dress", b =>
@@ -596,6 +668,28 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shop");
                 });
 
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.HasOne("Core.Entities.BeautyCenter", "beautyCenter")
+                        .WithMany("ImagesBeautyCenter")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("beautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Portfolio", b =>
+                {
+                    b.HasOne("Core.Entities.Photography", "Photographer")
+                        .WithMany("Images")
+                        .HasForeignKey("PhotographerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photographer");
+                });
+
             modelBuilder.Entity("Core.Entities.Review", b =>
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
@@ -607,14 +701,21 @@ namespace Infrastructure.Migrations
                     b.Navigation("BeautyCenter");
                 });
 
+            modelBuilder.Entity("Core.Entities.ReviewsPhoto", b =>
+                {
+                    b.HasOne("Core.Entities.Photography", "Photography")
+                        .WithMany("Reviews")
+                        .HasForeignKey("PhotographyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photography");
+                });
+
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
                 {
-                    b.HasOne("Core.Entities.Appointment", null)
-                        .WithMany("Services")
-                        .HasForeignKey("AppointmentId");
-
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany("servicesForBeautyCenter")
+                        .WithMany("ServicesForBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -736,16 +837,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
-                {
-                    b.Navigation("Services");
-                });
-
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
                 {
+                    b.Navigation("ImagesBeautyCenter");
+
                     b.Navigation("Reviews");
 
-                    b.Navigation("servicesForBeautyCenter");
+                    b.Navigation("ServicesForBeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.Navigation("Pictures");
+                });
+
+            modelBuilder.Entity("Core.Entities.Photography", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Core.Entities.ShopDresses", b =>

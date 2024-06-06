@@ -5,14 +5,14 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CarService2 : Migration
+    public partial class up2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Description",
-                table: "Cars",
+                table: "Photograph",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -23,7 +23,7 @@ namespace Infrastructure.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Description",
-                table: "Cars");
+                table: "Photograph");
         }
     }
 }

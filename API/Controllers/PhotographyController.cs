@@ -10,29 +10,30 @@ namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopDressesController : ControllerBase
+    public class PhotographyController : ControllerBase
     {
-        private readonly IShopDressesService _dressesService;
+        private readonly IPhotographyService _photoService;
+
         private readonly UserManager<ApplicationUser> userManager;
 
-        public ShopDressesController(IShopDressesService dressesService, UserManager<ApplicationUser> _userManager)
+        public PhotographyController(IPhotographyService photoService, UserManager<ApplicationUser> _userManager)
         {
-            _dressesService = dressesService;
-            userManager = _userManager;
+            _photoService = photoService;
+            _userManager = userManager;
         }
 
 
         [HttpGet]
-        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10)
+        public ActionResult GetAllPhotographer(int page = 1, int pageSize = 10)
         {
             try
             {
-                var response = _dressesService.GetAllShopDresses(page, pageSize);
+                var response = _photoService.GetAllPhotographer(page, pageSize);
                 if (response.Data.Count > 0)
                 {
                     return Ok(response);
                 }
-                return StatusCode(500, "No Beauty Center just added");
+                return StatusCode(500, "No Photographer  Added");
             }
             catch (Exception ex)
             {
@@ -47,47 +48,17 @@ namespace Presentation.Controllers
             }
         }
 
-
-
-        [HttpGet("GetShopDressesByName")]
-        public ActionResult GetShopDressesByName(string name)
+        [HttpGet("GetPhotographerById")]
+        public ActionResult GetPhotographerById(int id)
         {
             try
             {
-                var response = _dressesService.GetShopDressesByName(name);
-                if (response.Data.Count > 0)
-                {
-                    return Ok(response);
-                }
-                return StatusCode(500, "No Shop Dresses match with this name");
-
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new CustomResponseDTO<List<string>>
-                {
-                    Data = null,
-                    Message = "ايروووووووووووووور",
-                    Succeeded = false,
-                    Errors = new List<string> { ex.Message, ex.StackTrace }
-                };
-                return StatusCode(500, errorResponse);
-            }
-        }
-
-
-
-        [HttpGet("GetShopDressesById")]
-        public ActionResult GetShopDressesById(int id)
-        {
-            try
-            {
-                var response = _dressesService.GetShopDressesById(id);
+                var response = _photoService.GetPhotographerById(id);
                 if (response.Data != null)
                 {
                     return Ok(response);
                 }
-                return StatusCode(500, "No Shop Dresses match with this Id");
+                return StatusCode(500, "No Photographer match with this Id");
 
             }
             catch (Exception ex)
@@ -102,16 +73,16 @@ namespace Presentation.Controllers
                 return StatusCode(500, errorResponse);
             }
         }
+
         [HttpPost]
         [Authorize]
-
-        public ActionResult AddShopDresses([FromForm] ShopDressesDTo shopDressDto)
+        public ActionResult AddPhotographer([FromForm] AddPhotographyDTO photographyDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
-                shopDressDto.OwnerID = OwnerID;
-                var response = _dressesService.AddShopDress(shopDressDto);
+                photographyDTO.OwnerID = OwnerID;
+                var response = _photoService.AddPhotographer(photographyDTO);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -119,7 +90,7 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء إضافة  محل الفساتين ",
+                    Message = "حدث خطأ أثناء إضافة  الفوتوغرافر",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -128,15 +99,16 @@ namespace Presentation.Controllers
         }
 
 
-        [HttpPut]
+
+        [HttpPut("{id}")]
         [Authorize]
-        public ActionResult UpdateShopDress([FromForm] ShopDressesDTo shopDressesDTo, int id)
+        public ActionResult UpdatePhotographer(int id, [FromForm] AddPhotographyDTO photographyDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
-                shopDressesDTo.OwnerID = OwnerID;
-                var response = _dressesService.UpdateShopDress(shopDressesDTo, id);
+                photographyDTO.OwnerID = OwnerID;
+                var response = _photoService.UpdatePhotographer(id, photographyDTO);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -144,24 +116,22 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء تعديل محل الفساتين",
+                    Message = "حدث خطأ أثناء تحديث الفوتوجرافر",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return BadRequest(errorResponse);
             }
         }
-
-
 
 
         [HttpDelete]
         [Authorize]
-        public ActionResult DeleteShopDressById(int id)
+        public ActionResult DeleteBeautyCenterById(int id)
         {
             try
             {
-                var response = _dressesService.DeleteShopDressById(id);
+                var response = _photoService.DeletePhotographerById(id);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -169,12 +139,13 @@ namespace Presentation.Controllers
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء حذف البيوتي سنتر",
+                    Message = "حدث خطأ أثناء حذف  الفوتوجرافر",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return BadRequest(errorResponse);
             }
         }
+
     }
 }
