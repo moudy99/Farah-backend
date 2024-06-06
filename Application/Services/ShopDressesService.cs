@@ -16,19 +16,35 @@ namespace Application.Services
             _shopRepository = shopRepository;
             _mapper = mapper;
         }
-        public CustomResponseDTO<ShopDressesDTo> AddShopDress(ShopDressesDTo ShopDressDto)
+        public CustomResponseDTO<ShopDressesDTo> AddShopDress(ShopDressesDTo shopDressDto)
         {
             try
             {
-                var ShopDress = _mapper.Map<ShopDresses>(ShopDressDto);
-                _shopRepository.Insert(ShopDress);
+                // Save images and update DressDto objects
+                foreach (var dress in shopDressDto.Dresses)
+                {
+                    if (dress.Images != null && dress.Images.Count > 0)
+                    {
+                        var imageNames = ImageHelper.SaveImages(dress.Images, "ShopDressesImages");
+                        dress.ImageUrls = imageNames.Select(imageName => Path.Combine("Images", "ShopDressesImages", imageName)).ToList();
+                    }
+                }
+
+                // Map DTO to domain model
+                var shopDress = _mapper.Map<ShopDresses>(shopDressDto);
+
+                // Insert and save shopDress
+                _shopRepository.Insert(shopDress);
                 _shopRepository.Save();
 
-                var dressDto = _mapper.Map<ShopDressesDTo>(ShopDress);
+                // Map domain model back to DTO
+                var resultDTO = _mapper.Map<ShopDressesDTo>(shopDress);
+
+                // Create successful response
                 var response = new CustomResponseDTO<ShopDressesDTo>
                 {
-                    Data = dressDto,
-                    Message = "تم إضافة  محل الفساتين بنجاح",
+                    Data = resultDTO,
+                    Message = "تم إضافة محل الفساتين بنجاح",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null
@@ -38,17 +54,17 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
+                // Create error response
                 var errorResponse = new CustomResponseDTO<ShopDressesDTo>
                 {
                     Data = null,
-                    Message = "حدث خطأ أثناء إضافة  محل الفساتين",
+                    Message = "حدث خطأ أثناء إضافة محل الفساتين",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return errorResponse;
             }
         }
-
 
 
         public CustomResponseDTO<List<ShopDressesDTo>> GetAllShopDresses(int page, int pageSize)
@@ -110,7 +126,7 @@ namespace Application.Services
         {
             try
             {
-                // Retrieve the existing ShopDress from the database
+
                 var shopDress = _shopRepository.GetById(id);
                 if (shopDress == null)
                 {
@@ -123,8 +139,32 @@ namespace Application.Services
                     };
                 }
 
-                // Map changes from the DTO to the existing entity
+                // Map basic changes from the DTO to the existing entity
                 _mapper.Map(shopDressesDTo, shopDress);
+
+                // Update or add dresses
+                foreach (var dressDto in shopDressesDTo.Dresses)
+                {
+                    var existingDress = shopDress.Dresses.FirstOrDefault(d => d.Id == dressDto.Id);
+                    if (existingDress != null)
+                    {
+                        // Update existing dress
+                        _mapper.Map(dressDto, existingDress);
+                    }
+                    else
+                    {
+                        // Add new dress
+                        var newDress = _mapper.Map<Dress>(dressDto);
+                        shopDress.Dresses.Add(newDress);
+                    }
+                }
+
+                // Remove dresses not present in the DTO
+                var dressesToRemove = shopDress.Dresses.Where(d => !shopDressesDTo.Dresses.Any(dto => dto.Id == d.Id)).ToList();
+                foreach (var dressToRemove in dressesToRemove)
+                {
+                    shopDress.Dresses.Remove(dressToRemove);
+                }
 
                 // Update the existing entity in the repository
                 _shopRepository.Update(shopDress);
@@ -156,6 +196,7 @@ namespace Application.Services
                 return errorResponse;
             }
         }
+
 
 
         public CustomResponseDTO<ShopDressesDTo> DeleteShopDressById(int id)

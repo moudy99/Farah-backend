@@ -7,7 +7,7 @@
         public string OwnerID { get; set; }
         public int GovernorateID { get; set; }
         public int City { get; set; }
-        public DateTime OpeningHours { get; set; } // "Mon-Fri 10:00-18:00",
-        public ICollection<DressDto> Dresses { get; set; }
+        public DateTime OpeningHours { get; set; }
+        public List<DressDto> Dresses { get; set; } = new List<DressDto>();
     }
 }

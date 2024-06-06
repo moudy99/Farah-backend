@@ -38,7 +38,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OwnerID");
 
-                    b.ToTable("Services", (string)null);
+                    b.ToTable("Services");
 
                     b.UseTptMappingStrategy();
                 });
@@ -140,6 +140,28 @@ namespace Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CarID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CarID");
+
+                    b.ToTable("CarPictures");
+                });
+
             modelBuilder.Entity("Core.Entities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -157,7 +179,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("Core.Entities.Dress", b =>
@@ -169,6 +191,10 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -192,7 +218,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ShopId");
 
-                    b.ToTable("Dresses", (string)null);
+                    b.ToTable("Dresses");
                 });
 
             modelBuilder.Entity("Core.Entities.Governorate", b =>
@@ -212,7 +238,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Governorates", (string)null);
+                    b.ToTable("Governorates");
                 });
 
             modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
@@ -234,7 +260,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BeautyCenterId");
 
-                    b.ToTable("ImagesBeautyCenter", (string)null);
+                    b.ToTable("ImagesBeautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.Portfolio", b =>
@@ -256,7 +282,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PhotographerId");
 
-                    b.ToTable("Portfolio", (string)null);
+                    b.ToTable("ImagePhotography");
                 });
 
             modelBuilder.Entity("Core.Entities.Review", b =>
@@ -288,7 +314,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BeautyCenterId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Core.Entities.ReviewsPhoto", b =>
@@ -319,7 +345,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PhotographyID");
 
-                    b.ToTable("ReviewsPhoto", (string)null);
+                    b.ToTable("ReviewsPhoto");
                 });
 
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
@@ -350,7 +376,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BeautyCenterId");
 
-                    b.ToTable("servicesForBeautyCenter", (string)null);
+                    b.ToTable("servicesForBeautyCenter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -511,6 +537,26 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Application.Helpers.Service");
 
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.ToTable("Cars", (string)null);
                 });
 
@@ -524,6 +570,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Photography", b =>
                 {
                     b.HasBaseType("Application.Helpers.Service");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Photograph", (string)null);
                 });
@@ -593,6 +643,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
+                {
+                    b.HasOne("Core.Entities.Car", "Car")
+                        .WithMany("Pictures")
+                        .HasForeignKey("CarID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
             modelBuilder.Entity("Core.Entities.Dress", b =>
                 {
                     b.HasOne("Core.Entities.ShopDresses", "Shop")
@@ -606,11 +667,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
                 {
-                    b.HasOne("Core.Entities.BeautyCenter", null)
+                    b.HasOne("Core.Entities.BeautyCenter", "beautyCenter")
                         .WithMany("ImagesBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("beautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.Portfolio", b =>
@@ -778,6 +841,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("ServicesForBeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.Navigation("Pictures");
                 });
 
             modelBuilder.Entity("Core.Entities.Photography", b =>

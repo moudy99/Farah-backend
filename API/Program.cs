@@ -46,6 +46,9 @@ public class Program
 
         builder.Services.AddScoped<IShopDressesRepository, ShopDressesRepository>();
 
+        builder.Services.AddScoped<IPhotographyService, PhotographyService>();
+        builder.Services.AddScoped<IPhotographyRepository, PhotographyRepository>();
+
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IAccountService, AccountService>();
@@ -165,7 +168,10 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
         }
 
         app.UseHttpsRedirection();

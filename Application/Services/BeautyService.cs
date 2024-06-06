@@ -188,14 +188,14 @@ namespace Application.Services
         }
 
 
-        public CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id)
+        public CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id)
         {
             try
             {
                 _beautyRepository.Delete(id);
                 _beautyRepository.Save();
 
-                var response = new CustomResponseDTO<BeautyCenterDTO>
+                var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = null,
                     Message = "تم حذف البيوتي سنتر بنجاح",
@@ -208,7 +208,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء حذف البيوتي سنتر",
