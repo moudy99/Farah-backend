@@ -59,6 +59,11 @@ namespace Application.Helpers
             CreateMap<CarDTO, Car>()
                 .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.CarID))
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
+
+            // Map CarUpdateDTO to Car
+            CreateMap<CarUpdateDTO, Car>()
+                .ForMember(dest => dest.ID, opt => opt.Ignore())
+                .ForMember(dest => dest.Pictures, opt => opt.Ignore());
         }
     }
 }

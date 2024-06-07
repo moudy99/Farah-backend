@@ -68,12 +68,72 @@ namespace Application.Services
 
             return Mapper.Map<CarDTO>(car);
         }
+
+        public async Task<CarDTO> EditCar(int id, CarDTO carDto)
+        {
+                var existingCar = carRepository.GetById(id);
+                if (existingCar == null)
+                {
+                    throw new Exception("Car not found");
+                }
+
+                Mapper.Map(carDto, existingCar);
+
+                if (carDto.Pictures != null && carDto.Pictures.Any())
+                {
+                    var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
+                    existingCar.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
+                    carDto.PictureUrls = imagePaths;
+                }
+
+                carRepository.Update(existingCar);
+            carRepository.Save();
+                return Mapper.Map<CarDTO>(existingCar);
+        }
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Car car = carRepository.GetById(id);
+                if (car == null)
+                {
+                    throw new Exception("Can't Find A car With This ID");
+                }    
+                car.IsDeleted = true;
+
+                carRepository.Update(car);
+                carRepository.Save();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
+        public CustomResponseDTO<CarDTO> GetCarById(int id)
+        {
+            Car car = carRepository.GetById(id);
 
+            if(car == null)
+            {
+                return new CustomResponseDTO<CarDTO>()
+                {
+                    Data = null,
+                    Message = "Cant Find A car With This ID",
+                    Succeeded = false,
+                    Errors = null,
+                };
+            }
+
+            CarDTO carDTO = Mapper.Map<CarDTO>(car);
+            return new CustomResponseDTO<CarDTO>
+            {
+                Data = carDTO,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null
+            };
+        }
 
         public Car GetById(int id)
         {

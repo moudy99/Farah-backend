@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240603225043_init")]
-    partial class init
+    [Migration("20240606233734_CarDelete")]
+    partial class CarDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,28 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CarID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CarID");
+
+                    b.ToTable("CarPictures");
                 });
 
             modelBuilder.Entity("Core.Entities.City", b =>
@@ -492,6 +514,29 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Application.Helpers.Service");
 
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.ToTable("Cars", (string)null);
                 });
 
@@ -572,6 +617,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Core.Entities.CarPicture", b =>
+                {
+                    b.HasOne("Core.Entities.Car", "Car")
+                        .WithMany("Pictures")
+                        .HasForeignKey("CarID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
                 });
 
             modelBuilder.Entity("Core.Entities.Dress", b =>
@@ -748,6 +804,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("servicesForBeautyCenter");
+                });
+
+            modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.Navigation("Pictures");
                 });
 
             modelBuilder.Entity("Core.Entities.Photography", b =>

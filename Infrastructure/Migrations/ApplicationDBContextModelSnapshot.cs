@@ -30,10 +30,6 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Discriminator")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<string>("OwnerID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -142,34 +138,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("Core.Entities.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("BeautyCenterId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BeautyCenterId");
-
-                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("Core.Entities.CarPicture", b =>
@@ -557,6 +525,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("GovernorateID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
@@ -645,17 +616,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Core.Entities.Dress", b =>
-                {
-                    b.HasOne("Core.Entities.ShopDresses", "Shop")
-                        .WithMany("Dresses")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shop");
-                });
-
             modelBuilder.Entity("Core.Entities.CarPicture", b =>
                 {
                     b.HasOne("Core.Entities.Car", "Car")
@@ -668,6 +628,17 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Core.Entities.Dress", b =>
+                {
+                    b.HasOne("Core.Entities.ShopDresses", "Shop")
+                        .WithMany("Dresses")
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("Core.Entities.Portfolio", b =>
                 {
                     b.HasOne("Core.Entities.Photography", "Photographer")
                         .WithMany("Images")
