@@ -6,7 +6,7 @@ namespace Core.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int SSN { get; set; }
+        public string SSN { get; set; }
         public int GovID { get; set; }
         public int CityID { get; set; }
 
