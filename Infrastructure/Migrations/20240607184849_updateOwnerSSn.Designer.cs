@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240606233734_CarDelete")]
-    partial class CarDelete
+    [Migration("20240607184849_updateOwnerSSn")]
+    partial class updateOwnerSSn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,8 +111,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SSN")
-                        .HasColumnType("int");
+                    b.Property<string>("SSN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -197,6 +198,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsForRent")
                         .HasColumnType("bit");
 
@@ -240,6 +245,50 @@ namespace Infrastructure.Migrations
                     b.ToTable("Governorates");
                 });
 
+            modelBuilder.Entity("Core.Entities.HallPicture", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("HallID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("HallID");
+
+                    b.ToTable("HallPicture");
+                });
+
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BeautyCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeautyCenterId");
+
+                    b.ToTable("ImagesBeautyCenter");
+                });
+
             modelBuilder.Entity("Core.Entities.Portfolio", b =>
                 {
                     b.Property<int>("Id")
@@ -259,7 +308,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PhotographerId");
 
-                    b.ToTable("Portfolio");
+                    b.ToTable("ImagePhotography");
                 });
 
             modelBuilder.Entity("Core.Entities.Review", b =>
@@ -544,12 +593,39 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Application.Helpers.Service");
 
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
                     b.ToTable("Halls", (string)null);
                 });
 
             modelBuilder.Entity("Core.Entities.Photography", b =>
                 {
                     b.HasBaseType("Application.Helpers.Service");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Photograph", (string)null);
                 });
@@ -641,6 +717,28 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shop");
                 });
 
+            modelBuilder.Entity("Core.Entities.HallPicture", b =>
+                {
+                    b.HasOne("Core.Entities.Hall", "Hall")
+                        .WithMany("Pictures")
+                        .HasForeignKey("HallID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hall");
+                });
+
+            modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
+                {
+                    b.HasOne("Core.Entities.BeautyCenter", "beautyCenter")
+                        .WithMany("ImagesBeautyCenter")
+                        .HasForeignKey("BeautyCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("beautyCenter");
+                });
+
             modelBuilder.Entity("Core.Entities.Portfolio", b =>
                 {
                     b.HasOne("Core.Entities.Photography", "Photographer")
@@ -677,7 +775,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.ServiceForBeautyCenter", b =>
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "BeautyCenter")
-                        .WithMany("servicesForBeautyCenter")
+                        .WithMany("ServicesForBeautyCenter")
                         .HasForeignKey("BeautyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -801,12 +899,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
                 {
+                    b.Navigation("ImagesBeautyCenter");
+
                     b.Navigation("Reviews");
 
-                    b.Navigation("servicesForBeautyCenter");
+                    b.Navigation("ServicesForBeautyCenter");
                 });
 
             modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.Navigation("Pictures");
+                });
+
+            modelBuilder.Entity("Core.Entities.Hall", b =>
                 {
                     b.Navigation("Pictures");
                 });

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240606123830_up1")]
-    partial class up1
+    [Migration("20240607184652_updateOwner")]
+    partial class updateOwner
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -242,6 +242,28 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Governorates");
+                });
+
+            modelBuilder.Entity("Core.Entities.HallPicture", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("HallID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("HallID");
+
+                    b.ToTable("HallPicture");
                 });
 
             modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
@@ -554,6 +576,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("GovernorateID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
@@ -567,12 +592,39 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Application.Helpers.Service");
 
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("City")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GovernorateID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
                     b.ToTable("Halls", (string)null);
                 });
 
             modelBuilder.Entity("Core.Entities.Photography", b =>
                 {
                     b.HasBaseType("Application.Helpers.Service");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Photograph", (string)null);
                 });
@@ -662,6 +714,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("Core.Entities.HallPicture", b =>
+                {
+                    b.HasOne("Core.Entities.Hall", "Hall")
+                        .WithMany("Pictures")
+                        .HasForeignKey("HallID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hall");
                 });
 
             modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
@@ -843,6 +906,11 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Core.Entities.Car", b =>
+                {
+                    b.Navigation("Pictures");
+                });
+
+            modelBuilder.Entity("Core.Entities.Hall", b =>
                 {
                     b.Navigation("Pictures");
                 });
