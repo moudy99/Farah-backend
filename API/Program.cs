@@ -65,6 +65,9 @@ public class Program
         builder.Services.AddScoped<ICarService, CarService>();
         builder.Services.AddScoped<ICarRepository, CarRepository>();
 
+        builder.Services.AddScoped<IHallService, HallService>();
+        builder.Services.AddScoped<IHallRepository, HallRepository>();
+
 
         builder.Services.AddCors(options =>
         {

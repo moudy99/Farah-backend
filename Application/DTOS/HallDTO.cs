@@ -1,23 +1,24 @@
-﻿using Application.Helpers;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Entities
+namespace Application.DTOS
 {
-    public class Hall : Service
+    public class HallDTO
     {
-        public int ID { get; set; }
+        public int HallID { get; set; }
+        public string OwnerID { get; set; }
         public int Price { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Capacity { get; set; }
         public int GovernorateID { get; set; }
         public int City { get; set; }
-        public List<HallPicture> Pictures { get; set; }
+        public List<IFormFile> Pictures { get; set; } // For receiving image files
+        public List<string>? PictureUrls { get; set; } // For storing image URLs
 
-        public bool IsDeleted { get; set; } = false;
     }
 }

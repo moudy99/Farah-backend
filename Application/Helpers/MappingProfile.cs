@@ -102,6 +102,20 @@ namespace Application.Helpers
             CreateMap<CarUpdateDTO, Car>()
                 .ForMember(dest => dest.ID, opt => opt.Ignore())
                 .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+
+
+            ////////// Hall /////////
+
+            CreateMap<Hall,HallDTO>()
+                    .ForMember(dest => dest.HallID, opt => opt.MapFrom(src => src.ID))
+                    .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+                    .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+
+            CreateMap<HallDTO,Hall>()
+                .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.HallID))
+                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
+
+
         }
     }
 }
