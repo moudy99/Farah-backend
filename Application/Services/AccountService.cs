@@ -1,4 +1,5 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
@@ -19,6 +20,12 @@ namespace Application.Services
         public async Task<CustomResponseDTO<AuthUserDTO>> OwnerRegisterAsync(OwnerRegisterDTO registerModel)
         {
             var owner = _mapper.Map<Owner>(registerModel);
+            var IDBackImage = await ImageSavingHelper.SaveOneImageAsync(registerModel.IDBackImageFile, "OwnersImages");
+            var IDFrontImage = await ImageSavingHelper.SaveOneImageAsync(registerModel.IDFrontImageFile, "OwnersImages");
+            var profilePic = await ImageSavingHelper.SaveOneImageAsync(registerModel.ProfileImageFile, "OwnersImages");
+            owner.IDBackImage = IDBackImage;
+            owner.IDFrontImage = IDFrontImage;
+            owner.ProfileImage = profilePic;
             var registrationResult = await _accountRepository.OwnerRegisterAsync(owner, registerModel);
 
             return new CustomResponseDTO<AuthUserDTO>

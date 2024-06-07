@@ -24,7 +24,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("ownerRegister")]
-        public async Task<ActionResult> Register(OwnerRegisterDTO ownerRegisterModel)
+        public async Task<ActionResult> Register([FromForm] OwnerRegisterDTO ownerRegisterModel)
         {
             if (!ModelState.IsValid)
             {
