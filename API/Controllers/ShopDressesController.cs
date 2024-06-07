@@ -104,13 +104,14 @@ namespace Presentation.Controllers
         }
         [HttpPost]
         [Authorize]
-        public ActionResult AddShopDresses(ShopDressesDTo shopDresseDto)
+
+        public ActionResult AddShopDresses([FromForm] ShopDressesDTo shopDressDto)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
-                shopDresseDto.OwnerID = OwnerID;
-                var response = _dressesService.AddShopDress(shopDresseDto);
+                shopDressDto.OwnerID = OwnerID;
+                var response = _dressesService.AddShopDress(shopDressDto);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -125,10 +126,11 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
+
         [HttpPut]
         [Authorize]
-
-        public ActionResult UpdateShopDress(ShopDressesDTo shopDressesDTo, int id)
+        public ActionResult UpdateShopDress([FromForm] ShopDressesDTo shopDressesDTo, int id)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
@@ -149,6 +151,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
 
 

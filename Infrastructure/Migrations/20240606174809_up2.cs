@@ -5,25 +5,25 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class serviceTyp : Migration
+    public partial class up2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Discriminator",
-                table: "Services",
-                type: "nvarchar(13)",
-                maxLength: 13,
-                nullable: true);
+                name: "Description",
+                table: "Photograph",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Discriminator",
-                table: "Services");
+                name: "Description",
+                table: "Photograph");
         }
     }
 }

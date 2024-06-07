@@ -3,6 +3,7 @@ using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -73,21 +74,20 @@ namespace Application.Services
 
             return response;
         }
-        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO)
+
+        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
-
-
+                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
                 var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
-
+                beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
+                beautyCenterDTO.ImageUrls = imagePaths;
 
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-
                 var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
-
 
                 var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
@@ -99,6 +99,20 @@ namespace Application.Services
                 };
 
                 return response;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Log inner exception details
+                var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
+
+                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
+                    Succeeded = false,
+                    Errors = new List<string> { innerExceptionMessage }
+                };
+                return errorResponse;
             }
             catch (Exception ex)
             {
@@ -114,11 +128,11 @@ namespace Application.Services
         }
 
 
+
         public CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
             try
             {
-
                 var beautyCenter = _beautyRepository.GetById(id);
                 if (beautyCenter == null)
                 {
@@ -131,17 +145,17 @@ namespace Application.Services
                     };
                 }
 
-
+                // Update the existing beautyCenter entity with new values from the DTO
                 beautyCenter.Name = beautyCenterDTO.Name;
                 beautyCenter.Description = beautyCenterDTO.Description;
                 beautyCenter.Gove = beautyCenterDTO.Gove;
-                beautyCenter.OwnerID = beautyCenterDTO.OwnerID;
                 beautyCenter.City = beautyCenterDTO.City;
+                beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
-
-                beautyCenter.servicesForBeautyCenter
-                    = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
-
+                // Save new images and update image paths
+                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
+                beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
+                beautyCenterDTO.ImageUrls = imagePaths;
 
                 _beautyRepository.Update(beautyCenter);
                 _beautyRepository.Save();
@@ -152,7 +166,7 @@ namespace Application.Services
                 var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = resultDTO,
-                    Message = "تم تعديل  البيوتي سنتر بنجاح",
+                    Message = "تم تعديل البيوتي سنتر بنجاح",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null
@@ -174,14 +188,14 @@ namespace Application.Services
         }
 
 
-        public CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id)
+        public CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id)
         {
             try
             {
                 _beautyRepository.Delete(id);
                 _beautyRepository.Save();
 
-                var response = new CustomResponseDTO<BeautyCenterDTO>
+                var response = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = null,
                     Message = "تم حذف البيوتي سنتر بنجاح",
@@ -194,7 +208,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء حذف البيوتي سنتر",
@@ -204,8 +218,6 @@ namespace Application.Services
                 return errorResponse;
             }
         }
-
-
 
 
     }
