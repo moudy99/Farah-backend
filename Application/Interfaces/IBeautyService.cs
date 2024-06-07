@@ -9,9 +9,9 @@ namespace Application.Interfaces
 
         CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
         CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id);
-        CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenters(AddBeautyCenterDTO beautyCenterDTO);
+        CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO);
         CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id);
 
-        CustomResponseDTO<BeautyCenterDTO> DeleteBeautyCenterById(int id);
+        CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id);
     }
 }

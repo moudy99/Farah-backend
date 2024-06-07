@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
         {
             var beautyCenterServices = context.Services
                 .OfType<BeautyCenter>()
-                .Include(s => s.servicesForBeautyCenter)
+                .Include(s => s.ServicesForBeautyCenter)
                 .ToList();
 
             //var shopDressesServices = context.Services

@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json.Serialization;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
 
@@ -24,12 +23,7 @@ public class Program
 
         builder.Services.AddControllers();
 
-        builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.MaxDepth = 64;
-                });
+
 
 
         builder.Services.AddEndpointsApiExplorer();
@@ -51,6 +45,9 @@ public class Program
         builder.Services.AddScoped<IBeautyRepository, BeautyRepository>();
 
         builder.Services.AddScoped<IShopDressesRepository, ShopDressesRepository>();
+
+        builder.Services.AddScoped<IPhotographyService, PhotographyService>();
+        builder.Services.AddScoped<IPhotographyRepository, PhotographyRepository>();
 
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -174,7 +171,10 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
         }
 
         app.UseHttpsRedirection();

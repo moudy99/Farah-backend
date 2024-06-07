@@ -36,7 +36,7 @@ namespace Infrastructure.Repositories
 
         public void Insert(T obj)
         {
-            context.Add(obj);
+            context.Set<T>().Add(obj);
         }
 
         public void Save()

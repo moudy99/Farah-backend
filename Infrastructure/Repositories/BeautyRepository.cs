@@ -15,7 +15,8 @@ namespace Infrastructure.Repositories
         public List<BeautyCenter> GetAllBeautyCenters()
         {
             return context.BeautyCenters
-                          .Include(b => b.servicesForBeautyCenter)
+                          .Include(b => b.ImagesBeautyCenter)
+                          .Include(b => b.ServicesForBeautyCenter)
                           .Include(b => b.Reviews)
                           .ToList();
         }
@@ -26,9 +27,19 @@ namespace Infrastructure.Repositories
         {
             return context.BeautyCenters
                           .Where(b => b.Name.Contains(name))
-                          .Include(b => b.servicesForBeautyCenter)
+                          .Include(b => b.ServicesForBeautyCenter)
+                          .Include(b => b.ImagesBeautyCenter)
                           .Include(b => b.Reviews)
                           .ToList();
+        }
+
+        public BeautyCenter GetBeautyCenterById(int id)
+        {
+            return context.BeautyCenters
+                .Include(b => b.ImagesBeautyCenter)
+                .Include(b => b.ServicesForBeautyCenter)
+                .Include(b => b.Reviews)
+                .SingleOrDefault(b => b.ID == id);
         }
     }
 }

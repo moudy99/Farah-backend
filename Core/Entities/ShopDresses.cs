@@ -11,6 +11,8 @@ namespace Core.Entities
         public int GovernorateID { get; set; }
         public int City { get; set; }
         public DateTime OpeningHours { get; set; } // "Mon-Fri 10:00-18:00",
+
+
         public ICollection<Dress> Dresses { get; set; }
 
     }

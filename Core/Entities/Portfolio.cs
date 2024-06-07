@@ -10,7 +10,5 @@
 
         public Photography Photographer { get; set; }
 
-        // [NotMapped]
-        //public IFormFile? ImageFile { get; set; }
     }
 }
