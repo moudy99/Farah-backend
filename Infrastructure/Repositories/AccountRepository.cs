@@ -53,7 +53,7 @@ namespace Infrastructure.Repositories
                 {
                     Message = "Registration successful",
                     IsAuthenticated = true,
-                    Username = user.UserName,
+                    Name = user.FirstName + " " + user.LastName,
                     Email = user.Email,
                     ExpireTIme = securityToken.ValidTo,
                     Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
@@ -104,7 +104,7 @@ namespace Infrastructure.Repositories
                     {
                         Message = "Login successful",
                         IsAuthenticated = true,
-                        Username = user.UserName,
+                        Name = user.FirstName + " " + user.LastName,
                         Email = user.Email,
                         ExpireTIme = securityToken.ValidTo,
                         Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
