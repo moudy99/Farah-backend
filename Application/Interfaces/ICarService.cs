@@ -12,5 +12,9 @@ namespace Application.Interfaces
     {
         public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize);
         public Task<CarDTO> AddCar(CarDTO carDto);
+        public Task<CarDTO> EditCar(int id, CarDTO carDto);
+
+        public CustomResponseDTO<CarDTO> GetCarById(int id);
+
     }
 }

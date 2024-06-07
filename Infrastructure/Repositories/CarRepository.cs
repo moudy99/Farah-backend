@@ -21,8 +21,15 @@ namespace Infrastructure.Repositories
         public List<Car> GetAll()
         {
             return context.Cars
+                .Where(c => c.IsDeleted == false)
                 .Include(c => c.Pictures)
                 .ToList();
+        }
+        public Car GetById(int id)
+        {
+            return context.Cars
+                .Include(c => c.Pictures)
+                .FirstOrDefault(c => c.ID == id);
         }
     }
 }

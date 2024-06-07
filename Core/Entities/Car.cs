@@ -13,5 +13,7 @@ namespace Core.Entities
         public List<CarPicture> Pictures { get; set; }
         public int GovernorateID { get; set; }
         public int City { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }
