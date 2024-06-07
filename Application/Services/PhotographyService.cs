@@ -38,11 +38,11 @@ namespace Application.Services
             };
             return response;
         }
-        public CustomResponseDTO<AddPhotographyDTO> AddPhotographer(AddPhotographyDTO PhotographerDto)
+        public async Task<CustomResponseDTO<AddPhotographyDTO>> AddPhotographer(AddPhotographyDTO PhotographerDto)
         {
             try
             {
-                var imagePaths = ImageHelper.SaveImages(PhotographerDto.Pictures, "PhotographerImages");
+                var imagePaths = await ImageSavingHelper.SaveImagesAsync(PhotographerDto.Pictures, "PhotographerImages");
                 var photographer = Mapper.Map<Photography>(PhotographerDto);
                 photographer.Images = imagePaths.Select(path => new Portfolio { ImageURL = path }).ToList();
                 PhotographerDto.PictureUrls = imagePaths;
@@ -100,7 +100,7 @@ namespace Application.Services
 
 
 
-        public CustomResponseDTO<AddPhotographyDTO> UpdatePhotographer(int id, AddPhotographyDTO PhotographerDto)
+        public async Task<CustomResponseDTO<AddPhotographyDTO>> UpdatePhotographer(int id, AddPhotographyDTO PhotographerDto)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace Application.Services
                 photographer.Description = PhotographerDto.Description;
 
                 // Save new images and update image paths
-                var imagePaths = ImageHelper.SaveImages(PhotographerDto.Pictures, "PhotographerImages");
+                var imagePaths = await ImageSavingHelper.SaveImagesAsync(PhotographerDto.Pictures, "PhotographerImages");
                 photographer.Images = imagePaths.Select(path => new Portfolio { ImageURL = path }).ToList();
                 PhotographerDto.PictureUrls = imagePaths;
 

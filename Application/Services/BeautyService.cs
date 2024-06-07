@@ -75,11 +75,11 @@ namespace Application.Services
             return response;
         }
 
-        public CustomResponseDTO<AddBeautyCenterDTO> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
-                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
+                var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
                 var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;
@@ -129,7 +129,7 @@ namespace Application.Services
 
 
 
-        public CustomResponseDTO<AddBeautyCenterDTO> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
+        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Application.Services
                 beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
                 // Save new images and update image paths
-                var imagePaths = ImageHelper.SaveImages(beautyCenterDTO.Images, "BeautyCenterImages");
+                var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;
 

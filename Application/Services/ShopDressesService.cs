@@ -16,7 +16,7 @@ namespace Application.Services
             _shopRepository = shopRepository;
             _mapper = mapper;
         }
-        public CustomResponseDTO<ShopDressesDTo> AddShopDress(ShopDressesDTo shopDressDto)
+        public async Task<CustomResponseDTO<ShopDressesDTo>> AddShopDress(ShopDressesDTo shopDressDto)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace Application.Services
                 {
                     if (dress.Images != null && dress.Images.Count > 0)
                     {
-                        var imageNames = ImageHelper.SaveImages(dress.Images, "ShopDressesImages");
+                        var imageNames = await ImageSavingHelper.SaveImagesAsync(dress.Images, "ShopDressesImages");
                         dress.ImageUrls = imageNames.Select(imageName => Path.Combine("Images", "ShopDressesImages", imageName)).ToList();
                     }
                 }
