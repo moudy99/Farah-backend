@@ -152,11 +152,6 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        Task<HallDTO> IHallService.AddHall(HallDTO HallDto)
-        {
-            throw new NotImplementedException();
-        }
-
         List<Hall> Iservices<Hall>.GetAll()
         {
             throw new NotImplementedException();

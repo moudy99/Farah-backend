@@ -139,7 +139,7 @@ namespace Presentation.Controllers
             }
         }
         [HttpGet("CarByID")]
-        public IActionResult GetCarByID(int id)
+        public IActionResult GetHallByID(int id)
         {
 
             var hall = HallService.GetHallById(id);

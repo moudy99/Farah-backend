@@ -725,7 +725,6 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Core.Entities.ImagesBeautyCenter", b =>
-
                 {
                     b.HasOne("Core.Entities.BeautyCenter", "beautyCenter")
                         .WithMany("ImagesBeautyCenter")
@@ -734,17 +733,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("beautyCenter");
-                });
-
-            modelBuilder.Entity("Core.Entities.Portfolio", b =>
-                {
-                    b.HasOne("Core.Entities.ShopDresses", "Shop")
-                        .WithMany("Dresses")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("Core.Entities.Portfolio", b =>

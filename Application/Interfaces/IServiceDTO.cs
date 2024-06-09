@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Entities
+namespace Application.Interfaces
 {
-    public class Customer : ApplicationUser
+    public interface IServiceDTO
     {
-        public List<FavoriteService> FavoriteServices { get; set; }
+        string OwnerID { get; set; }
     }
 }
