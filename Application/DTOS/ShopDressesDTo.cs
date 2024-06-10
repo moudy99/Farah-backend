@@ -1,6 +1,8 @@
-﻿namespace Application.DTOS
+﻿using Application.Interfaces;
+
+namespace Application.DTOS
 {
-    public class ShopDressesDTo
+    public class ShopDressesDTo : IServiceDTO
     {
         public string ShopName { get; set; }
         public string ShopDescription { get; set; }

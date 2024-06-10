@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
 using Core.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,56 @@ namespace Application.Services
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository AdminRepository;
+        private readonly IBeautyRepository _beautyCenterRepository;
+        private readonly IHallRepository _hallRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IPhotographyRepository _photographyRepository;
+        private readonly IShopDressesRepository _shopDressesRepository;
         private readonly IMapper Mapper;
 
-        public AdminService(IAdminRepository adminRepository, IMapper _mapper)
+        public AdminService(IAdminRepository adminRepository, IMapper _mapper, IBeautyRepository beautyCenterRepository,
+        IHallRepository hallRepository,
+        ICarRepository carRepository,
+        IPhotographyRepository photographyRepository,
+        IShopDressesRepository shopDressesRepository)
         {
+            _beautyCenterRepository = beautyCenterRepository;
+            _hallRepository = hallRepository;
+            _carRepository = carRepository;
+            _photographyRepository = photographyRepository;
+            _shopDressesRepository = shopDressesRepository;
             AdminRepository = adminRepository;
             Mapper = _mapper;
         }
+
+
+
+
+        public AllServicesDTO GetAllServices()
+        {
+            var beautyCenters = _beautyCenterRepository.GetAll();
+            var halls = _hallRepository.GetAll();
+            var cars = _carRepository.GetAll();
+            var photographies = _photographyRepository.GetAll();
+            var shopDresses = _shopDressesRepository.GetAll();
+
+            var compositeDto = new AllServicesDTO
+            {
+                BeautyCenters = Mapper.Map<List<BeautyCenterDTO>>(beautyCenters),
+                Halls = Mapper.Map<List<HallDTO>>(halls),
+                Cars = Mapper.Map<List<CarDTO>>(cars),
+                Photographys = Mapper.Map<List<PhotographyDTO>>(photographies),
+                ShopDresses = Mapper.Map<List<ShopDressesDTo>>(shopDresses)
+            };
+
+
+
+            return compositeDto;
+        }
+
+
+
+
         public CustomResponseDTO<OwnerDTO> GetOwnerById(string ownerId)
         {
             Owner owner = AdminRepository.GetById(ownerId);
@@ -317,9 +361,6 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public List<Service> GetAllServices()
-        {
-            return AdminRepository.GetAllServices();
-        }
+
     }
 }

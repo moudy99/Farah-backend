@@ -11,7 +11,7 @@ namespace Application.Interfaces
     public interface ICarService : Iservices<Car>
     {
         public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize);
-        public Task<CarDTO> AddCar(CarDTO carDto);
+        public Task<CarDTO> AddCar(AddCarDTO carDto);
         public Task<CarDTO> EditCar(int id, CarDTO carDto);
 
         public CustomResponseDTO<CarDTO> GetCarById(int id);

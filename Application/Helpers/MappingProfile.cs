@@ -98,13 +98,25 @@ namespace Application.Helpers
                 .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.CarID))
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
 
+
+           /////////////////////////////////////////////////// Add Car ////////////////////////////////////////////////////////
+
+            CreateMap<Car, AddCarDTO>()
+               .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+               .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+
+
+            // Map CarDTO to Car, converting PictureUrls to CarPicture entities
+            CreateMap<AddCarDTO, Car>()
+                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
+
             // Map CarUpdateDTO to Car
             CreateMap<CarUpdateDTO, Car>()
                 .ForMember(dest => dest.ID, opt => opt.Ignore())
                 .ForMember(dest => dest.Pictures, opt => opt.Ignore());
 
 
-            ////////// Hall /////////
+            /////////////////////////////////////////////// Hall ////////////////////////////////
 
             CreateMap<Hall,HallDTO>()
                     .ForMember(dest => dest.HallID, opt => opt.MapFrom(src => src.ID))
@@ -115,6 +127,15 @@ namespace Application.Helpers
                 .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.HallID))
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
 
+
+
+
+            CreateMap<Hall, AddHallDTO>()
+                    .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+                    .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+
+            CreateMap<AddHallDTO, Hall>()
+                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
 
         }
     }

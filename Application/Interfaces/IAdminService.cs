@@ -13,7 +13,7 @@ namespace Application.Interfaces
 {
     public interface IAdminService:Iservices<Owner>
     {
-        public List<Service>GetAllServices();
+        public AllServicesDTO GetAllServices();
        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
         public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name);
         public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize);

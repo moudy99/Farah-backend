@@ -4,8 +4,6 @@ namespace Core.Entities
 {
     public class Car : Service
     {
-        public int ID { get; set; }
-
         public string Brand { get; set; }
         public int Year { get; set; }
         public int Price { get; set; }

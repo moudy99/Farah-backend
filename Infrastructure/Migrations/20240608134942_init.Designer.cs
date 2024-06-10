@@ -4,6 +4,7 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240608134942_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +111,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SSN")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SSN")
+                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -220,30 +222,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ShopId");
 
                     b.ToTable("Dresses");
-                });
-
-            modelBuilder.Entity("Core.Entities.FavoriteService", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("FavoriteService");
                 });
 
             modelBuilder.Entity("Core.Entities.Governorate", b =>
@@ -738,25 +716,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shop");
                 });
 
-            modelBuilder.Entity("Core.Entities.FavoriteService", b =>
-                {
-                    b.HasOne("Core.Entities.Customer", "Customer")
-                        .WithMany("FavoriteServices")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Helpers.Service", "Service")
-                        .WithMany("FavoriteServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("Core.Entities.HallPicture", b =>
                 {
                     b.HasOne("Core.Entities.Hall", "Hall")
@@ -937,11 +896,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Application.Helpers.Service", b =>
-                {
-                    b.Navigation("FavoriteServices");
-                });
-
             modelBuilder.Entity("Core.Entities.BeautyCenter", b =>
                 {
                     b.Navigation("ImagesBeautyCenter");
@@ -971,11 +925,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.ShopDresses", b =>
                 {
                     b.Navigation("Dresses");
-                });
-
-            modelBuilder.Entity("Core.Entities.Customer", b =>
-                {
-                    b.Navigation("FavoriteServices");
                 });
 
             modelBuilder.Entity("Core.Entities.Owner", b =>

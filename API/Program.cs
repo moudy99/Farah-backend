@@ -68,6 +68,9 @@ public class Program
         builder.Services.AddScoped<IHallService, HallService>();
         builder.Services.AddScoped<IHallRepository, HallRepository>();
 
+        builder.Services.AddScoped<IFavoriteServiceLayer, FavoriteServiceLayer>();
+        builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
 
         builder.Services.AddCors(options =>
         {

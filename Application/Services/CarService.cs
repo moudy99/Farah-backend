@@ -55,7 +55,7 @@ namespace Application.Services
 
         }
 
-        public async Task<CarDTO> AddCar(CarDTO carDto)
+        public async Task<CarDTO> AddCar(AddCarDTO carDto)
         {
             var car = Mapper.Map<Car>(carDto);
 
