@@ -17,6 +17,7 @@ namespace Core.Entities
         public int City { get; set; }
         public List<HallPicture> Pictures { get; set; }
 
+        public List<HallFeature> Features { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 }

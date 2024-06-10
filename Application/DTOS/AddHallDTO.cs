@@ -16,6 +16,8 @@ namespace Application.DTOS
         public int Capacity { get; set; }
         public int GovernorateID { get; set; }
         public int City { get; set; }
+
+        public List<string> Features { get; set; }
         public List<IFormFile> Pictures { get; set; } // For receiving image files
         public List<string>? PictureUrls { get; set; } // For storing image URLs
     }

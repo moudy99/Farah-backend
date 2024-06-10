@@ -13,6 +13,7 @@ namespace Application.DTOS
         public int HallID { get; set; }
         public string OwnerID { get; set; }
         public int Price { get; set; }
+        public List<string> Features { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int Capacity { get; set; }
