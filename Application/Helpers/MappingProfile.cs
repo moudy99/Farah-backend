@@ -136,23 +136,28 @@ namespace Application.Helpers
 
             /////////////////////////////////////////////// Hall ////////////////////////////////
 
-            CreateMap<Hall,HallDTO>()
-                    .ForMember(dest => dest.HallID, opt => opt.MapFrom(src => src.ID))
-                    .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
-                    .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+            // Hall to HallDTO mapping
+            CreateMap<Hall, HallDTO>()
+                .ForMember(dest => dest.Features, opt => opt.MapFrom(src => src.Features.Select(f => f.Feature).ToList()))
+                .ForMember(dest => dest.HallID, opt => opt.MapFrom(src => src.ID))
+                .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+                .ForMember(dest => dest.Pictures, opt => opt.Ignore());
 
-            CreateMap<HallDTO,Hall>()
+            // HallDTO to Hall mapping
+            CreateMap<HallDTO, Hall>()
                 .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.HallID))
-                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
+                .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()))
+                .ForMember(dest => dest.Features, opt => opt.Ignore());  // Assuming Features are handled elsewhere
 
-
-
-
+            // Hall to AddHallDTO mapping
             CreateMap<Hall, AddHallDTO>()
-                    .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
-                    .ForMember(dest => dest.Pictures, opt => opt.Ignore());
+                .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
+                .ForMember(dest => dest.Pictures, opt => opt.Ignore())
+                .ForMember(dest => dest.Features, opt => opt.MapFrom(src => src.Features.Select(f => f.Feature).ToList()));
 
+            // AddHallDTO to Hall mapping
             CreateMap<AddHallDTO, Hall>()
+                .ForMember(dest => dest.Features, opt => opt.MapFrom(src => src.Features.Select(f => new HallFeature { Feature = f }).ToList()))
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
 
         }

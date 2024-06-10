@@ -23,6 +23,7 @@ namespace Infrastructure.Repositories
             return context.Halls
                 .Where(c => c.IsDeleted == false)
                 .Include(c => c.Pictures)
+                .Include(c => c.Features)
                 .ToList();
         }
 
@@ -30,6 +31,7 @@ namespace Infrastructure.Repositories
         {
             return context.Halls
                 .Include(c => c.Pictures)
+                .Include(c => c.Features)   
                 .FirstOrDefault(c => c.ID == id);
         }
     }
