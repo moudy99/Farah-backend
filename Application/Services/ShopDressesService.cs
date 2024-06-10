@@ -16,7 +16,7 @@ namespace Application.Services
             _shopRepository = shopRepository;
             _mapper = mapper;
         }
-        public async Task<CustomResponseDTO<ShopDressesDTo>> AddShopDress(ShopDressesDTo shopDressDto)
+        public async Task<CustomResponseDTO<ShopDressesDTo>> AddShopDress(AddShopDressDTO shopDressDto)
         {
             try
             {

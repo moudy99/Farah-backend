@@ -105,13 +105,13 @@ namespace Presentation.Controllers
         [HttpPost]
         [Authorize]
 
-        public ActionResult AddShopDresses([FromForm] ShopDressesDTo shopDressDto)
+        public async Task <ActionResult> AddShopDresses([FromForm] AddShopDressDTO shopDressDto)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
                 shopDressDto.OwnerID = OwnerID;
-                var response = _dressesService.AddShopDress(shopDressDto);
+                var response = await _dressesService.AddShopDress(shopDressDto);
                 return Ok(response);
             }
             catch (Exception ex)
