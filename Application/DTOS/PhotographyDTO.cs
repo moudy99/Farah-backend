@@ -6,6 +6,7 @@ namespace Application.DTOS
 {
     public class PhotographyDTO : IServiceDTO
     {
+        public int photographyID { get; set; }
         public List<ReviewsPhoto> Reviews { get; set; }
         public string OwnerID { get; set; }
         public string Description { get; set; }

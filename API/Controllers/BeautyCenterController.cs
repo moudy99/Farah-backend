@@ -103,13 +103,13 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult AddBeautyCenter([FromForm] AddBeautyCenterDTO beautyCenterDTO)
+        public async  Task<ActionResult> AddBeautyCenter([FromForm] AddBeautyCenterDTO beautyCenterDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
                 beautyCenterDTO.OwnerID = OwnerID;
-                var response = _beautyService.AddBeautyCenter(beautyCenterDTO);
+                var response = await _beautyService.AddBeautyCenter(beautyCenterDTO);
                 return Ok(response);
             }
             catch (Exception ex)

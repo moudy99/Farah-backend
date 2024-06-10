@@ -4,6 +4,8 @@ namespace Application.DTOS
 {
     public class BeautyCenterDTO : IServiceDTO
     {
+        public int BeautyCenterId { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
         public int Gove { get; set; }

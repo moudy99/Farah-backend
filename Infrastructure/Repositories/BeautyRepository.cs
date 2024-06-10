@@ -6,7 +6,8 @@ namespace Infrastructure.Repositories
 {
     public class BeautyRepository : Repository<BeautyCenter>, IBeautyRepository
     {
-        ApplicationDBContext context;
+        private readonly ApplicationDBContext context;
+
         public BeautyRepository(ApplicationDBContext _context) : base(_context)
         {
             context = _context;
