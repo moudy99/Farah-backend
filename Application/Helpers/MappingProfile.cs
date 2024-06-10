@@ -40,10 +40,24 @@ namespace Application.Helpers
 
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
+
             CreateMap<ShopDressesDTo, ShopDresses>()
-           .ForMember(dest => dest.Dresses, opt => opt.MapFrom(src => src.Dresses));
+           .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ShopDressesID))
+           .ForMember(dest => dest. Dresses, opt => opt.MapFrom(src => src.Dresses));
+
             CreateMap<ShopDresses, ShopDressesDTo>()
+                .ForMember(dest => dest.ShopDressesID, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.Dresses, opt => opt.MapFrom(src => src.Dresses));
+
+
+
+            CreateMap<AddShopDressDTO, ShopDresses>()
+                .ForMember(dest => dest.Dresses, opt => opt.MapFrom(src => src.Dresses));
+
+            CreateMap<ShopDresses, AddShopDressDTO>()
+                .ForMember(dest => dest.Dresses, opt => opt.MapFrom(src => src.Dresses));
+
+
 
             // Map DressDto to Dress and vice versa
             CreateMap<DressDto, Dress>()

@@ -1,10 +1,13 @@
-﻿using Application.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.DTOS
 {
-    public class ShopDressesDTo : IServiceDTO
+    public class AddShopDressDTO
     {
-        public int ShopDressesID { get; set; }
         public string ShopName { get; set; }
         public string ShopDescription { get; set; }
         public string OwnerID { get; set; }

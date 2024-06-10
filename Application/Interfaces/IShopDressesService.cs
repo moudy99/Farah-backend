@@ -10,7 +10,7 @@ namespace Application.Interfaces
         CustomResponseDTO<List<ShopDressesDTo>> GetShopDressesByName(string name);
 
         CustomResponseDTO<ShopDressesDTo> GetShopDressesById(int id);
-        Task<CustomResponseDTO<ShopDressesDTo>> AddShopDress(ShopDressesDTo ShopDress);
+        Task<CustomResponseDTO<ShopDressesDTo>> AddShopDress(AddShopDressDTO ShopDress);
         CustomResponseDTO<ShopDressesDTo> UpdateShopDress(ShopDressesDTo ShopDress, int id);
 
         CustomResponseDTO<ShopDressesDTo> DeleteShopDressById(int id);
