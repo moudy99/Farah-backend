@@ -24,6 +24,7 @@ namespace Application.Helpers
             .ReverseMap();
 
             CreateMap<BeautyCenter, BeautyCenterDTO>()
+                .ForMember(dest => dest.BeautyCenterId, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter
                     .Select(s => new ServiceForBeautyCenterDTO
@@ -71,7 +72,10 @@ namespace Application.Helpers
 
 
             CreateMap<Photography, PhotographyDTO>()
-         .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Images.Select(image => image.ImageURL))).ReverseMap();
+         .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Images.Select(image => image.ImageURL)))
+            .ForMember(dest => dest.photographyID, opt => opt.MapFrom(src => src.ID))
+            .ReverseMap();
+
 
             CreateMap<OwnerRegisterDTO, Owner>();
             CreateMap<CustomerRegisterDTO, Customer>();

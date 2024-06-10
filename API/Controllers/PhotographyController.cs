@@ -76,13 +76,13 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult AddPhotographer([FromForm] AddPhotographyDTO photographyDTO)
+        public async Task<ActionResult> AddPhotographer([FromForm] AddPhotographyDTO photographyDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
                 photographyDTO.OwnerID = OwnerID;
-                var response = _photoService.AddPhotographer(photographyDTO);
+                var response = await _photoService.AddPhotographer(photographyDTO);
                 return Ok(response);
             }
             catch (Exception ex)
