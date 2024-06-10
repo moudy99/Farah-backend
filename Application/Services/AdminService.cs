@@ -58,6 +58,8 @@ namespace Application.Services
                 ShopDresses = Mapper.Map<List<ShopDressesDTo>>(shopDresses)
             };
 
+
+
             return compositeDto;
         }
 

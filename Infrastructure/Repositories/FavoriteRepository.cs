@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,12 @@ namespace Infrastructure.Repositories
             context = _context;
         }
 
+        public List<FavoriteService> GetAllFavoritesForCustomer(string customerId)
+        {
+            return context.FavoriteService
+                .Include(f => f.Service)
+                .Where(f => f.CustomerId == customerId)
+                .ToList();
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("AddCar")]
-        public async Task<ActionResult> AddCar( CarDTO carDto) // Use FromForm to handle file uploads
+        public async Task<ActionResult> AddCar( AddCarDTO carDto) // Use FromForm to handle file uploads
         {
             string OwnerID = User.FindFirstValue("uid");
 

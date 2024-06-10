@@ -16,15 +16,21 @@ namespace Presentation.Controllers
             FavoriteService = _favoriteService;
         }
 
-        //[HttpGet]
-        //public IActionResult GetAll(int page = 1, int pageSize = 6)
-        //{
-        //    string CustomerID = User.FindFirstValue("uid");
-        //    try
-        //    {
-        //        var response = FavoriteService.GetAll(page, pageSize, CustomerID);
-        //    }
-        
-        //}
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            string CustomerID = User.FindFirstValue("uid");
+            try
+            {
+                var response = FavoriteService.GetAll(CustomerID);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+        }
     }
 }

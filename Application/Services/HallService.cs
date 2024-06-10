@@ -75,7 +75,7 @@ namespace Application.Services
             };
 
         }
-        public async Task<HallDTO> AddHall(HallDTO HallDto)
+        public async Task<HallDTO> AddHall(AddHallDTO HallDto)
         {
             var hall = Mapper.Map<Hall>(HallDto);
 

@@ -32,6 +32,7 @@ namespace Infrastructure
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarPicture> CarPictures { get; set; }
 
+        public DbSet<FavoriteService> FavoriteService { get; set; }
 
 
 

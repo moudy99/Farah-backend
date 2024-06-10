@@ -10,6 +10,6 @@ namespace Application.Interfaces
 {
     public interface IFavoriteServiceLayer
     {
-       // public List<CustomResponseDTO<FavoriteServiceDTO>> GetAll(int page = 1, int pageSize = 6,string CustomerID);
+       public CustomResponseDTO<AllServicesDTO> GetAll(string CustomerID);
     }
 }
