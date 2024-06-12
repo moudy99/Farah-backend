@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Helpers;
+using Application.Interfaces;
 using Application.Services;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,13 @@ namespace Infrastructure.Repositories
                 .Include(f => f.Service)
                 .Where(f => f.CustomerId == customerId)
                 .ToList();
+        }
+
+        public FavoriteService GetFavService(int serviceID, string CustomerID)
+        {
+            return context
+                .FavoriteService
+                .FirstOrDefault(f => f.ServiceId == serviceID && f.CustomerId == CustomerID);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,18 @@ namespace Application.Services
         {
             favoriteRepository = _favoriteRepository;
             _mapper = mapper;
+        }
+
+        public void AddServiceToFav(int serviceID, string CustomerID)
+        {
+            var favoriteService = new FavoriteService
+            {
+                ServiceId = serviceID,
+                CustomerId = CustomerID
+            };
+
+            favoriteRepository.Insert(favoriteService);
+            favoriteRepository.Save();
         }
 
         public CustomResponseDTO<AllServicesDTO> GetAll(string CustomerID)
@@ -64,6 +78,17 @@ namespace Application.Services
                 Errors = null,
                 PaginationInfo = null
             };
+        }
+
+        public void RemoveServiceFromFav(int serviceId, string customerId)
+        {
+            FavoriteService FavService = favoriteRepository.GetFavService(serviceId, customerId);
+
+            if(FavService != null)
+            {
+                favoriteRepository.Delete(FavService.ID);
+                favoriteRepository.Save();
+            }
         }
     }
 }
