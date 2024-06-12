@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOS;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -29,8 +30,63 @@ namespace Presentation.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
 
+        [HttpPost("Add")]
+        public IActionResult AddServiceToFav(int serviceID)
+        {
+            string CustomerID = User.FindFirstValue("uid");
+        
+            try
+            {
+                FavoriteService.AddServiceToFav(serviceID, CustomerID);
+                return Ok(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = "Serviec Added To Fav Successfully",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
+            catch (Exception ex) {
 
+                return NotFound(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = "Failed To Add Service To Fav",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
+        }
+
+        [HttpPost("Remove")]
+        public IActionResult RemoveServiceFromFav(int serviceID)
+        {
+            string CustomerID = User.FindFirstValue("uid");
+
+            try
+            {
+                FavoriteService.RemoveServiceFromFav(serviceID, CustomerID);
+                return Ok(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = "Serviec Removed Successfully",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
+            catch (Exception ex)
+            {
+
+                return NotFound(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = "Failed To Remove Service",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
         }
     }
 }

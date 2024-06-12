@@ -1,4 +1,5 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,8 @@ namespace Application.Interfaces
     public interface IFavoriteServiceLayer
     {
        public CustomResponseDTO<AllServicesDTO> GetAll(string CustomerID);
+        public void AddServiceToFav(int serviceID, string CustomerID);
+
+        void RemoveServiceFromFav(int serviceId, string customerId);
     }
 }
