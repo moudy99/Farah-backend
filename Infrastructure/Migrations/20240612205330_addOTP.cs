@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class addOTP : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +31,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SSN = table.Column<int>(type: "int", nullable: false),
+                    SSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GovID = table.Column<int>(type: "int", nullable: false),
                     CityID = table.Column<int>(type: "int", nullable: false),
                     ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -85,6 +84,21 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Governorates", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "userOTPs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OTP = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OTPGeneratedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_userOTPs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -296,6 +310,32 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FavoriteService",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteService", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_FavoriteService_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_FavoriteService_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Halls",
                 columns: table => new
                 {
@@ -446,6 +486,26 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HallFeature",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Feature = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HallId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HallFeature", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HallFeature_Halls_HallId",
+                        column: x => x.HallId,
+                        principalTable: "Halls",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HallPicture",
                 columns: table => new
                 {
@@ -583,6 +643,21 @@ namespace Infrastructure.Migrations
                 column: "ShopId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FavoriteService_CustomerId",
+                table: "FavoriteService",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteService_ServiceId",
+                table: "FavoriteService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HallFeature_HallId",
+                table: "HallFeature",
+                column: "HallId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HallPicture_HallID",
                 table: "HallPicture",
                 column: "HallID");
@@ -643,13 +718,16 @@ namespace Infrastructure.Migrations
                 name: "Cities");
 
             migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
                 name: "Dresses");
 
             migrationBuilder.DropTable(
+                name: "FavoriteService");
+
+            migrationBuilder.DropTable(
                 name: "Governorates");
+
+            migrationBuilder.DropTable(
+                name: "HallFeature");
 
             migrationBuilder.DropTable(
                 name: "HallPicture");
@@ -670,6 +748,9 @@ namespace Infrastructure.Migrations
                 name: "servicesForBeautyCenter");
 
             migrationBuilder.DropTable(
+                name: "userOTPs");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -677,6 +758,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ShopDresses");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Halls");

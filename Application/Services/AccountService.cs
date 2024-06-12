@@ -30,9 +30,9 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsEmailConfirmed ? registrationResult : null,
+                Data = registrationResult,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsEmailConfirmed,
+                Succeeded = registrationResult.Succeeded,
                 Errors = registrationResult.Errors
             };
         }
@@ -50,6 +50,20 @@ namespace Application.Services
                 Errors = registrationResult.Errors
             };
         }
+
+        public async Task<CustomResponseDTO<AuthUserDTO>> ConfirmEmailAsync(string email, string otp)
+        {
+            var result = await _accountRepository.ConfirmEmailAsync(email, otp);
+
+            return new CustomResponseDTO<AuthUserDTO>
+            {
+                Data = result.IsEmailConfirmed ? result : null,
+                Message = result.Message,
+                Succeeded = result.Succeeded,
+                Errors = result.Errors
+            };
+        }
+
 
         public async Task<CustomResponseDTO<AuthUserDTO>> Login(LoginUserDTO loginUser)
         {

@@ -37,5 +37,22 @@ namespace Application.Services
             };
             await emailService.sendEmailAsync(emailDTO);
         }
+
+        public async Task<bool> VerifyOTPAsync(string email, string otp)
+        {
+            var userOTP = await _userOTPRepository.GetOTPAsync(email, otp);
+
+            if (userOTP == null || CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime))
+            {
+                if (userOTP != null && CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime))
+                {
+                    await _userOTPRepository.DeleteOTPAsync(userOTP);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

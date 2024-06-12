@@ -67,20 +67,25 @@
               "">
                               Your OTP
                          </h1>
-                         <p style=""
+                               <div style=""display: flex;align-items: center;justify-content: center;"">
+
+                              <p style=""
                 margin: 0;
                 margin-top: 17px;
                 font-size: 15px;
                 font-weight: 500;
-              "">
-                              Hey {{{{{userName}}}}} 👋👋,
-                         </p>
-                         <p style=""
+                "">
+                                   Hey {{{{{userName}}}}}
+                              </p>
+                              <p style=""
                 margin: 0;
                 margin-top: 17px;
                 font-weight: 500;
                 letter-spacing: 0.56px;
-              "">
+                "">
+                                   <img src=""https://png.pngtree.com/png-vector/20220621/ourmid/pngtree-isolated-waving-hand-vector-icon-on-white-backgroundeps-10-vector-png-image_46317074.jpg""
+                                        style=""width: 50px;"" alt=""hi image"">
+                         </div>
                               Thank you for choosing Farah Company. Use the following OTP
                               to Verify you Account. OTP is
                               valid for

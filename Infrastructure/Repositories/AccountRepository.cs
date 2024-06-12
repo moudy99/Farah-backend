@@ -50,13 +50,14 @@ namespace Infrastructure.Repositories
                 await _userManager.AddToRoleAsync(user, role);
 
                 await _userOTPService.SaveAndSendOTPAsync(user.Email, user.FirstName, user.LastName);
-
                 return new AuthUserDTO()
                 {
                     Message = "Registration successful",
                     IsEmailConfirmed = user.EmailConfirmed,
                     Name = user.FirstName + " " + user.LastName,
                     Email = user.Email,
+                    Succeeded = true,
+                    Token = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user)),
                     Role = role
                 };
             }
@@ -82,6 +83,42 @@ namespace Infrastructure.Repositories
         {
             return await RegisterUserAsync(customer, registerDto.Password, RolesEnum.Customer.ToString());
         }
+
+
+
+        public async Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp)
+        {
+            var isValid = await _userOTPService.VerifyOTPAsync(email, otp);
+            if (!isValid)
+            {
+                return new AuthUserDTO { Message = "Invalid or expired OTP. Please request a new OTP." };
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return new AuthUserDTO { Message = "User not found" };
+            }
+
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+
+            var checkUserType = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+
+            return new AuthUserDTO
+            {
+                Message = "Email confirmed successfully.",
+                IsEmailConfirmed = true,
+                Succeeded = true,
+                Name = user.FirstName + " " + user.LastName,
+                Email = user.Email,
+                Token = checkUserType != "Owner" ? new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user)) : null,
+                Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()
+            };
+        }
+
+
         public async Task<AuthUserDTO> Login(LoginUserDTO loginUser)
         {
             var user = await _userManager.FindByEmailAsync(loginUser.Email);
@@ -90,6 +127,16 @@ namespace Infrastructure.Repositories
                 bool found = await _userManager.CheckPasswordAsync(user, loginUser.Password);
                 if (found)
                 {
+                    if (!user.EmailConfirmed)
+                    {
+                        return new AuthUserDTO()
+                        {
+                            Message = "Login failed: Email not confirmed",
+                            IsEmailConfirmed = false,
+                            Succeeded = false
+                        };
+                    }
+
                     var checkUserType = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                     Owner owner = null;
 
@@ -104,6 +151,7 @@ namespace Infrastructure.Repositories
                     {
                         Message = "Login successful",
                         IsEmailConfirmed = true,
+                        Succeeded = true,
                         Name = user.FirstName + " " + user.LastName,
                         Email = user.Email,
                         ExpireTIme = securityToken.ValidTo,
@@ -112,14 +160,25 @@ namespace Infrastructure.Repositories
                         AccountStatus = owner?.AccountStatus.ToString()
                     };
                 }
+                else
+                {
+                    return new AuthUserDTO()
+                    {
+                        Message = "Login failed: Invalid email or password",
+                        IsEmailConfirmed = user.EmailConfirmed,
+                        Succeeded = false
+                    };
+                }
             }
 
             return new AuthUserDTO()
             {
-                Message = "Login failed: Invalid email or password",
-                IsEmailConfirmed = false
+                Message = "Login failed: User not found",
+                IsEmailConfirmed = false,
+                Succeeded = false
             };
         }
+
 
         public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)
         {
