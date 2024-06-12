@@ -38,6 +38,11 @@ public class Program
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDBContext>();
 
+        // Map the AppSettings mailSettings into the Helper class
+        builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("EmailSettings"));
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
+        builder.Services.AddScoped<IUserOTPService, UserOTPService>();
 
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddScoped<IBeautyService, BeautyService>();

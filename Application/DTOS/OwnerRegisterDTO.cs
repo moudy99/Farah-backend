@@ -19,7 +19,7 @@ namespace Application.DTOS
         public string Email { get; set; }
 
         [Required(ErrorMessage = "SSN is required.")]
-        [StringLength(14, MinimumLength = 14, ErrorMessage = "SSN must be exactly 14 digits long.")]
+        //[StringLength(14, MinimumLength = 14, ErrorMessage = "SSN must be exactly 14 digits long.")]
         public string SSN { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]

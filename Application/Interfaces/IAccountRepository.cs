@@ -10,6 +10,8 @@ namespace Application.Interfaces
         public Task<AuthUserDTO> CustomerRegisterAsync(Customer customer, CustomerRegisterDTO RegisterModel);
         public Task<AuthUserDTO> Login(LoginUserDTO loginUser);
         public Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel);
+        public Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp);
+        public Task<bool> SendNewOTPAsync(string email);
 
     }
 }
