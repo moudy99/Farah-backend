@@ -46,7 +46,7 @@ namespace Application.Services
             {
                 Data = registrationResult.IsEmailConfirmed ? registrationResult : null,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsEmailConfirmed,
+                Succeeded = registrationResult.Succeeded,
                 Errors = registrationResult.Errors
             };
         }
@@ -63,6 +63,26 @@ namespace Application.Services
                 Errors = result.Errors
             };
         }
+        public async Task<CustomResponseDTO<string>> SendNewOTPAsync(string email)
+        {
+            var result = await _accountRepository.SendNewOTPAsync(email);
+            if (result)
+            {
+                return new CustomResponseDTO<string>
+                {
+                    Data = "OTP sent successfully",
+                    Succeeded = true
+                };
+            }
+            else
+            {
+                return new CustomResponseDTO<string>
+                {
+                    Message = "Failed to send OTP",
+                    Succeeded = false
+                };
+            }
+        }
 
 
         public async Task<CustomResponseDTO<AuthUserDTO>> Login(LoginUserDTO loginUser)
@@ -70,10 +90,11 @@ namespace Application.Services
             var LoginResult = await _accountRepository.Login(loginUser);
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = LoginResult.IsEmailConfirmed ? LoginResult : null,
+                Data = LoginResult,
                 Message = LoginResult.Message,
-                Succeeded = LoginResult.IsEmailConfirmed,
+                Succeeded = LoginResult.Succeeded,
                 Errors = LoginResult.Errors
+
             };
         }
 

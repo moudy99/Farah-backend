@@ -118,25 +118,52 @@ namespace Infrastructure.Repositories
             };
         }
 
+        public async Task<bool> SendNewOTPAsync(string email)
+        {
+            var currentUser = await _userManager.FindByEmailAsync(email);
+
+            if (currentUser == null)
+            {
+                return false;
+            }
+
+            var checkUserType = (await _userManager.GetRolesAsync(currentUser)).FirstOrDefault();
+            ApplicationUser user;
+
+            if (checkUserType == "Owner")
+            {
+                user = await _context.Owners.FirstOrDefaultAsync(u => u.Id == currentUser.Id);
+            }
+            else
+            {
+                user = await _context.Customers.FirstOrDefaultAsync(u => u.Id == currentUser.Id);
+            }
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            await _userOTPService.SendNewOTPAsync(email, user.FirstName, user.LastName);
+
+            return true;
+        }
+
 
         public async Task<AuthUserDTO> Login(LoginUserDTO loginUser)
         {
-            var user = await _userManager.FindByEmailAsync(loginUser.Email);
+            // If i change the mail in sql i return null with the new mail
+
+            //var user = await _userManager.FindByEmailAsync(loginUser.Email);
+
+            //It work with the new mail 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginUser.Email);
+
             if (user != null)
             {
                 bool found = await _userManager.CheckPasswordAsync(user, loginUser.Password);
                 if (found)
                 {
-                    if (!user.EmailConfirmed)
-                    {
-                        return new AuthUserDTO()
-                        {
-                            Message = "Login failed: Email not confirmed",
-                            IsEmailConfirmed = false,
-                            Succeeded = false
-                        };
-                    }
-
                     var checkUserType = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                     Owner owner = null;
 
@@ -144,9 +171,24 @@ namespace Infrastructure.Repositories
                     {
                         owner = await _context.Owners.FirstOrDefaultAsync(u => u.Id == user.Id);
                     }
+                    var Token = await CreateJwtToken(user);
 
-                    // Generate Token
-                    var securityToken = await CreateJwtToken(user);
+                    if (!user.EmailConfirmed)
+                    {
+
+                        return new AuthUserDTO()
+                        {
+                            Message = " Email not confirmed",
+                            IsEmailConfirmed = false,
+                            ExpireTIme = Token.ValidTo,
+                            Token = new JwtSecurityTokenHandler().WriteToken(Token),
+                            Succeeded = true,
+                            Role = checkUserType,
+                            AccountStatus = owner?.AccountStatus.ToString(),
+                            Name = user.FirstName + " " + user.LastName,
+                            Email = user.Email,
+                        };
+                    }
                     return new AuthUserDTO()
                     {
                         Message = "Login successful",
@@ -154,8 +196,8 @@ namespace Infrastructure.Repositories
                         Succeeded = true,
                         Name = user.FirstName + " " + user.LastName,
                         Email = user.Email,
-                        ExpireTIme = securityToken.ValidTo,
-                        Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
+                        ExpireTIme = Token.ValidTo,
+                        Token = new JwtSecurityTokenHandler().WriteToken(Token),
                         Role = checkUserType,
                         AccountStatus = owner?.AccountStatus.ToString()
                     };

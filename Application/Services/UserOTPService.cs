@@ -41,18 +41,43 @@ namespace Application.Services
         public async Task<bool> VerifyOTPAsync(string email, string otp)
         {
             var userOTP = await _userOTPRepository.GetOTPAsync(email, otp);
-
-            if (userOTP == null || CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime))
+            var IsExpire = CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime);
+            if (userOTP == null || IsExpire)
             {
-                if (userOTP != null && CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime))
+                if (userOTP != null && IsExpire)
                 {
                     await _userOTPRepository.DeleteOTPAsync(userOTP);
                 }
                 return false;
             }
+            await _userOTPRepository.DeleteOTPAsync(userOTP);
 
             return true;
         }
 
+
+        public async Task<AuthUserDTO> SendNewOTPAsync(string email, string firstName, string lastName)
+        {
+            var otp = GenerateRandomCode.GetCode();
+
+            var userOTP = new UserOTP
+            {
+                OTP = otp,
+                Email = email,
+                OTPGeneratedTime = DateTime.Now
+            };
+
+            await _userOTPRepository.SaveOTPAsync(userOTP);
+
+            EmailDTO emailDTO = new EmailDTO
+            {
+                To = email,
+                Subject = "Farah Account Verification OTP",
+                Body = FormatEmail.CreateDesignForConfirmEmail(otp, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
+            };
+            await emailService.sendEmailAsync(emailDTO);
+
+            return new AuthUserDTO { Message = "New OTP sent to your email successfully" };
+        }
     }
 }
