@@ -3,7 +3,7 @@
     public class AuthUserDTO
     {
         public string Message { get; set; }
-        public bool IsAuthenticated { get; set; }
+        public bool IsEmailConfirmed { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }

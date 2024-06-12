@@ -19,14 +19,16 @@ namespace Infrastructure.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserOTPService _userOTPService;
 
         public AccountRepository(ApplicationDBContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration, IUserOTPService userOTPService)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            this._userOTPService = userOTPService;
         }
         public async Task<AuthUserDTO> RegisterUserAsync(ApplicationUser user, string password, string role)
         {
@@ -47,16 +49,14 @@ namespace Infrastructure.Repositories
             {
                 await _userManager.AddToRoleAsync(user, role);
 
-                // Generate Token 
-                var securityToken = await CreateJwtToken(user);
+                await _userOTPService.SaveAndSendOTPAsync(user.Email, user.FirstName, user.LastName);
+
                 return new AuthUserDTO()
                 {
                     Message = "Registration successful",
-                    IsAuthenticated = true,
+                    IsEmailConfirmed = user.EmailConfirmed,
                     Name = user.FirstName + " " + user.LastName,
                     Email = user.Email,
-                    ExpireTIme = securityToken.ValidTo,
-                    Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
                     Role = role
                 };
             }
@@ -65,7 +65,7 @@ namespace Infrastructure.Repositories
                 return new AuthUserDTO()
                 {
                     Message = string.Join(", ", result.Errors.Select(error => error.Description)),
-                    IsAuthenticated = false,
+                    IsEmailConfirmed = false,
                     Errors = result.Errors.Select(error => error.Description).ToList()
                 };
             }
@@ -103,7 +103,7 @@ namespace Infrastructure.Repositories
                     return new AuthUserDTO()
                     {
                         Message = "Login successful",
-                        IsAuthenticated = true,
+                        IsEmailConfirmed = true,
                         Name = user.FirstName + " " + user.LastName,
                         Email = user.Email,
                         ExpireTIme = securityToken.ValidTo,
@@ -117,7 +117,7 @@ namespace Infrastructure.Repositories
             return new AuthUserDTO()
             {
                 Message = "Login failed: Invalid email or password",
-                IsAuthenticated = false
+                IsEmailConfirmed = false
             };
         }
 

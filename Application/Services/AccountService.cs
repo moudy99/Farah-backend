@@ -30,9 +30,9 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Data = registrationResult.IsEmailConfirmed ? registrationResult : null,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsAuthenticated,
+                Succeeded = registrationResult.IsEmailConfirmed,
                 Errors = registrationResult.Errors
             };
         }
@@ -44,9 +44,9 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Data = registrationResult.IsEmailConfirmed ? registrationResult : null,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsAuthenticated,
+                Succeeded = registrationResult.IsEmailConfirmed,
                 Errors = registrationResult.Errors
             };
         }
@@ -56,9 +56,9 @@ namespace Application.Services
             var LoginResult = await _accountRepository.Login(loginUser);
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = LoginResult.IsAuthenticated ? LoginResult : null,
+                Data = LoginResult.IsEmailConfirmed ? LoginResult : null,
                 Message = LoginResult.Message,
-                Succeeded = LoginResult.IsAuthenticated,
+                Succeeded = LoginResult.IsEmailConfirmed,
                 Errors = LoginResult.Errors
             };
         }
