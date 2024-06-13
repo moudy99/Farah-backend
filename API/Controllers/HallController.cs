@@ -16,12 +16,12 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("AllHalls")]
-        public IActionResult GetAll(int page = 1, int pageSize = 6)
+        public IActionResult GetAll(int page = 1, int pageSize = 6, string priceRange = "all")
         {
             try
             {
-                var response = HallService.GetAllHalls(page, pageSize);
-                if (response.Data == null)
+                var response = HallService.GetAllHalls(page, pageSize, priceRange);
+                if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<HallDTO>>
                     {
@@ -45,6 +45,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
         [HttpPost("AddHall")]
         public async Task<ActionResult> AddHall([FromForm] AddHallDTO hallDTO)

@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Infrastructure/Migrations
+/API/wwwroot/Images/OwnersImages
+/API/wwwroot/Images/BeautyCenterImages

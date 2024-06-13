@@ -10,5 +10,6 @@ namespace Application.Interfaces
     public interface IFavoriteRepository : IRepository<FavoriteService>
     {
         public List<FavoriteService> GetAllFavoritesForCustomer(string customerId);
+        public FavoriteService GetFavService(int serviceID, string CustomerID);
     }
 }
