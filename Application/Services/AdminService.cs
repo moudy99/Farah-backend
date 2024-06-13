@@ -64,11 +64,71 @@ namespace Application.Services
         }
 
 
+        public CustomResponseDTO<object> GetServiceTypeByID(int id)
+        {
+            Service Service = AdminRepository.GetServiceById(id);
 
+            switch (Service)
+            {
+                case BeautyCenter beautyCenter:
+                    return new CustomResponseDTO<object>()
+                    {
+                        Data = Mapper.Map<BeautyCenterDTO>(beautyCenter),
+                        Message = "Beauty Center",
+                        Succeeded = true,
+                        Errors = null,
+                    };
+                        
+                    break;
+                case Hall hall:
+                    return new CustomResponseDTO<object>()
+                    {
+                        Data = Mapper.Map<HallDTO>(hall),
+                        Message = "Hall",
+                        Succeeded = true,
+                        Errors = null,
+                    };
+                    break;
+                case Car car:
+                    return new CustomResponseDTO<object>()
+                    {
+                        Data = Mapper.Map<CarDTO>(car),
+                        Message = "Car",
+                        Succeeded = true,
+                        Errors = null,
+                    };
+                    break;
+                case Photography photography:
+                    return new CustomResponseDTO<object>()
+                    {
+                        Data = Mapper.Map<PhotographyDTO>(photography),
+                        Message = "Beauty Center",
+                        Succeeded = true,
+                        Errors = null,
+                    };
+                    break;
+                case ShopDresses shopDresses:
+                    return new CustomResponseDTO<object>()
+                    {
+                        Data = Mapper.Map<ShopDressesDTo>(shopDresses),
+                        Message = "ShopDresses",
+                        Succeeded = true,
+                        Errors = null,
+                    };
+                    break;
+            }
+            return new CustomResponseDTO<object>()
+            {
+                Data = null,
+                Message = "Service Not Found",
+                Succeeded = false,
+                Errors = null,
+            };
+        }
 
         public CustomResponseDTO<OwnerDTO> GetOwnerById(string ownerId)
         {
-            Owner owner = AdminRepository.GetById(ownerId);
+            Owner owner = AdminRepository.GetOwnerById(ownerId);
 
             if (owner == null)
             {
