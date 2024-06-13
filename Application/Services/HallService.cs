@@ -3,11 +3,6 @@ using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -15,7 +10,7 @@ namespace Application.Services
     {
         private readonly IMapper Mapper;
         private readonly IHallRepository HallRepository;
-        public HallService(IMapper _Mapper, IHallRepository _HallRepository) 
+        public HallService(IMapper _Mapper, IHallRepository _HallRepository)
         {
             HallRepository = _HallRepository;
             Mapper = _Mapper;
@@ -39,16 +34,43 @@ namespace Application.Services
                 throw ex;
             }
         }
-        public List<Hall> GetAll()
-        {
-            throw new NotImplementedException();
-        }
 
-        public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize)
+        public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize, string priceRange)
         {
-            List<Hall> Halls = HallRepository.GetAll();
+            var query = HallRepository.GetAll().AsQueryable();
 
-            if (!Halls.Any())
+            // Apply price range filter
+            if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
+            {
+                int minPrice;
+                int maxPrice;
+
+                if (priceRange.StartsWith("<"))
+                {
+                    maxPrice = int.Parse(priceRange.Substring(1));
+                    query = query.Where(h => h.Price < maxPrice);
+                }
+                else if (priceRange.StartsWith(">"))
+                {
+                    minPrice = int.Parse(priceRange.Substring(1));
+                    query = query.Where(h => h.Price > minPrice);
+                }
+                else
+                {
+                    var priceRanges = priceRange.Split('-').Select(int.Parse).ToArray();
+                    if (priceRanges.Length == 2)
+                    {
+                        minPrice = priceRanges[0];
+                        maxPrice = priceRanges[1];
+                        query = query.Where(h => h.Price >= minPrice && h.Price <= maxPrice);
+                    }
+                }
+            }
+
+            // Check if any halls match the filters
+            var filteredHalls = query.ToList();
+
+            if (!filteredHalls.Any())
             {
                 return new CustomResponseDTO<List<HallDTO>>
                 {
@@ -60,7 +82,7 @@ namespace Application.Services
                 };
             }
 
-            var HallsDTO = Mapper.Map<List<HallDTO>>(Halls);
+            var HallsDTO = Mapper.Map<List<HallDTO>>(filteredHalls);
 
             var paginatedList = PaginationHelper.Paginate(HallsDTO, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
@@ -73,8 +95,8 @@ namespace Application.Services
                 Errors = null,
                 PaginationInfo = paginationInfo
             };
-
         }
+
         public async Task<HallDTO> AddHall(AddHallDTO HallDto)
         {
             var hall = Mapper.Map<Hall>(HallDto);

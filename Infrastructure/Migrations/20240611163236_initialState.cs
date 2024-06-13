@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initialState : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SSN = table.Column<int>(type: "int", nullable: false),
+                    SSN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GovID = table.Column<int>(type: "int", nullable: false),
                     CityID = table.Column<int>(type: "int", nullable: false),
                     ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -105,7 +105,7 @@ namespace Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,7 +126,7 @@ namespace Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,7 +146,7 @@ namespace Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -164,13 +164,13 @@ namespace Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,7 +190,7 @@ namespace Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -207,7 +207,7 @@ namespace Infrastructure.Migrations
                         column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -228,7 +228,7 @@ namespace Infrastructure.Migrations
                         column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,7 +268,7 @@ namespace Infrastructure.Migrations
                         column: x => x.ID,
                         principalTable: "Services",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -292,7 +292,33 @@ namespace Infrastructure.Migrations
                         column: x => x.ID,
                         principalTable: "Services",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FavoriteService",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteService", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_FavoriteService_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FavoriteService_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,7 +342,7 @@ namespace Infrastructure.Migrations
                         column: x => x.ID,
                         principalTable: "Services",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -334,7 +360,7 @@ namespace Infrastructure.Migrations
                         column: x => x.ID,
                         principalTable: "Services",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -356,7 +382,7 @@ namespace Infrastructure.Migrations
                         column: x => x.ID,
                         principalTable: "Services",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -376,7 +402,7 @@ namespace Infrastructure.Migrations
                         column: x => x.BeautyCenterId,
                         principalTable: "BeautyCenters",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -399,7 +425,7 @@ namespace Infrastructure.Migrations
                         column: x => x.BeautyCenterId,
                         principalTable: "BeautyCenters",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -422,7 +448,7 @@ namespace Infrastructure.Migrations
                         column: x => x.BeautyCenterId,
                         principalTable: "BeautyCenters",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -442,7 +468,27 @@ namespace Infrastructure.Migrations
                         column: x => x.CarID,
                         principalTable: "Cars",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HallFeature",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Feature = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HallId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HallFeature", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HallFeature_Halls_HallId",
+                        column: x => x.HallId,
+                        principalTable: "Halls",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -462,7 +508,7 @@ namespace Infrastructure.Migrations
                         column: x => x.HallID,
                         principalTable: "Halls",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -482,7 +528,7 @@ namespace Infrastructure.Migrations
                         column: x => x.PhotographerId,
                         principalTable: "Photograph",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -505,7 +551,7 @@ namespace Infrastructure.Migrations
                         column: x => x.PhotographyID,
                         principalTable: "Photograph",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -530,7 +576,7 @@ namespace Infrastructure.Migrations
                         column: x => x.ShopId,
                         principalTable: "ShopDresses",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -581,6 +627,21 @@ namespace Infrastructure.Migrations
                 name: "IX_Dresses_ShopId",
                 table: "Dresses",
                 column: "ShopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteService_CustomerId",
+                table: "FavoriteService",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteService_ServiceId",
+                table: "FavoriteService",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HallFeature_HallId",
+                table: "HallFeature",
+                column: "HallId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HallPicture_HallID",
@@ -643,13 +704,16 @@ namespace Infrastructure.Migrations
                 name: "Cities");
 
             migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
                 name: "Dresses");
 
             migrationBuilder.DropTable(
+                name: "FavoriteService");
+
+            migrationBuilder.DropTable(
                 name: "Governorates");
+
+            migrationBuilder.DropTable(
+                name: "HallFeature");
 
             migrationBuilder.DropTable(
                 name: "HallPicture");
@@ -677,6 +741,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ShopDresses");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Halls");
