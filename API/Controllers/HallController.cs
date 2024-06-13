@@ -48,7 +48,7 @@ namespace Presentation.Controllers
 
 
         [HttpPost("AddHall")]
-        public async Task<ActionResult> AddHall(AddHallDTO hallDTO)
+        public async Task<ActionResult> AddHall([FromForm] AddHallDTO hallDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
 
