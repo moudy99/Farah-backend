@@ -44,7 +44,7 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsEmailConfirmed ? registrationResult : null,
+                Data = registrationResult,
                 Message = registrationResult.Message,
                 Succeeded = registrationResult.Succeeded,
                 Errors = registrationResult.Errors
@@ -95,6 +95,24 @@ namespace Application.Services
                 Succeeded = LoginResult.Succeeded,
                 Errors = LoginResult.Errors
 
+            };
+        }
+
+        public async Task<CustomResponseDTO<string>> ForgetPassword(string Email)
+        {
+            var result = await _accountRepository.ForgetPassword(Email);
+            if (result != null)
+            {
+                return new CustomResponseDTO<string>()
+                {
+                    Data = "Reset Password Link sent successfully",
+                    Succeeded = true
+                };
+            }
+            return new CustomResponseDTO<string>()
+            {
+                Data = "Failed to send THe Reset Password Link",
+                Succeeded = false
             };
         }
 

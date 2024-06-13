@@ -33,7 +33,7 @@ namespace Application.Services
             {
                 To = email,
                 Subject = "Farah Account Verification OTP",
-                Body = FormatEmail.CreateDesignForConfirmEmail(otp, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
+                Body = FormatEmail.ConfirmEmail(otp, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
             };
             await emailService.sendEmailAsync(emailDTO);
         }
@@ -41,6 +41,10 @@ namespace Application.Services
         public async Task<bool> VerifyOTPAsync(string email, string otp)
         {
             var userOTP = await _userOTPRepository.GetOTPAsync(email, otp);
+            if (userOTP == null)
+            {
+                return false;
+            }
             var IsExpire = CalcOTPExpirationTime.IsOTPExpired(userOTP.OTPGeneratedTime);
             if (userOTP == null || IsExpire)
             {
@@ -73,11 +77,34 @@ namespace Application.Services
             {
                 To = email,
                 Subject = "Farah Account Verification OTP",
-                Body = FormatEmail.CreateDesignForConfirmEmail(otp, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
+                Body = FormatEmail.ConfirmEmail(otp, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
             };
             await emailService.sendEmailAsync(emailDTO);
 
             return new AuthUserDTO { Message = "New OTP sent to your email successfully" };
+        }
+        public async Task<bool> SendForgetPasswordLinkAsync(string email, string token, string firstName, string lastName)
+        {
+
+
+            EmailDTO emailDTO = new EmailDTO
+            {
+                To = email,
+                Subject = "Reset Password For Farah Account ]",
+                Body = FormatEmail.ForgetPassword(token, $"{firstName} {lastName}", DateTime.Now.ToString("dd MMM, yyyy"))
+            };
+            try
+            {
+                await emailService.sendEmailAsync(emailDTO);
+
+            }
+            catch
+            {
+                return false;
+
+            }
+
+            return true;
         }
     }
 }

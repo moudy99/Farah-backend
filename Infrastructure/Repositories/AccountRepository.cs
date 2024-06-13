@@ -222,6 +222,27 @@ namespace Infrastructure.Repositories
         }
 
 
+        public async Task<bool> ForgetPassword(string Email)
+        {
+            var User = await _userManager.FindByEmailAsync(Email);
+            if (User is null)
+            {
+                return false;
+            }
+            var TokenGenerated = await CreateJwtToken(User);
+            var Token = new JwtSecurityTokenHandler().WriteToken(TokenGenerated);
+
+            var result = _userOTPService.SendForgetPasswordLinkAsync(Email, Token, User.FirstName, User.LastName);
+
+            if (result is null)
+            {
+                return false;
+            }
+            return true;
+
+
+        }
+
         public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
