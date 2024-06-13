@@ -13,5 +13,6 @@ namespace Application.Interfaces
         public Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp);
         public Task<bool> SendNewOTPAsync(string email);
 
+        public Task<bool> ForgetPassword(string Email);
     }
 }

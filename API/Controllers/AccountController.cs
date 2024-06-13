@@ -81,6 +81,22 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpPost("forgetPassword")]
+        public async Task<ActionResult> ForgetPassword(string Email)
+        {
+            var result = await _accountService.ForgetPassword(Email);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
+        //[HttpPost("createNewPassword")]
+        //public async Task<ActionResult> CreateNewPassword(string Email)
+        //{
+
+        //}
 
         [HttpGet("resendOTP")]
         public async Task<ActionResult> GetNewOTP()
