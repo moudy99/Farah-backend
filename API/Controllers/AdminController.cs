@@ -29,10 +29,24 @@ namespace Presentation.Controllersa
         [HttpGet("Services")]
         public ActionResult GetAllServices() 
         {
-            var services = AdminService.GetAllServices();
+            AllServicesDTO services = AdminService.GetAllServices();
 
 
             return Ok(services);
+        }
+
+        [HttpGet("ServiceType")]
+        public ActionResult GetServiceTypeByID(int id) 
+        {
+            try
+            {
+                var service = AdminService.GetServiceTypeByID(id);
+                return Ok(service);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("owners")]

@@ -19,10 +19,17 @@ namespace Infrastructure.Repositories
         {
 
             return context.Owners
+                .Include(o => o.Services)
                     .ToList();
 
         }
-
+        public Owner GetOwnerById(string id) 
+        {
+            return context.Owners
+                .Include(o => o.Services)
+                .FirstOrDefault(o=> o.Id == id);
+            
+        }
         public List<Service> GetAllServices()
         {
             var beautyCenterServices = context.Services
@@ -47,7 +54,11 @@ namespace Infrastructure.Repositories
 
             return allServices;
         }
-
+        public Service GetServiceById(int id)
+        {
+            return context.Services
+                .FirstOrDefault(s => s.ID == id);
+        }
         public List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
         {
             var query = context.Owners.AsQueryable();
