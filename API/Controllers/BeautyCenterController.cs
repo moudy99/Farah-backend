@@ -103,7 +103,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [Authorize]
-        public async  Task<ActionResult> AddBeautyCenter([FromForm] AddBeautyCenterDTO beautyCenterDTO)
+        public async Task<ActionResult> AddBeautyCenter([FromForm] AddBeautyCenterDTO beautyCenterDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
@@ -183,3 +183,139 @@ namespace Presentation.Controllers
 
     }
 }
+
+//////////////////////////////////////////////////////////////////
+//public PropertyPaginationResponseDTO GetAllProperties(int pageNum, int pageSize, int numOfRooms, string priceRange, int govId, int city)
+//{
+//    //Pagination 
+
+
+//    //Search 
+//    var query = dbContext.Properties.AsQueryable();
+
+//    if (numOfRooms > 0)
+//    {
+//        query = query.Where(p => p.RoomsNumber == numOfRooms);
+//    }
+
+//    if (priceRange != "all")
+//    {
+//        int minPrice;
+//        int maxPrice;
+
+//        if (priceRange.StartsWith("<"))
+//        {
+//            maxPrice = int.Parse(priceRange.Substring(1));
+//            query = query.Where(p => p.Price < maxPrice);
+//        }
+//        else if (priceRange.StartsWith(">"))
+//        {
+//            minPrice = int.Parse(priceRange.Substring(1));
+//            query = query.Where(p => p.Price > minPrice);
+//        }
+//        else
+//        {
+//            var priceRanges = priceRange.Split('-').Select(int.Parse).ToArray();
+//            if (priceRanges.Length == 2)
+//            {
+//                minPrice = priceRanges[0];
+//                maxPrice = priceRanges[1];
+//                query = query.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
+//            }
+//        }
+//    }
+
+//    if (govId > 0)
+//    {
+//        query = query.Where(p => p.GovernorateID == govId);
+//    }
+
+//    if (city > 0)
+//    {
+//        query = query.Where(p => p.City == city);
+//    }
+
+
+//    int total = query.Count();
+//    var paginatedList = new PaginatedList(total, pageNum, pageSize);
+
+//    int totalPages = paginatedList.TotalPages;
+//    int currentPage = paginatedList.CurrentPage;
+//    int startPage = paginatedList.StartPage;
+//    int endPage = paginatedList.EndPage;
+
+//    int skipedData = (pageNum - 1) * pageSize;
+//    int cityId = Convert.ToInt32(city);
+//    List<Properties> properties = query.Skip(skipedData).Take(pageSize).ToList();
+//    List<displayPropertyDTO> displayPropertyDTOs = mapper.Map<List<displayPropertyDTO>>(properties);
+
+//    foreach (var property in displayPropertyDTOs)
+//    {
+//        property.isForSale = property.status == "Sale";
+//        property.Address = dbContext.Governorates.Where(g => g.GovernorateID == property.govID)
+//                                                 .Select(g => g.Name)
+//                                                 .FirstOrDefault() + ", " +
+//                          dbContext.Cities.Where(c => c.Id == property.cityId)
+//        .Select(c => c.Name)
+//                                          .FirstOrDefault();
+//        property.imageUrl = dbContext.PropertyImages.Where(img => img.PropertyId == property.id)
+//                                                     .Select(img => img.ImageUrl)
+//                                                     .FirstOrDefault();
+//    }
+
+//    var responseDTO = new PropertyPaginationResponseDTO
+//    {
+//        Properties = displayPropertyDTOs,
+//        PaginationInfo = new PaginationInfoDTO
+//        {
+//            Total = total,
+//            TotalPages = totalPages,
+//            CurrentPage = currentPage,
+//            StartPage = startPage,
+//            EndPage = endPage
+//        }
+//    };
+
+//    return responseDTO;
+//}
+
+//[HttpGet]
+//public async Task<ActionResult> GetAllProperty(int pageNum = 1, int pageSize = 6, int numOfRooms = 0, string priceRange = "all", int govId = 0, int cityId = 0)
+//{
+//    try
+//    {
+//        PropertyPaginationResponseDTO displayPropertyDTO = propertyServices.GetAllProperties(pageNum, pageSize, numOfRooms, priceRange, govId, cityId);
+//        if (displayPropertyDTO == null)
+//        {
+//            var customResponseWithNoDate = new CustomResponseDTO
+//            {
+//                Success = false,
+//                Message = "The Properties Is Null ",
+//                Data = null,
+//                Errors = null
+//            };
+//            return BadRequest(customResponseWithNoDate);
+//        }
+
+//        var customResponseSuccessfully = new CustomResponseDTO
+//        {
+//            Success = true,
+//            Data = displayPropertyDTO,
+//            Message = "data successfully retrieved",
+//            Errors = null
+//        };
+//        return Ok(customResponseSuccessfully);
+
+//    }
+//    catch (Exception ex)
+//    {
+//        var customResponse = new CustomResponseDTO
+//        {
+//            Success = false,
+//            Message = "An error occurred while retrieving the Properties",
+//            Data = null,
+//            Errors = new List<string> { ex.Message }
+//        };
+//        return BadRequest(customResponse);
+//    }
+//}
