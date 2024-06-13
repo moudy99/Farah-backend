@@ -1,8 +1,5 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Azure;
-using Core.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -13,13 +10,13 @@ namespace Presentation.Controllers
     public class HallController : ControllerBase
     {
         private readonly IHallService HallService;
-        public HallController(IHallService _hallService) 
+        public HallController(IHallService _hallService)
         {
             HallService = _hallService;
         }
 
         [HttpGet("AllHalls")]
-        public IActionResult GetAll(int page = 1, int pageSize = 6) 
+        public IActionResult GetAll(int page = 1, int pageSize = 6)
         {
             try
             {
@@ -50,7 +47,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("AddHall")]
-        public async Task<ActionResult> AddHall(AddHallDTO hallDTO)
+        public async Task<ActionResult> AddHall([FromForm] AddHallDTO hallDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
 
