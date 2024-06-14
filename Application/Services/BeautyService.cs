@@ -85,10 +85,10 @@ namespace Application.Services
                 beautyCenterDTO.ImageUrls = imagePaths;
 
                 // Map single service object to ServicesForBeautyCenter collection
-                beautyCenter.ServicesForBeautyCenter = new List<ServiceForBeautyCenter>
-        {
-            _mapper.Map<ServiceForBeautyCenter>(beautyCenterDTO.Services)
-        };
+                //beautyCenter.ServicesForBeautyCenter = new List<ServiceForBeautyCenter>
+                //    {
+                //        _mapper.Map<ServiceForBeautyCenter>(beautyCenterDTO.Services)
+                //    };
 
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
@@ -156,7 +156,7 @@ namespace Application.Services
                 beautyCenter.Description = beautyCenterDTO.Description;
                 beautyCenter.Gove = beautyCenterDTO.Gove;
                 beautyCenter.City = beautyCenterDTO.City;
-                beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
+                //beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
                 // Save new images and update image paths
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
