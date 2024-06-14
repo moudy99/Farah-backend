@@ -6,5 +6,7 @@ namespace Application.Interfaces
     {
         public List<BeautyCenter>? GetBeautyCenterByName(string name);
         public List<BeautyCenter> GetAllBeautyCenters();
+
+        public List<BeautyCenter> GetOwnerServices(string ownerID);
     }
 }

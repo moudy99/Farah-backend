@@ -26,7 +26,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(c => c.ID == id);
         }
 
-
-
+        public List<Photography> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .Photographies
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Images)
+                    .ToList();
+        }
     }
 }

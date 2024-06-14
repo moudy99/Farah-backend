@@ -11,12 +11,46 @@ namespace Application.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
 
-        public AccountService(IAccountRepository accountRepository, IMapper mapper)
+        private readonly IBeautyRepository _beautyCenterRepository;
+        private readonly IHallRepository _hallRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IPhotographyRepository _photographyRepository;
+        private readonly IShopDressesRepository _shopDressesRepository;
+
+        public AccountService(IAccountRepository accountRepository, IMapper mapper,
+            IBeautyRepository beautyCenterRepository,
+            IHallRepository hallRepository,
+            ICarRepository carRepository,
+            IPhotographyRepository photographyRepository,
+            IShopDressesRepository shopDressesRepository)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
+            _beautyCenterRepository = beautyCenterRepository;
+            _hallRepository = hallRepository;
+            _carRepository = carRepository;
+            _photographyRepository = photographyRepository;
+            _shopDressesRepository = shopDressesRepository;
         }
+        public AllServicesDTO GetOwnerServices(string ownerID)
+        {
+            List<BeautyCenter> beauty = _beautyCenterRepository.GetOwnerServices(ownerID);
+            List<Hall> halls = _hallRepository.GetOwnerServices(ownerID);
+            List<Car> cars = _carRepository.GetOwnerServices(ownerID);
+            List<Photography> photographies = _photographyRepository.GetOwnerServices(ownerID);
+            List<ShopDresses> shopDresses = _shopDressesRepository.GetOwnerServices(ownerID);
 
+            var compositeDto = new AllServicesDTO
+            {
+                BeautyCenters = _mapper.Map<List<BeautyCenterDTO>>(beauty),
+                Halls = _mapper.Map<List<HallDTO>>(halls),
+                Cars = _mapper.Map<List<CarDTO>>(cars),
+                Photographys = _mapper.Map<List<PhotographyDTO>>(photographies),
+                ShopDresses = _mapper.Map<List<ShopDressesDTo>>(shopDresses)
+            };
+            return compositeDto;
+
+        }
         public async Task<CustomResponseDTO<AuthUserDTO>> OwnerRegisterAsync(OwnerRegisterDTO registerModel)
         {
             var owner = _mapper.Map<Owner>(registerModel);
@@ -75,6 +109,8 @@ namespace Application.Services
                 Errors = result.Succeeded ? null : result.Errors.Select(e => e.Description).ToList()
             };
         }
+
+
     }
 
 
