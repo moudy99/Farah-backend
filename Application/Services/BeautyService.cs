@@ -17,11 +17,21 @@ namespace Application.Services
             _beautyRepository = beautyRepository;
             _mapper = mapper;
         }
-        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize)
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId)
         {
-            var beautyCenters = _beautyRepository.GetAllBeautyCenters();
+            var beautyCenters = _beautyRepository.GetAllBeautyCenters().AsQueryable();
+            if (govId > 0)
+            {
+                beautyCenters = beautyCenters.Where(p => p.Gove== govId);
+            }
 
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(beautyCenters);
+            if (cityId > 0)
+            {
+                beautyCenters = beautyCenters.Where(p => p.City == cityId);
+            }
+            var filteredBeautyCenters = beautyCenters.ToList();
+
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(filteredBeautyCenters);
 
             var paginatedList = PaginationHelper.Paginate(beautyCenterDTOs, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);

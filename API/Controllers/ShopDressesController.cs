@@ -23,11 +23,11 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
-        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10)
+        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10, int govId = 0, int cityId = 0)
         {
             try
             {
-                var response = _dressesService.GetAllShopDresses(page, pageSize);
+                var response = _dressesService.GetAllShopDresses(page, pageSize,govId, cityId);
                 if (response.Data.Count > 0)
                 {
                     return Ok(response);

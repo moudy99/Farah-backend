@@ -10,7 +10,7 @@ namespace Application.Interfaces
 {
     public interface ICarService : Iservices<Car>
     {
-        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize);
+        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize, string priceRange, int govId, int cityId);
         public Task<CarDTO> AddCar(AddCarDTO carDto);
         public Task<CarDTO> EditCar(int id, CarDTO carDto);
 
