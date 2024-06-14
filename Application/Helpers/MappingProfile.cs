@@ -10,19 +10,6 @@ namespace Application.Helpers
         {
             CreateMap<Customer, CustomerRegisterDTO>();
 
-            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
-            .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
-            .ForMember(dest => dest.Images, opt => opt.Ignore())
-            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter
-                .Select(s => new ServiceForBeautyCenterDTO
-                {
-                    Name = s.Name,
-                    Description = s.Description,
-                    Price = (decimal)s.Price,
-                    Appointment = (DateTime)s.Appointment
-                }).ToList()))
-            .ReverseMap();
-
             CreateMap<BeautyCenter, BeautyCenterDTO>()
                 .ForMember(dest => dest.BeautyCenterId, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
@@ -33,13 +20,24 @@ namespace Application.Helpers
                         Description = s.Description,
                         Price = (decimal)s.Price,
                         Appointment = (DateTime)s.Appointment
-                    }).ToList()))
+                    })))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
                 .ReverseMap();
 
-
+            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => new ServiceForBeautyCenterDTO
+                {
+                    Name = src.ServicesForBeautyCenter.FirstOrDefault().Name,
+                    Description = src.ServicesForBeautyCenter.FirstOrDefault().Description,
+                    Price = src.ServicesForBeautyCenter.FirstOrDefault().Price ?? 0,
+                    Appointment = src.ServicesForBeautyCenter.FirstOrDefault().Appointment ?? DateTime.MinValue
+                }))
+                .ReverseMap();
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
+
 
             CreateMap<ShopDressesDTo, ShopDresses>()
            .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ShopDressesID))

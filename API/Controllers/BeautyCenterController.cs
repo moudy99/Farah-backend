@@ -100,6 +100,26 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpPost("AddBeautyService")]
+        public IActionResult AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        {
+            try
+            {
+                var response = _beautyService.AddBeautyService(beautyDTO);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "ايروووووووووووووور",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message, ex.StackTrace }
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
 
         [HttpPost]
         [Authorize]
@@ -124,6 +144,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
 
 

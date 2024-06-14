@@ -51,5 +51,10 @@ namespace Infrastructure.Repositories
                     .Include(c => c.Reviews)
                     .ToList();
         }
+
+        public void InsertService(ServiceForBeautyCenter service)
+        {
+            context.Add(service);
+        }
     }
 }
