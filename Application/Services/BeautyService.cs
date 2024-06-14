@@ -75,7 +75,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        public async Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
@@ -93,9 +93,9 @@ namespace Application.Services
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
+                var resultDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
 
-                var response = new CustomResponseDTO<AddBeautyCenterDTO>
+                var response = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = resultDTO,
                     Message = "تم إضافة البيوتي سنتر بنجاح",
@@ -110,7 +110,7 @@ namespace Application.Services
             {
                 var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
 
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
@@ -121,7 +121,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
