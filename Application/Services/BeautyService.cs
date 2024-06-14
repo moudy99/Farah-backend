@@ -84,6 +84,12 @@ namespace Application.Services
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;
 
+                // Map single service object to ServicesForBeautyCenter collection
+                beautyCenter.ServicesForBeautyCenter = new List<ServiceForBeautyCenter>
+        {
+            _mapper.Map<ServiceForBeautyCenter>(beautyCenterDTO.Services)
+        };
+
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
@@ -102,7 +108,6 @@ namespace Application.Services
             }
             catch (DbUpdateException dbEx)
             {
-                // Log inner exception details
                 var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
 
                 var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
@@ -126,6 +131,7 @@ namespace Application.Services
                 return errorResponse;
             }
         }
+
 
 
 
@@ -219,7 +225,36 @@ namespace Application.Services
             }
         }
 
+        public CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        {
+            try{
 
+                ServiceForBeautyCenter serviceForBeautyCenter = _mapper.Map<ServiceForBeautyCenter>(beautyDTO);
+
+                _beautyRepository.InsertService(serviceForBeautyCenter);
+                _beautyRepository.Save();
+
+                return new CustomResponseDTO<ServiceForBeautyCenterDTO>()
+                {
+                    Data = beautyDTO,
+                    Message = "Service Added Successfuly",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<ServiceForBeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "Cant Add Service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+        }
     }
 
 }
