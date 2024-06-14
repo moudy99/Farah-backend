@@ -5,7 +5,7 @@ namespace Application.Interfaces
     public interface IBeautyService
     {
 
-        CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
+        CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId , int cityId);
 
         CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
         CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id);

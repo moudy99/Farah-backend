@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Services
 {
@@ -24,9 +25,46 @@ namespace Application.Services
 
         }
 
-        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize)
+        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize, string priceRange, int govId, int city)
         {
-            var allCars = carRepository.GetAll();
+            var allCars = carRepository.GetAll().AsQueryable();
+            if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
+            {
+                int minPrice;
+                int maxPrice;
+
+                if (priceRange.StartsWith("<"))
+                {
+                    maxPrice = int.Parse(priceRange.Substring(1));
+                    allCars = allCars.Where(h => h.Price < maxPrice);
+                }
+                else if (priceRange.StartsWith(">"))
+                {
+                    minPrice = int.Parse(priceRange.Substring(1));
+                    allCars = allCars.Where(h => h.Price > minPrice);
+                }
+                else
+                {
+                    var priceRanges = priceRange.Split('-').Select(int.Parse).ToArray();
+                    if (priceRanges.Length == 2)
+                    {
+                        minPrice = priceRanges[0];
+                        maxPrice = priceRanges[1];
+                        allCars = allCars.Where(h => h.Price >= minPrice && h.Price <= maxPrice);
+                    }
+                }
+            }
+            if (govId > 0)
+            {
+                allCars = allCars.Where(p => p.GovernorateID == govId);
+            }
+
+            if (city > 0)
+            {
+                allCars = allCars.Where(p => p.City == city);
+            }
+            var filteredCars = allCars.ToList();
+
             if (!allCars.Any())
             {
                 return new CustomResponseDTO<List<CarDTO>>
@@ -39,7 +77,7 @@ namespace Application.Services
                 };
             }
 
-            var cars = Mapper.Map<List<CarDTO>>(allCars);
+            var cars = Mapper.Map<List<CarDTO>>(filteredCars);
 
             var paginatedList = PaginationHelper.Paginate(cars, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
