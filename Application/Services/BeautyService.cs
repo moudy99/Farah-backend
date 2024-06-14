@@ -85,7 +85,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        public async Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
@@ -94,12 +94,18 @@ namespace Application.Services
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;
 
+                // Map single service object to ServicesForBeautyCenter collection
+                //beautyCenter.ServicesForBeautyCenter = new List<ServiceForBeautyCenter>
+                //    {
+                //        _mapper.Map<ServiceForBeautyCenter>(beautyCenterDTO.Services)
+                //    };
+
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
+                var resultDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
 
-                var response = new CustomResponseDTO<AddBeautyCenterDTO>
+                var response = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = resultDTO,
                     Message = "تم إضافة البيوتي سنتر بنجاح",
@@ -112,10 +118,9 @@ namespace Application.Services
             }
             catch (DbUpdateException dbEx)
             {
-                // Log inner exception details
                 var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
 
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
@@ -126,7 +131,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
@@ -136,6 +141,7 @@ namespace Application.Services
                 return errorResponse;
             }
         }
+
 
 
 
@@ -160,7 +166,7 @@ namespace Application.Services
                 beautyCenter.Description = beautyCenterDTO.Description;
                 beautyCenter.Gove = beautyCenterDTO.Gove;
                 beautyCenter.City = beautyCenterDTO.City;
-                beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
+                //beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
                 // Save new images and update image paths
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
@@ -229,7 +235,36 @@ namespace Application.Services
             }
         }
 
+        public CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        {
+            try{
 
+                ServiceForBeautyCenter serviceForBeautyCenter = _mapper.Map<ServiceForBeautyCenter>(beautyDTO);
+
+                _beautyRepository.InsertService(serviceForBeautyCenter);
+                _beautyRepository.Save();
+
+                return new CustomResponseDTO<ServiceForBeautyCenterDTO>()
+                {
+                    Data = beautyDTO,
+                    Message = "Service Added Successfuly",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<ServiceForBeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "Cant Add Service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+        }
     }
 
 }

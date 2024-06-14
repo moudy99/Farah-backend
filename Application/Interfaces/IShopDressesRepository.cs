@@ -6,5 +6,6 @@ namespace Application.Interfaces
     {
         public List<ShopDresses>? GetShopDressesByName(string name);
         public List<ShopDresses> GetAllShopDresses();
+        public List<ShopDresses> GetOwnerServices(string ownerID);
     }
 }
