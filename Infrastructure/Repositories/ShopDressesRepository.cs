@@ -18,6 +18,16 @@ namespace Infrastructure.Repositories
                           .Include(b => b.Dresses)
                           .ToList();
         }
+
+        public List<ShopDresses> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .ShopDresses
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Dresses)
+                    .ToList();
+        }
+
         public List<ShopDresses>? GetShopDressesByName(string name)
         {
             return context.ShopDresses

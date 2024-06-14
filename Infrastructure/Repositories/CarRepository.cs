@@ -31,5 +31,14 @@ namespace Infrastructure.Repositories
                 .Include(c => c.Pictures)
                 .FirstOrDefault(c => c.ID == id);
         }
+
+        public List<Car> GetOwnerServices(string ownerID)
+        {
+            return context
+                .Cars
+                .Where(c => c.OwnerID == ownerID)
+                .Include(c => c.Pictures)
+                .Where(c => c.IsDeleted == false) .ToList();
+        }
     }
 }

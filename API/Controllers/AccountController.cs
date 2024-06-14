@@ -23,6 +23,39 @@ namespace Presentation.Controllers
             _accountService = accountService;
         }
 
+        [HttpGet("OwnerServices")]
+        public IActionResult GetOwnerServices()
+        {
+            string ownerID = User.FindFirstValue("uid");
+
+            try
+            {
+                var ownerServices = _accountService.GetOwnerServices(ownerID);
+                return Ok(new CustomResponseDTO<AllServicesDTO>()
+                {
+                    Data = ownerServices,
+                    Message = $"{ownerID} Services",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null,
+
+                });
+            }
+            catch
+            (Exception ex)
+            {
+                return BadRequest(new CustomResponseDTO<AllServicesDTO>()
+                {
+                    Data = null,
+                    Message = ex.Message,
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message },
+                    PaginationInfo = null,
+
+                });
+            }
+        }
+
         [HttpPost("ownerRegister")]
         public async Task<ActionResult> Register([FromForm] OwnerRegisterDTO ownerRegisterModel)
         {

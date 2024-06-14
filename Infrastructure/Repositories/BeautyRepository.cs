@@ -42,5 +42,14 @@ namespace Infrastructure.Repositories
                 .Include(b => b.Reviews)
                 .SingleOrDefault(b => b.ID == id);
         }
+
+        public List<BeautyCenter> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .BeautyCenters
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Reviews)
+                    .ToList();
+        }
     }
 }
