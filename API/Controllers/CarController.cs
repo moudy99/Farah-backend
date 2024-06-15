@@ -22,11 +22,11 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("Cars")]
-        public IActionResult GetAllCars(int page = 1, int pageSize = 6)
+        public IActionResult GetAllCars(int page = 1, int pageSize = 6, string priceRange = "all", int govId = 0, int cityId = 0)
         {
             try
             {
-                var response = carService.GetAllCars(page, pageSize);
+                var response = carService.GetAllCars(page, pageSize, priceRange, govId, cityId);
                 if (response.Data == null)
                 {
                     return NotFound(new CustomResponseDTO<List<CarDTO>>

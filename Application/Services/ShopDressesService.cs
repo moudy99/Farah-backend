@@ -67,11 +67,21 @@ namespace Application.Services
         }
 
 
-        public CustomResponseDTO<List<ShopDressesDTo>> GetAllShopDresses(int page, int pageSize)
+        public CustomResponseDTO<List<ShopDressesDTo>> GetAllShopDresses(int page, int pageSize, int govId, int cityId)
         {
-            var AllShopDresses = _shopRepository.GetAllShopDresses();
+            var AllShopDresses = _shopRepository.GetAllShopDresses().AsQueryable();
+            if (govId > 0)
+            {
+                AllShopDresses = AllShopDresses.Where(p => p.GovernorateID == govId);
+            }
 
-            var ShopDressesDTOs = _mapper.Map<List<ShopDressesDTo>>(AllShopDresses);
+            if (cityId > 0)
+            {
+                AllShopDresses = AllShopDresses.Where(p => p.City == cityId);
+            }
+            var filteredShopDress = AllShopDresses.ToList();
+
+            var ShopDressesDTOs = _mapper.Map<List<ShopDressesDTo>>(filteredShopDress);
 
             var paginatedList = PaginationHelper.Paginate(ShopDressesDTOs, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);

@@ -97,6 +97,61 @@ namespace Presentation.Controllers
         }
 
 
+        [HttpPost("confirmEmail")]
+        public async Task<ActionResult> ConfirmEmail(string otp)
+        {
+            string Email = User.FindFirstValue(ClaimTypes.Email);
+
+            var result = await _accountService.ConfirmEmailAsync(Email, otp);
+
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPost("forgetPassword")]
+        public async Task<ActionResult> ForgetPassword(string Email)
+        {
+            var result = await _accountService.ForgetPassword(Email);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
+        //[HttpPost("createNewPassword")]
+        //public async Task<ActionResult> CreateNewPassword(string Email)
+        //{
+
+        //}
+
+        [HttpGet("resendOTP")]
+        public async Task<ActionResult> GetNewOTP()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "User Not Found , Please Login" });
+
+            }
+            var result = await _accountService.SendNewOTPAsync(email);
+
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginUserDTO loginUserModel)
         {
@@ -124,7 +179,11 @@ namespace Presentation.Controllers
         {
 
             var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "User Not Found , Please Login" });
 
+            }
             var response = await _accountService.ChangePasswordAsync(changePasswordDto, email);
 
             if (response.Succeeded)

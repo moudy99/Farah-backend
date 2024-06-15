@@ -19,14 +19,16 @@ namespace Infrastructure.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserOTPService _userOTPService;
 
         public AccountRepository(ApplicationDBContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration)
+            IConfiguration configuration, IUserOTPService userOTPService)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            this._userOTPService = userOTPService;
         }
         public async Task<AuthUserDTO> RegisterUserAsync(ApplicationUser user, string password, string role)
         {
@@ -47,16 +49,15 @@ namespace Infrastructure.Repositories
             {
                 await _userManager.AddToRoleAsync(user, role);
 
-                // Generate Token 
-                var securityToken = await CreateJwtToken(user);
+                await _userOTPService.SaveAndSendOTPAsync(user.Email, user.FirstName, user.LastName);
                 return new AuthUserDTO()
                 {
                     Message = "Registration successful",
-                    IsAuthenticated = true,
+                    IsEmailConfirmed = user.EmailConfirmed,
                     Name = user.FirstName + " " + user.LastName,
                     Email = user.Email,
-                    ExpireTIme = securityToken.ValidTo,
-                    Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
+                    Succeeded = true,
+                    Token = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user)),
                     Role = role
                 };
             }
@@ -65,7 +66,7 @@ namespace Infrastructure.Repositories
                 return new AuthUserDTO()
                 {
                     Message = string.Join(", ", result.Errors.Select(error => error.Description)),
-                    IsAuthenticated = false,
+                    IsEmailConfirmed = false,
                     Errors = result.Errors.Select(error => error.Description).ToList()
                 };
             }
@@ -82,9 +83,82 @@ namespace Infrastructure.Repositories
         {
             return await RegisterUserAsync(customer, registerDto.Password, RolesEnum.Customer.ToString());
         }
+
+
+
+        public async Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp)
+        {
+            var isValid = await _userOTPService.VerifyOTPAsync(email, otp);
+            if (!isValid)
+            {
+                return new AuthUserDTO { Message = "Invalid or expired OTP. Please request a new OTP." };
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return new AuthUserDTO { Message = "User not found" };
+            }
+
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+
+            var checkUserType = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+
+            return new AuthUserDTO
+            {
+                Message = "Email confirmed successfully.",
+                IsEmailConfirmed = true,
+                Succeeded = true,
+                Name = user.FirstName + " " + user.LastName,
+                Email = user.Email,
+                Token = checkUserType != "Owner" ? new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user)) : null,
+                Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault()
+            };
+        }
+
+        public async Task<bool> SendNewOTPAsync(string email)
+        {
+            var currentUser = await _userManager.FindByEmailAsync(email);
+
+            if (currentUser == null)
+            {
+                return false;
+            }
+
+            var checkUserType = (await _userManager.GetRolesAsync(currentUser)).FirstOrDefault();
+            ApplicationUser user;
+
+            if (checkUserType == "Owner")
+            {
+                user = await _context.Owners.FirstOrDefaultAsync(u => u.Id == currentUser.Id);
+            }
+            else
+            {
+                user = await _context.Customers.FirstOrDefaultAsync(u => u.Id == currentUser.Id);
+            }
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            await _userOTPService.SendNewOTPAsync(email, user.FirstName, user.LastName);
+
+            return true;
+        }
+
+
         public async Task<AuthUserDTO> Login(LoginUserDTO loginUser)
         {
-            var user = await _userManager.FindByEmailAsync(loginUser.Email);
+            // If i change the mail in sql i return null with the new mail
+
+            //var user = await _userManager.FindByEmailAsync(loginUser.Email);
+
+            //It work with the new mail 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginUser.Email);
+
             if (user != null)
             {
                 bool found = await _userManager.CheckPasswordAsync(user, loginUser.Password);
@@ -97,28 +171,76 @@ namespace Infrastructure.Repositories
                     {
                         owner = await _context.Owners.FirstOrDefaultAsync(u => u.Id == user.Id);
                     }
+                    var Token = await CreateJwtToken(user);
 
-                    // Generate Token
-                    var securityToken = await CreateJwtToken(user);
+                    if (!user.EmailConfirmed)
+                    {
+
+                        return new AuthUserDTO()
+                        {
+                            Message = " Email not confirmed",
+                            IsEmailConfirmed = false,
+                            ExpireTIme = Token.ValidTo,
+                            Token = new JwtSecurityTokenHandler().WriteToken(Token),
+                            Succeeded = true,
+                            Role = checkUserType,
+                            AccountStatus = owner?.AccountStatus.ToString(),
+                            Name = user.FirstName + " " + user.LastName,
+                            Email = user.Email,
+                        };
+                    }
                     return new AuthUserDTO()
                     {
                         Message = "Login successful",
-                        IsAuthenticated = true,
+                        IsEmailConfirmed = true,
+                        Succeeded = true,
                         Name = user.FirstName + " " + user.LastName,
                         Email = user.Email,
-                        ExpireTIme = securityToken.ValidTo,
-                        Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
+                        ExpireTIme = Token.ValidTo,
+                        Token = new JwtSecurityTokenHandler().WriteToken(Token),
                         Role = checkUserType,
                         AccountStatus = owner?.AccountStatus.ToString()
+                    };
+                }
+                else
+                {
+                    return new AuthUserDTO()
+                    {
+                        Message = "Login failed: Invalid email or password",
+                        IsEmailConfirmed = user.EmailConfirmed,
+                        Succeeded = false
                     };
                 }
             }
 
             return new AuthUserDTO()
             {
-                Message = "Login failed: Invalid email or password",
-                IsAuthenticated = false
+                Message = "Login failed: User not found",
+                IsEmailConfirmed = false,
+                Succeeded = false
             };
+        }
+
+
+        public async Task<bool> ForgetPassword(string Email)
+        {
+            var User = await _userManager.FindByEmailAsync(Email);
+            if (User is null)
+            {
+                return false;
+            }
+            var TokenGenerated = await CreateJwtToken(User);
+            var Token = new JwtSecurityTokenHandler().WriteToken(TokenGenerated);
+
+            var result = _userOTPService.SendForgetPasswordLinkAsync(Email, Token, User.FirstName, User.LastName);
+
+            if (result is null)
+            {
+                return false;
+            }
+            return true;
+
+
         }
 
         public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)

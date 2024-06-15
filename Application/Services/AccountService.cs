@@ -64,9 +64,9 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Data = registrationResult,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsAuthenticated,
+                Succeeded = registrationResult.Succeeded,
                 Errors = registrationResult.Errors
             };
         }
@@ -78,22 +78,75 @@ namespace Application.Services
 
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = registrationResult.IsAuthenticated ? registrationResult : null,
+                Data = registrationResult,
                 Message = registrationResult.Message,
-                Succeeded = registrationResult.IsAuthenticated,
+                Succeeded = registrationResult.Succeeded,
                 Errors = registrationResult.Errors
             };
         }
+
+        public async Task<CustomResponseDTO<AuthUserDTO>> ConfirmEmailAsync(string email, string otp)
+        {
+            var result = await _accountRepository.ConfirmEmailAsync(email, otp);
+
+            return new CustomResponseDTO<AuthUserDTO>
+            {
+                Data = result.IsEmailConfirmed ? result : null,
+                Message = result.Message,
+                Succeeded = result.Succeeded,
+                Errors = result.Errors
+            };
+        }
+        public async Task<CustomResponseDTO<string>> SendNewOTPAsync(string email)
+        {
+            var result = await _accountRepository.SendNewOTPAsync(email);
+            if (result)
+            {
+                return new CustomResponseDTO<string>
+                {
+                    Data = "OTP sent successfully",
+                    Succeeded = true
+                };
+            }
+            else
+            {
+                return new CustomResponseDTO<string>
+                {
+                    Message = "Failed to send OTP",
+                    Succeeded = false
+                };
+            }
+        }
+
 
         public async Task<CustomResponseDTO<AuthUserDTO>> Login(LoginUserDTO loginUser)
         {
             var LoginResult = await _accountRepository.Login(loginUser);
             return new CustomResponseDTO<AuthUserDTO>
             {
-                Data = LoginResult.IsAuthenticated ? LoginResult : null,
+                Data = LoginResult,
                 Message = LoginResult.Message,
-                Succeeded = LoginResult.IsAuthenticated,
+                Succeeded = LoginResult.Succeeded,
                 Errors = LoginResult.Errors
+
+            };
+        }
+
+        public async Task<CustomResponseDTO<string>> ForgetPassword(string Email)
+        {
+            var result = await _accountRepository.ForgetPassword(Email);
+            if (result)
+            {
+                return new CustomResponseDTO<string>()
+                {
+                    Data = "Reset Password Link sent successfully",
+                    Succeeded = true
+                };
+            }
+            return new CustomResponseDTO<string>()
+            {
+                Data = "Failed to send THe Reset Password Link",
+                Succeeded = false
             };
         }
 
