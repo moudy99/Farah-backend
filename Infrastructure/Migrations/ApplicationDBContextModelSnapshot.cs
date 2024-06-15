@@ -425,8 +425,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("Appointment")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Appointment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("BeautyCenterId")
                         .HasColumnType("int");
