@@ -135,7 +135,7 @@ namespace Application.Services
         public async Task<CustomResponseDTO<string>> ForgetPassword(string Email)
         {
             var result = await _accountRepository.ForgetPassword(Email);
-            if (result != null)
+            if (result)
             {
                 return new CustomResponseDTO<string>()
                 {

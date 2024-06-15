@@ -18,7 +18,17 @@ namespace Infrastructure.Repositories
 
         public async Task SaveOTPAsync(UserOTP userOTP)
         {
-            _context.userOTPs.Add(userOTP);
+            UserOTP otp = _context.userOTPs.FirstOrDefault(otp => otp.Email == userOTP.Email);
+            if (otp == null)
+            {
+                _context.userOTPs.Add(userOTP);
+
+            }
+            else
+            {
+                otp.OTP = userOTP.OTP;
+                _context.userOTPs.Update(otp);
+            }
             await _context.SaveChangesAsync();
         }
 
