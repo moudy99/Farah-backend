@@ -101,7 +101,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("AddBeautyService")]
-        public IActionResult AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        public IActionResult AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO)
         {
             try
             {

@@ -235,19 +235,23 @@ namespace Application.Services
             }
         }
 
-        public CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        public CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTOs)
         {
-            try{
+            try
+            {
+                var services = _mapper.Map<List<ServiceForBeautyCenter>>(beautyDTOs);
 
-                ServiceForBeautyCenter serviceForBeautyCenter = _mapper.Map<ServiceForBeautyCenter>(beautyDTO);
+                foreach (var service in services)
+                {
+                    _beautyRepository.InsertService(service);
+                }
 
-                _beautyRepository.InsertService(serviceForBeautyCenter);
                 _beautyRepository.Save();
 
-                return new CustomResponseDTO<ServiceForBeautyCenterDTO>()
+                return new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>()
                 {
-                    Data = beautyDTO,
-                    Message = "Service Added Successfuly",
+                    Data = beautyDTOs,
+                    Message = "Service Added Successfully",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null
@@ -255,16 +259,17 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<ServiceForBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>
                 {
                     Data = null,
-                    Message = "Cant Add Service",
+                    Message = "Can't Add Service",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return errorResponse;
             }
         }
+
     }
 
 }
