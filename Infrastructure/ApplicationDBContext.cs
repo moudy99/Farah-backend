@@ -34,6 +34,7 @@ namespace Infrastructure
 
         public DbSet<FavoriteService> FavoriteService { get; set; }
 
+        public DbSet<UserOTP> userOTPs { get; set; }
 
 
 

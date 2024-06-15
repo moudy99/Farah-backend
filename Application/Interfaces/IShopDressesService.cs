@@ -5,7 +5,7 @@ namespace Application.Interfaces
     public interface IShopDressesService
     {
 
-        CustomResponseDTO<List<ShopDressesDTo>> GetAllShopDresses(int page, int pageSize);
+        CustomResponseDTO<List<ShopDressesDTo>> GetAllShopDresses(int page, int pageSize, int govId,int cityId);
 
         CustomResponseDTO<List<ShopDressesDTo>> GetShopDressesByName(string name);
 
