@@ -12,7 +12,8 @@ namespace Application.Interfaces
         public Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel);
         public Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp);
         public Task<bool> SendNewOTPAsync(string email);
-
         public Task<bool> ForgetPassword(string Email);
+
+
     }
 }
