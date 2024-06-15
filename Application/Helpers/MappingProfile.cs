@@ -19,7 +19,7 @@ namespace Application.Helpers
                         Name = s.Name,
                         Description = s.Description,
                         Price = (decimal)s.Price,
-                        Appointment = (DateTime)s.Appointment
+                        Appointment = s.Appointment
                     })))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
                 .ReverseMap();
