@@ -98,7 +98,21 @@ namespace Presentation.Controllers
 
 
         [HttpPost("confirmEmail")]
+        public async Task<ActionResult> ConfirmEmail(string otp)
+        {
+            string Email = User.FindFirstValue(ClaimTypes.Email);
 
+            var result = await _accountService.ConfirmEmailAsync(Email, otp);
+
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
         [HttpPost("forgetPassword")]
         public async Task<ActionResult> ForgetPassword(string Email)
         {
