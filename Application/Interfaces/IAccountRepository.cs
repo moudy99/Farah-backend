@@ -14,6 +14,8 @@ namespace Application.Interfaces
         public Task<bool> SendNewOTPAsync(string email);
         public Task<bool> ForgetPassword(string Email);
 
+        public Task<Owner> GetOwnerInfo(string Email);
+        public Task<bool> UpdateOwnerInfo(Owner owner);
 
     }
 }
