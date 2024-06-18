@@ -313,5 +313,33 @@ namespace Infrastructure.Repositories
 
             return jwtSecurityToken;
         }
+
+
+        /// Get Profile info 
+        public async Task<Owner> GetOwnerInfo(string Email)
+        {
+            Owner owner = _context.Owners.FirstOrDefault(email => email.Email == Email);
+            if (owner == null)
+            {
+                return null;
+            }
+            return owner;
+        }
+
+        public async Task<bool> UpdateOwnerInfo(Owner owner)
+        {
+            try
+            {
+                _context.Owners.Update(owner);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
     }
 }

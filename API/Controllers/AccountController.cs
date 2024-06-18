@@ -196,11 +196,40 @@ namespace Presentation.Controllers
         }
 
 
-        //[HttpGet("gerProfileInfo")]
-        //public async Task<ActionResult> GetProfileInfo()
-        //{
-        //    var Email = User.FindFirstValue(ClaimTypes.Email);
+        [HttpGet("getOwnerInfo")]
+        public async Task<ActionResult> GetOwnerProfileInfo()
+        {
+            var Email = User.FindFirstValue(ClaimTypes.Email);
+            if (Email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
 
-        //}
+            var response = await _accountService.GetOwnerInfo(Email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPut("updateOwnerInfo")]
+        public async Task<ActionResult> UpdateOwnerInfo([FromForm] OwnerAccountInfoDTO updateDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest("لم يتم العثور على البريد الإلكتروني للمستخدم.");
+            }
+
+            var response = await _accountService.UpdateOwnerInfo(updateDto, email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response);
+        }
     }
 }
