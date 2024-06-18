@@ -175,7 +175,7 @@ namespace Presentation.Controllers
 
 
         [HttpDelete]
-        [Authorize]
+        //[Authorize]
         public ActionResult DeleteBeautyCenterById(int id)
         {
             try
