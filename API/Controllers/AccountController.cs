@@ -34,7 +34,7 @@ namespace Presentation.Controllers
                 return Ok(new CustomResponseDTO<AllServicesDTO>()
                 {
                     Data = ownerServices,
-                    Message = $"{ownerID} Services",
+                    Message = "Services retrieved Successfully",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null,
@@ -213,6 +213,29 @@ namespace Presentation.Controllers
 
             return Ok(response);
         }
+
+        [HttpHead("getOwnerInfo")]
+
+        public async Task<IActionResult> HeadOwnerProfileInfo()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
+
+            var response = await _accountService.GetOwnerInfo(email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            Response.Headers.Add("X-Owner-Info", "Available");
+            Response.Headers.Add("X-Owner-Info-Status", "Complete");
+
+            return NoContent();
+        }
+
 
         [HttpPut("updateOwnerInfo")]
         public async Task<ActionResult> UpdateOwnerInfo([FromForm] OwnerAccountInfoDTO updateDto)
