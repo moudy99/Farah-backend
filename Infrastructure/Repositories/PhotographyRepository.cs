@@ -13,11 +13,10 @@ namespace Infrastructure.Repositories
             this.context = context;
         }
 
-        public List<Photography> GetAll()
+        public IQueryable<Photography> GetAll()
         {
             return context.Photographies
-                .Include(c => c.Images)
-                .ToList();
+                .Include(c => c.Images);
         }
         public Photography GetById(int id)
         {
