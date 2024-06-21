@@ -8,7 +8,7 @@ namespace Application.Interfaces
         CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId , int cityId);
 
 
-        CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
+      //  CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
         CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO);
 
         CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
