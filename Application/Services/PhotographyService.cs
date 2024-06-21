@@ -23,14 +23,14 @@ namespace Application.Services
         {
             var photographies = photoRepository.GetAll();
 
-            var photographyDTOs = Mapper.Map<List<PhotographyDTO>>(photographies);
+            var paginatedList = PaginationHelper.Paginate(photographies, page, pageSize);
+            var photographyDTOs = Mapper.Map<List<PhotographyDTO>>(paginatedList.Items);
 
-            var paginatedList = PaginationHelper.Paginate(photographyDTOs, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
             var response = new CustomResponseDTO<List<PhotographyDTO>>
             {
-                Data = paginatedList.Items,
+                Data = photographyDTOs,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,

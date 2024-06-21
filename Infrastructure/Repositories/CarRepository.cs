@@ -1,11 +1,6 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -18,12 +13,11 @@ namespace Infrastructure.Repositories
             this.context = context;
         }
 
-        public List<Car> GetAll()
+        public IQueryable<Car> GetAll()
         {
             return context.Cars
                 .Where(c => c.IsDeleted == false)
-                .Include(c => c.Pictures)
-                .ToList();
+                .Include(c => c.Pictures);
         }
         public Car GetById(int id)
         {
@@ -38,7 +32,7 @@ namespace Infrastructure.Repositories
                 .Cars
                 .Where(c => c.OwnerID == ownerID)
                 .Include(c => c.Pictures)
-                .Where(c => c.IsDeleted == false) .ToList();
+                .Where(c => c.IsDeleted == false).ToList();
         }
     }
 }

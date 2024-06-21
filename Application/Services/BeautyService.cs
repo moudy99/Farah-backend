@@ -22,23 +22,22 @@ namespace Application.Services
             var beautyCenters = _beautyRepository.GetAllBeautyCenters().AsQueryable();
             if (govId > 0)
             {
-                beautyCenters = beautyCenters.Where(p => p.Gove== govId);
+                beautyCenters = beautyCenters.Where(p => p.Gove == govId);
             }
 
             if (cityId > 0)
             {
                 beautyCenters = beautyCenters.Where(p => p.City == cityId);
             }
-            var filteredBeautyCenters = beautyCenters.ToList();
 
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(filteredBeautyCenters);
 
-            var paginatedList = PaginationHelper.Paginate(beautyCenterDTOs, page, pageSize);
+            var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
 
             var response = new CustomResponseDTO<List<BeautyCenterDTO>>
             {
-                Data = paginatedList.Items,
+                Data = beautyCenterDTOs,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,
