@@ -6,6 +6,8 @@
         public string LastName { get; set; }
         //public string UserName { get; set; }
         public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+
         public string SSN { get; set; }
         public int GovID { get; set; }
         public int CityID { get; set; }
