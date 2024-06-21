@@ -3,12 +3,6 @@ using Application.Helpers;
 using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Services
 {
@@ -27,7 +21,7 @@ namespace Application.Services
 
         public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize, string priceRange, int govId, int city)
         {
-            var allCars = carRepository.GetAll().AsQueryable();
+            var allCars = carRepository.GetAll();
             if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
             {
                 int minPrice;
@@ -63,9 +57,9 @@ namespace Application.Services
             {
                 allCars = allCars.Where(p => p.City == city);
             }
-            var filteredCars = allCars.ToList();
 
-            if (!allCars.Any())
+            var paginatedList = PaginationHelper.Paginate(allCars, page, pageSize);
+            if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<CarDTO>>
                 {
@@ -77,14 +71,13 @@ namespace Application.Services
                 };
             }
 
-            var cars = Mapper.Map<List<CarDTO>>(filteredCars);
 
-            var paginatedList = PaginationHelper.Paginate(cars, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+            var cars = Mapper.Map<List<CarDTO>>(paginatedList.Items);
 
             return new CustomResponseDTO<List<CarDTO>>
             {
-                Data = paginatedList.Items,
+                Data = cars,
                 Message = "Success",
                 Succeeded = true,
                 Errors = null,
@@ -109,24 +102,24 @@ namespace Application.Services
 
         public async Task<CarDTO> EditCar(int id, CarDTO carDto)
         {
-                var existingCar = carRepository.GetById(id);
-                if (existingCar == null)
-                {
-                    throw new Exception("Car not found");
-                }
+            var existingCar = carRepository.GetById(id);
+            if (existingCar == null)
+            {
+                throw new Exception("Car not found");
+            }
 
-                Mapper.Map(carDto, existingCar);
+            Mapper.Map(carDto, existingCar);
 
-                if (carDto.Pictures != null && carDto.Pictures.Any())
-                {
-                    var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
-                    existingCar.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
-                    carDto.PictureUrls = imagePaths;
-                }
+            if (carDto.Pictures != null && carDto.Pictures.Any())
+            {
+                var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
+                existingCar.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
+                carDto.PictureUrls = imagePaths;
+            }
 
-                carRepository.Update(existingCar);
+            carRepository.Update(existingCar);
             carRepository.Save();
-                return Mapper.Map<CarDTO>(existingCar);
+            return Mapper.Map<CarDTO>(existingCar);
         }
         public void Delete(int id)
         {
@@ -136,7 +129,7 @@ namespace Application.Services
                 if (car == null)
                 {
                     throw new Exception("Can't Find A car With This ID");
-                }    
+                }
                 car.IsDeleted = true;
 
                 carRepository.Update(car);
@@ -152,7 +145,7 @@ namespace Application.Services
         {
             Car car = carRepository.GetById(id);
 
-            if(car == null)
+            if (car == null)
             {
                 return new CustomResponseDTO<CarDTO>()
                 {

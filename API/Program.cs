@@ -163,11 +163,13 @@ public class Program
         var services = scope.ServiceProvider;
         var dbContext = services.GetRequiredService<ApplicationDBContext>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         try
         {
             await dbContext.Database.MigrateAsync();
             await RoleInitializer.SeedRolesAsync(roleManager);
+            await AdminInitializer.SeedAdminUserAsync(userManager);
             await GovernorateCityInitializer.AddDateSeeding(dbContext);
         }
         catch (Exception ex)

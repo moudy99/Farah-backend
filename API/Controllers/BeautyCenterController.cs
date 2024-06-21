@@ -101,7 +101,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("AddBeautyService")]
-        public IActionResult AddBeautyService(ServiceForBeautyCenterDTO beautyDTO)
+        public IActionResult AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace Presentation.Controllers
 
 
         [HttpDelete]
-        [Authorize]
+        //[Authorize]
         public ActionResult DeleteBeautyCenterById(int id)
         {
             try

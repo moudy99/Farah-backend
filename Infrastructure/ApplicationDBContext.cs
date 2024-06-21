@@ -44,6 +44,19 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+
+            modelBuilder.Entity<BeautyCenter>()
+                        .HasMany(bc => bc.ServicesForBeautyCenter)
+                        .WithOne(s => s.BeautyCenter)
+                        .HasForeignKey(s => s.BeautyCenterId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BeautyCenter>()
+                    .HasMany(bc => bc.ImagesBeautyCenter)
+                    .WithOne(i => i.beautyCenter)
+                    .HasForeignKey(i => i.BeautyCenterId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Car>()
                         .HasMany(c => c.Pictures)
                         .WithOne(p => p.Car)

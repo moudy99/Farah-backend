@@ -37,7 +37,7 @@ namespace Application.Services
 
         public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize, string priceRange)
         {
-            var query = HallRepository.GetAll().AsQueryable();
+            var query = HallRepository.GetAll();
 
             // Apply price range filter
             if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
@@ -68,9 +68,9 @@ namespace Application.Services
             }
 
             // Check if any halls match the filters
-            var filteredHalls = query.ToList();
+            var paginatedList = PaginationHelper.Paginate(query, page, pageSize);
 
-            if (!filteredHalls.Any())
+            if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<HallDTO>>
                 {
@@ -82,14 +82,13 @@ namespace Application.Services
                 };
             }
 
-            var HallsDTO = Mapper.Map<List<HallDTO>>(filteredHalls);
+            var HallsDTO = Mapper.Map<List<HallDTO>>(paginatedList.Items);
 
-            var paginatedList = PaginationHelper.Paginate(HallsDTO, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
             return new CustomResponseDTO<List<HallDTO>>
             {
-                Data = paginatedList.Items,
+                Data = HallsDTO,
                 Message = "Success",
                 Succeeded = true,
                 Errors = null,

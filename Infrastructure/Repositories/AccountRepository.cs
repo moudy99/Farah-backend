@@ -242,33 +242,37 @@ namespace Infrastructure.Repositories
 
 
         }
-
         public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            //var user = await _userManager.FindByEmailAsync(userEmail);
+
+            // todo remove it .. it just for test  Cause i Change the main from the SQL 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
             if (user == null)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+                return IdentityResult.Failed(new IdentityError { Description = "المستخدم غير موجود" });
             }
 
             if (user.YourFavirotePerson != changePasswordModel.SecurityQuestionAnswer)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "Security question answer is incorrect" });
+                return IdentityResult.Failed(new IdentityError { Description = "إجابة سؤال الأمان غير صحيحة" });
             }
 
             var passwordVerificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordModel.OldPassword);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "Old password is incorrect" });
+                return IdentityResult.Failed(new IdentityError { Description = "كلمة المرور القديمة غير صحيحة" });
             }
 
             if (changePasswordModel.OldPassword == changePasswordModel.NewPassword)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "New password cannot be the same as the old password" });
+                return IdentityResult.Failed(new IdentityError { Description = "لا يمكن أن تكون كلمة المرور الجديدة مطابقة للكلمة القديمة" });
             }
 
             return await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
         }
+
 
         private string GenerateUsernameFromEmail(string email)
         {
@@ -309,5 +313,33 @@ namespace Infrastructure.Repositories
 
             return jwtSecurityToken;
         }
+
+
+        /// Get Profile info 
+        public async Task<Owner> GetOwnerInfo(string Email)
+        {
+            Owner owner = _context.Owners.FirstOrDefault(email => email.Email == Email);
+            if (owner == null)
+            {
+                return null;
+            }
+            return owner;
+        }
+
+        public async Task<bool> UpdateOwnerInfo(Owner owner)
+        {
+            try
+            {
+                _context.Owners.Update(owner);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
     }
 }

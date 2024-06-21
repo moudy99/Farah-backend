@@ -135,7 +135,7 @@ namespace Application.Services
         public async Task<CustomResponseDTO<string>> ForgetPassword(string Email)
         {
             var result = await _accountRepository.ForgetPassword(Email);
-            if (result != null)
+            if (result)
             {
                 return new CustomResponseDTO<string>()
                 {
@@ -160,6 +160,72 @@ namespace Application.Services
                 Message = result.Succeeded ? "Password changed successfully" : "Password change failed",
                 Succeeded = result.Succeeded,
                 Errors = result.Succeeded ? null : result.Errors.Select(e => e.Description).ToList()
+            };
+        }
+
+
+        public async Task<CustomResponseDTO<OwnerAccountInfoDTO>> GetOwnerInfo(string email)
+        {
+            var result = await _accountRepository.GetOwnerInfo(email);
+            if (result == null)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>()
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "حدث خطأ أثناء استرداد معلومات المالك. يرجى التحقق من البريد الإلكتروني والمحاولة مرة أخرى."
+                };
+            }
+
+            var response = _mapper.Map<OwnerAccountInfoDTO>(result);
+            return new CustomResponseDTO<OwnerAccountInfoDTO>()
+            {
+                Data = response,
+                Succeeded = true,
+                Message = "تم استرداد معلومات المالك بنجاح."
+            };
+        }
+
+        public async Task<CustomResponseDTO<OwnerAccountInfoDTO>> UpdateOwnerInfo(OwnerAccountInfoDTO infoDTO, string Email)
+        {
+
+            var owner = await _accountRepository.GetOwnerInfo(Email);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "لم يتم العثور على المالك بهذا البريد الإلكتروني."
+                };
+            }
+
+            _mapper.Map(infoDTO, owner);
+
+            string newPrfileImag;
+            if (infoDTO.SetNewProfileImage != null)
+            {
+                newPrfileImag = await ImageSavingHelper.SaveOneImageAsync(infoDTO.SetNewProfileImage, "OwnersImages");
+                owner.ProfileImage = newPrfileImag;
+            }
+            var result = await _accountRepository.UpdateOwnerInfo(owner);
+
+            if (!result)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "فشل تحديث معلومات المالك."
+                };
+            }
+            var ReturnDTO = _mapper.Map<OwnerAccountInfoDTO>(owner);
+            return new CustomResponseDTO<OwnerAccountInfoDTO>
+            {
+                Data = ReturnDTO,
+                Succeeded = true,
+                Message = "تم تحديث معلومات المالك بنجاح."
             };
         }
 

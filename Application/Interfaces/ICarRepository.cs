@@ -1,14 +1,10 @@
 ﻿using Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
     public interface ICarRepository : IRepository<Car>
     {
         public List<Car> GetOwnerServices(string ownerID);
+        public new IQueryable<Car> GetAll();
     }
 }

@@ -34,7 +34,7 @@ namespace Presentation.Controllers
                 return Ok(new CustomResponseDTO<AllServicesDTO>()
                 {
                     Data = ownerServices,
-                    Message = $"{ownerID} Services",
+                    Message = "Services retrieved Successfully",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null,
@@ -113,7 +113,6 @@ namespace Presentation.Controllers
                 return BadRequest(result);
             }
         }
-
         [HttpPost("forgetPassword")]
         public async Task<ActionResult> ForgetPassword(string Email)
         {
@@ -196,5 +195,64 @@ namespace Presentation.Controllers
             }
         }
 
+
+        [HttpGet("getOwnerInfo")]
+        public async Task<ActionResult> GetOwnerProfileInfo()
+        {
+            var Email = User.FindFirstValue(ClaimTypes.Email);
+            if (Email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
+
+            var response = await _accountService.GetOwnerInfo(Email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpHead("getOwnerInfo")]
+
+        public async Task<IActionResult> HeadOwnerProfileInfo()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
+
+            var response = await _accountService.GetOwnerInfo(email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            Response.Headers.Add("X-Owner-Info", "Available");
+            Response.Headers.Add("X-Owner-Info-Status", "Complete");
+
+            return NoContent();
+        }
+
+
+        [HttpPut("updateOwnerInfo")]
+        public async Task<ActionResult> UpdateOwnerInfo([FromForm] OwnerAccountInfoDTO updateDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest("لم يتم العثور على البريد الإلكتروني للمستخدم.");
+            }
+
+            var response = await _accountService.UpdateOwnerInfo(updateDto, email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response);
+        }
     }
 }

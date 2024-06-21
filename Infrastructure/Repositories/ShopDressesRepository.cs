@@ -12,11 +12,10 @@ namespace Infrastructure.Repositories
         {
             context = _context;
         }
-        public List<ShopDresses> GetAllShopDresses()
+        public IQueryable<ShopDresses> GetAllShopDresses()
         {
             return context.ShopDresses
-                          .Include(b => b.Dresses)
-                          .ToList();
+                          .Include(b => b.Dresses);
         }
 
         public List<ShopDresses> GetOwnerServices(string ownerID)

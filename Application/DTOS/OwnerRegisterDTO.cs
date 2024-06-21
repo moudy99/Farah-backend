@@ -25,7 +25,6 @@ namespace Application.DTOS
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "User Type is required.")]
         public UserType UserType { get; set; }
 
         [Required(ErrorMessage = "Government  is required.")]
@@ -33,6 +32,10 @@ namespace Application.DTOS
 
         [Required(ErrorMessage = "City  is required.")]
         public int CityID { get; set; }
+
+        [Required(ErrorMessage = "PhoneNumber  is required.")]
+        public string PhoneNumber { get; set; }
+
 
         [Required(ErrorMessage = "Your Favorite Person is required.")]
         [StringLength(100, ErrorMessage = "Your Favorite Person cannot be longer than 100 characters.")]

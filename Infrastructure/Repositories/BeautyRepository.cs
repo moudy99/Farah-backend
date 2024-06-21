@@ -13,13 +13,12 @@ namespace Infrastructure.Repositories
             context = _context;
         }
 
-        public List<BeautyCenter> GetAllBeautyCenters()
+        public IQueryable<BeautyCenter> GetAllBeautyCenters()
         {
             return context.BeautyCenters
                           .Include(b => b.ImagesBeautyCenter)
                           .Include(b => b.ServicesForBeautyCenter)
-                          .Include(b => b.Reviews)
-                          .ToList();
+                          .Include(b => b.Reviews);
         }
 
 
