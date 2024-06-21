@@ -248,9 +248,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "المالك غير موجود",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "المالك غير موجود" }
                 };
             }
 
@@ -259,7 +259,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.UserName,
-                    Message = "Owner is already blocked",
+                    Message = "المالك محظور بالفعل",
                     Succeeded = false,
                     Errors = null
                 };
@@ -272,11 +272,12 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.UserName,
-                Message = "Owner is blocked",
+                Message = "تم حظر المالك بنجاح",
                 Succeeded = true,
                 Errors = null
             };
         }
+
 
         public CustomResponseDTO<object> UnblockOwner(string ownerId)
         {
@@ -287,9 +288,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "المالك غير موجود",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "المالك غير موجود" }
                 };
             }
 
@@ -298,7 +299,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.UserName,
-                    Message = "Owner is not blocked",
+                    Message = "المالك غير محظور بالفعل",
                     Succeeded = false,
                     Errors = null
                 };
@@ -311,7 +312,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.UserName,
-                Message = "Owner is unblocked",
+                Message = "تم رفع الحظر عن المالك بنجاح",
                 Succeeded = true,
                 Errors = null
             };
