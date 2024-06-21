@@ -34,7 +34,7 @@ namespace Application.Helpers
                         await file.CopyToAsync(fileStream);
                     }
 
-                    imageNames.Add(uniqueFileName);
+                    imageNames.Add($"/Images/{folderName}/{uniqueFileName}");
                 }
             }
 
@@ -44,7 +44,7 @@ namespace Application.Helpers
         public static async Task<string> SaveOneImageAsync(IFormFile file, string folderName)
         {
             var imageNames = await SaveImagesAsync(new List<IFormFile> { file }, folderName);
-            return imageNames.FirstOrDefault();
+            return $"{imageNames.FirstOrDefault()}";
         }
     }
 }
