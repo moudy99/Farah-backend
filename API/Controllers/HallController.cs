@@ -16,11 +16,11 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("AllHalls")]
-        public IActionResult GetAll(int page = 1, int pageSize = 6, string priceRange = "all")
+        public IActionResult GetAll(int page = 1, int pageSize = 6, string priceRange = "all", int govId = 0, int cityId = 0)
         {
             try
             {
-                var response = HallService.GetAllHalls(page, pageSize, priceRange);
+                var response = HallService.GetAllHalls(page, pageSize, priceRange, govId, cityId);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<HallDTO>>
