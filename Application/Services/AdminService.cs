@@ -56,8 +56,44 @@ namespace Application.Services
 
             return compositeDto;
         }
+        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
+        {
+            IQueryable<Owner> allOwners = AdminRepository.GetAllOwners();
+            var paginatedList = PaginationHelper.Paginate(allOwners, page, pageSize);
 
+            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(paginatedList.Items);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
+            var response = new CustomResponseDTO<List<OwnerDTO>>
+            {
+                Data = owners,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
+        }
+        public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(bool? isBlocked, int page, int pageSize)
+        {
+            IQueryable<Customer> allCustomers = AdminRepository.GetAllCustomers(isBlocked);
+            var paginatedList = PaginationHelper.Paginate(allCustomers, page, pageSize);
+
+            List<CustomerDTO> customers = Mapper.Map<List<CustomerDTO>>(paginatedList.Items);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            var response = new CustomResponseDTO<List<CustomerDTO>>
+            {
+                Data = customers,
+                Message = "Success",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
+        }
         public CustomResponseDTO<object> GetServiceTypeByID(int id)
         {
             Service Service = AdminRepository.GetServiceById(id);
@@ -151,25 +187,7 @@ namespace Application.Services
             AdminRepository.Delete(id);
         }
 
-        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
-        {
-            IQueryable<Owner> allOwners = AdminRepository.GetAllOwners();
-            var paginatedList = PaginationHelper.Paginate(allOwners, page, pageSize);
 
-            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(paginatedList.Items);
-            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-
-            var response = new CustomResponseDTO<List<OwnerDTO>>
-            {
-                Data = owners,
-                Message = "Success",
-                Succeeded = true,
-                Errors = null,
-                PaginationInfo = paginationInfo
-            };
-
-            return response;
-        }
         public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name)
         {
             var users = AdminRepository.SearchUsersByName(name);
@@ -396,25 +414,8 @@ namespace Application.Services
             };
         }
 
-        public List<ApplicationUser> GetAll()
-        {
-            throw new NotImplementedException();
-        }
 
-        public void Insert(Owner obj)
-        {
-            throw new NotImplementedException();
-        }
 
-        List<Owner> Iservices<Owner>.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        Owner Iservices<Owner>.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
 
 
     }

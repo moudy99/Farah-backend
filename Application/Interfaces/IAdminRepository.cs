@@ -8,6 +8,8 @@ namespace Application.Interfaces
     {
         public List<Service> GetAllServices();
         public IQueryable<Owner> GetAllOwners();
+        public IQueryable<Customer> GetAllCustomers(bool? isBlocked);
+
         public Owner GetOwnerById(string id);
         public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
         public List<ApplicationUser> SearchUsersByName(string name);

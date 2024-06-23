@@ -11,11 +11,12 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IAdminService:Iservices<Owner>
+    public interface IAdminService
     {
         public AllServicesDTO GetAllServices();
         public CustomResponseDTO<object> GetServiceTypeByID(int id);
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
+        public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(bool? isBlocked, int page, int pageSize);
         public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name);
         public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize);
         public CustomResponseDTO<object> BlockOwner(string  ownerId);

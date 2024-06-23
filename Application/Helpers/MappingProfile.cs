@@ -11,6 +11,7 @@ namespace Application.Helpers
 
 
             CreateMap<Customer, CustomerRegisterDTO>();
+            CreateMap<Customer, CustomerDTO>().ReverseMap();
 
             CreateMap<BeautyCenter, BeautyCenterDTO>()
                 .ForMember(dest => dest.BeautyCenterId, opt => opt.MapFrom(src => src.ID))

@@ -82,6 +82,38 @@ namespace Presentation.Controllersa
             }
         }
 
+        [HttpGet("Customers")]
+        public ActionResult GetAllCustomers(int page = 1, int pageSize = 6, bool? isBlocked = null)
+        {
+            try
+            {
+                var response = AdminService.GetAllCustomers(isBlocked, page, pageSize);
+                if (response.Data == null)
+                {
+                    return NotFound(new CustomResponseDTO<List<CustomerDTO>>
+                    {
+                        Data = null,
+                        Message = "No Customers found with the given criteria",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
         [HttpGet("GetOwnerById/{ownerId}")]
         public IActionResult GetOwnerById(string ownerId)
         {
