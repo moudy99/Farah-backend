@@ -75,8 +75,11 @@ namespace Infrastructure
                 // configuration for Customer can go here
             });
 
-
-
+            modelBuilder.Entity<Photography>()
+                .HasMany(p => p.Images)
+                .WithOne(i => i.Photographer)
+                .HasForeignKey(i => i.PhotographerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BeautyCenter>()
            .HasMany(b => b.ServicesForBeautyCenter)

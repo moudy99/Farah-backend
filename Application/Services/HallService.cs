@@ -35,7 +35,7 @@ namespace Application.Services
             }
         }
 
-        public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize, string priceRange)
+        public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize, string priceRange, int govId, int cityId)
         {
             var query = HallRepository.GetAll();
 
@@ -66,7 +66,15 @@ namespace Application.Services
                     }
                 }
             }
+            if (govId > 0)
+            {
+                query = query.Where(p => p.GovernorateID == govId);
+            }
 
+            if (cityId > 0)
+            {
+                query = query.Where(p => p.City == cityId);
+            }
             // Check if any halls match the filters
             var paginatedList = PaginationHelper.Paginate(query, page, pageSize);
 
