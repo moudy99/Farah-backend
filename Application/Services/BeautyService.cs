@@ -89,6 +89,7 @@ namespace Application.Services
             try
             {
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
+
                 var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;

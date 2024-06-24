@@ -5,6 +5,7 @@ namespace Application.Helpers
     public static class ImageSavingHelper
     {
         private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        private static long maxAllowedImageSize =4* 1_048_576;
 
         public static async Task<List<string>> SaveImagesAsync(List<IFormFile> files, string folderName)
         {
@@ -24,7 +25,7 @@ namespace Application.Helpers
 
             foreach (var file in files)
             {
-                if (file.Length > 0)
+                if (file.Length > 0 && file.Length <= maxAllowedImageSize)
                 {
                     string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     var filePath = Path.Combine(uploads, uniqueFileName);
@@ -36,8 +37,12 @@ namespace Application.Helpers
 
                     imageNames.Add($"/Images/{folderName}/{uniqueFileName}");
                 }
+                else
+                {
+                    throw new ApplicationException($"Image size exceeds the maximum allowed size (4 MB) !");
+                }
             }
-
+             
             return imageNames;
         }
 
