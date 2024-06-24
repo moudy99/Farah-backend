@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -18,7 +19,8 @@ namespace Infrastructure.Repositories
             return context.Halls
                 .Where(c => c.IsDeleted == false)
                 .Include(c => c.Pictures)
-                .Include(c => c.Features);
+                .Include(c => c.Features)
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
         }
 
         public Hall GetById(int id)
