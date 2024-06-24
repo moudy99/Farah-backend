@@ -64,9 +64,9 @@ namespace Application.Services
                 return new CustomResponseDTO<List<CarDTO>>
                 {
                     Data = new List<CarDTO>(),
-                    Message = "No cars found",
+                    Message = "لا يوجد سيارات",
                     Succeeded = false,
-                    Errors = new List<string> { "No data" },
+                    Errors = new List<string> { "لا يوجد سيارات" },
                     PaginationInfo = null
                 };
             }
@@ -78,7 +78,7 @@ namespace Application.Services
             return new CustomResponseDTO<List<CarDTO>>
             {
                 Data = cars,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -105,7 +105,7 @@ namespace Application.Services
             var existingCar = carRepository.GetById(id);
             if (existingCar == null)
             {
-                throw new Exception("Car not found");
+                throw new Exception("تعذر العثور علي السياره");
             }
 
             Mapper.Map(carDto, existingCar);
@@ -128,7 +128,7 @@ namespace Application.Services
                 Car car = carRepository.GetById(id);
                 if (car == null)
                 {
-                    throw new Exception("Can't Find A car With This ID");
+                    throw new Exception("تعذر العثور علي السياره");
                 }
                 car.IsDeleted = true;
 
@@ -150,7 +150,7 @@ namespace Application.Services
                 return new CustomResponseDTO<CarDTO>()
                 {
                     Data = null,
-                    Message = "Cant Find A car With This ID",
+                    Message = "تعذر العثور علي السياره",
                     Succeeded = false,
                     Errors = null,
                 };
@@ -160,40 +160,11 @@ namespace Application.Services
             return new CustomResponseDTO<CarDTO>
             {
                 Data = carDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null
             };
         }
 
-        public Car GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Car GetById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Insert(Car obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Car obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Car> GetAll()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

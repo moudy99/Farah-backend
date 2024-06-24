@@ -61,7 +61,7 @@ namespace Presentation.Controllersa
                     return NotFound(new CustomResponseDTO<List<OwnerDTO>>
                     {
                         Data = null,
-                        Message = "No owners found with the given criteria",
+                        Message = "حدث خطأ",
                         Succeeded = false,
                         Errors = null
                     });
@@ -74,7 +74,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error",
+                    Message = "حدث خطأ",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -93,7 +93,7 @@ namespace Presentation.Controllersa
                     return NotFound(new CustomResponseDTO<List<CustomerDTO>>
                     {
                         Data = null,
-                        Message = "No Customers found with the given criteria",
+                        Message = "تعذر العثور علي مستخدمين",
                         Succeeded = false,
                         Errors = null
                     });
@@ -106,7 +106,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error",
+                    Message = "حدث خطأ",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -151,7 +151,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while accepting the owner",
+                    Message = "حدث خطأ اثناء قبل المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -172,7 +172,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while declining the owner",
+                    Message = "حدث خطأ اثناء رفض المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -193,7 +193,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while blocking the owner",
+                    Message = "حدث خطأ اثناء حظر المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -214,7 +214,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while unblocking the owner",
+                    Message = "حدث خطأ اثناء فك الحظر",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };

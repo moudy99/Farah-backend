@@ -22,7 +22,7 @@ namespace Application.Services
                 Hall car = HallRepository.GetById(id);
                 if (car == null)
                 {
-                    throw new Exception("Can't Find A Hall With This ID");
+                    throw new Exception("تعذر العثور علي القاعه");
                 }
                 car.IsDeleted = true;
 
@@ -83,9 +83,9 @@ namespace Application.Services
                 return new CustomResponseDTO<List<HallDTO>>
                 {
                     Data = new List<HallDTO>(),
-                    Message = "No Halls found",
+                    Message = "لا يوجد قاعات",
                     Succeeded = false,
-                    Errors = new List<string> { "No data" },
+                    Errors = new List<string> { "لا يوجد قاعات" },
                     PaginationInfo = null
                 };
             }
@@ -97,7 +97,7 @@ namespace Application.Services
             return new CustomResponseDTO<List<HallDTO>>
             {
                 Data = HallsDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -123,7 +123,7 @@ namespace Application.Services
             var existingHall = HallRepository.GetById(id);
             if (existingHall == null)
             {
-                throw new Exception("Hall not found");
+                throw new Exception("تعذر العثور علي القاعه");
             }
 
             Mapper.Map(hallDto, existingHall);
@@ -149,7 +149,7 @@ namespace Application.Services
                 return new CustomResponseDTO<HallDTO>()
                 {
                     Data = null,
-                    Message = "Cant Find A Hall With This ID",
+                    Message = "تعذر العثور علي القاعه",
                     Succeeded = false,
                     Errors = null,
                 };
@@ -159,57 +159,11 @@ namespace Application.Services
             return new CustomResponseDTO<HallDTO>
             {
                 Data = hallDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null
             };
         }
 
-
-        public void Insert(Hall obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Hall obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        List<Hall> Iservices<Hall>.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        Hall Iservices<Hall>.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Hall Iservices<Hall>.GetById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        void Iservices<Hall>.Insert(Hall obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        void Iservices<Hall>.Update(Hall obj)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        void Iservices<Hall>.Save()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -67,7 +67,7 @@ namespace Application.Services
             var response = new CustomResponseDTO<List<OwnerDTO>>
             {
                 Data = owners,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -86,7 +86,7 @@ namespace Application.Services
             var response = new CustomResponseDTO<List<CustomerDTO>>
             {
                 Data = customers,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -104,7 +104,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<BeautyCenterDTO>(beautyCenter),
-                        Message = "Beauty Center",
+                        Message = "بيوتي سنتر",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -114,7 +114,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<HallDTO>(hall),
-                        Message = "Hall",
+                        Message = "قاعه",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -123,7 +123,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<CarDTO>(car),
-                        Message = "Car",
+                        Message = "عربيه",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -132,7 +132,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<PhotographyDTO>(photography),
-                        Message = "Beauty Center",
+                        Message = "مصور",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -141,7 +141,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<ShopDressesDTo>(shopDresses),
-                        Message = "ShopDresses",
+                        Message = "فساتين",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -150,7 +150,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>()
             {
                 Data = null,
-                Message = "Service Not Found",
+                Message = "حدث خطأ",
                 Succeeded = false,
                 Errors = null,
             };
@@ -165,9 +165,9 @@ namespace Application.Services
                 return new CustomResponseDTO<OwnerDTO>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -176,7 +176,7 @@ namespace Application.Services
             return new CustomResponseDTO<OwnerDTO>
             {
                 Data = ownerDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null
             };
@@ -196,9 +196,9 @@ namespace Application.Services
                 return new CustomResponseDTO<List<ApplicationUserDTO>>
                 {
                     Data = null,
-                    Message = "No users found",
+                    Message = "لا يوجد مستخدمين",
                     Succeeded = false,
-                    Errors = new List<string> { "No users match the search criteria" }
+                    Errors = new List<string> { "لا يوجد مستخدمين" }
                 };
             }
 
@@ -221,7 +221,7 @@ namespace Application.Services
                 return new CustomResponseDTO<List<OwnerDTO>>
                 {
                     Data = null,
-                    Message = "No owners found with the given criteria",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
                     Errors = null
                 };
@@ -233,7 +233,7 @@ namespace Application.Services
             var response = new CustomResponseDTO<List<OwnerDTO>>
             {
                 Data = owners,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -345,9 +345,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -356,7 +356,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.AccountStatus,
-                    Message = "Owner is already accepted",
+                    Message = "المالك تم قبوله مسبقا",
                     Succeeded = false,
                     Errors = null
                 };
@@ -369,7 +369,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.AccountStatus,
-                Message = "Owner accepted",
+                Message = "تم قبول المالك",
                 Succeeded = true,
                 Errors = null
             };
@@ -384,9 +384,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -395,7 +395,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.AccountStatus,
-                    Message = "Owner is already declined",
+                    Message = "المالك تم رفضه مسبقا",
                     Succeeded = false,
                     Errors = null
                 };
@@ -408,7 +408,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.AccountStatus,
-                Message = "Owner declined",
+                Message = "تم رفض المالك",
                 Succeeded = true,
                 Errors = null
             };

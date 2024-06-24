@@ -250,7 +250,7 @@ namespace Application.Services
                 return new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>()
                 {
                     Data = beautyDTOs,
-                    Message = "Service Added Successfully",
+                    Message = "تم اضافة الخدمه بنجاح",
                     Succeeded = true,
                     Errors = null,
                     PaginationInfo = null
@@ -261,7 +261,7 @@ namespace Application.Services
                 var errorResponse = new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>
                 {
                     Data = null,
-                    Message = "Can't Add Service",
+                    Message = "حدث خطأ اثناء اضافة الخدمه",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
