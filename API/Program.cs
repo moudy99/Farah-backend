@@ -38,6 +38,8 @@ public class Program
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDBContext>();
 
+        builder.Services.AddHttpContextAccessor();
+
         // Map the AppSettings mailSettings into the Helper class
         builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddScoped<IEmailService, EmailService>();
@@ -196,6 +198,11 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.None,
+        });
 
         app.MapControllers();
 
