@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -16,7 +17,8 @@ namespace Infrastructure.Repositories
         public IQueryable<Photography> GetAll()
         {
             return context.Photographies
-                .Include(c => c.Images);
+                .Include(c => c.Images)
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
         }
         public Photography GetById(int id)
         {

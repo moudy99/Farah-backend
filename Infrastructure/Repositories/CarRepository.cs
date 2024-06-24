@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -17,7 +18,8 @@ namespace Infrastructure.Repositories
         {
             return context.Cars
                 .Where(c => c.IsDeleted == false)
-                .Include(c => c.Pictures);
+                .Include(c => c.Pictures)
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted); 
         }
         public Car GetById(int id)
         {

@@ -1,6 +1,9 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
+
 
 namespace Infrastructure.Repositories
 {
@@ -18,7 +21,10 @@ namespace Infrastructure.Repositories
             return context.BeautyCenters
                           .Include(b => b.ImagesBeautyCenter)
                           .Include(b => b.ServicesForBeautyCenter)
-                          .Include(b => b.Reviews);
+                          .Include(b => b.Reviews)
+                          .Where(b=>b.ServiceStatus == ServiceStatus.Accepted) ;
+                         
+            
         }
 
 

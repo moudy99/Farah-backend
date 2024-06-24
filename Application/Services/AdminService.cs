@@ -27,9 +27,9 @@ namespace Application.Services
         ICarRepository carRepository,
         IPhotographyRepository photographyRepository,
 
-        IShopDressesRepository shopDressesRepository,
-        IRepository<Service> serviceRepository
-        )
+       
+        IRepository<Service> serviceRepository,
+        
 
         IShopDressesRepository shopDressesRepository, ICustomerRepository customerRepository)
 
