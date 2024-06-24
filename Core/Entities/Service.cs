@@ -18,5 +18,7 @@ namespace Application.Helpers
 
         public List<FavoriteService> FavoriteServices { get; set; }
 
+        public ServiceStatus ServiceStatus { get; set; }= ServiceStatus.Pending;
+
     }
 }

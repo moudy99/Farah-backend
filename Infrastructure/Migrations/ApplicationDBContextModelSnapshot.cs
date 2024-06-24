@@ -34,6 +34,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("ServiceStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("OwnerID");

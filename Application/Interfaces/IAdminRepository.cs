@@ -4,7 +4,7 @@ using Core.Enums;
 
 namespace Application.Interfaces
 {
-    public interface IAdminRepository : IRepository<Owner>
+    public interface IAdminRepository : IRepository<Owner> 
     {
         public List<Service> GetAllServices();
         public IQueryable<Owner> GetAllOwners();

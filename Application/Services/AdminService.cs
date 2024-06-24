@@ -15,14 +15,24 @@ namespace Application.Services
         private readonly ICarRepository _carRepository;
         private readonly IPhotographyRepository _photographyRepository;
         private readonly IShopDressesRepository _shopDressesRepository;
+
+        private readonly IRepository<Service> _serviceRepository;
+
         private readonly ICustomerRepository _customerRepository;
+
         private readonly IMapper Mapper;
 
         public AdminService(IAdminRepository adminRepository, IMapper _mapper, IBeautyRepository beautyCenterRepository,
         IHallRepository hallRepository,
         ICarRepository carRepository,
         IPhotographyRepository photographyRepository,
+
+        IShopDressesRepository shopDressesRepository,
+        IRepository<Service> serviceRepository
+        )
+
         IShopDressesRepository shopDressesRepository, ICustomerRepository customerRepository)
+
         {
             _beautyCenterRepository = beautyCenterRepository;
             _hallRepository = hallRepository;
@@ -30,6 +40,7 @@ namespace Application.Services
             _photographyRepository = photographyRepository;
             _shopDressesRepository = shopDressesRepository;
             AdminRepository = adminRepository;
+            _serviceRepository = serviceRepository;
             Mapper = _mapper;
             _customerRepository = customerRepository;
         }
@@ -495,6 +506,82 @@ namespace Application.Services
             };
         }
 
+        public CustomResponseDTO<object> AcceptService(int id)
+        {
+            Service service = _serviceRepository.GetById(id);
+            if (service == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Service not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Service not found" }
+                };
+
+            }
+            if(service.ServiceStatus== ServiceStatus.Accepted)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = service.ServiceStatus,
+                    Message = " service is already accepted",
+                    Succeeded = false,
+                    Errors = null
+                };
+
+            }
+            service.ServiceStatus = ServiceStatus.Accepted;
+            _serviceRepository.Update(service);
+            AdminRepository.Save();
+            return new CustomResponseDTO<object>
+            {
+                Data = service.ServiceStatus,
+                Message = "Service accepted",
+                Succeeded = true,
+                Errors = null
+            };
+
+        }
+
+        public CustomResponseDTO<object> DeclineService(int id)
+        {
+
+            Service service = _serviceRepository.GetById(id);
+            if (service == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Service not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Service not found" }
+                };
+
+            }
+            if (service.ServiceStatus == ServiceStatus.Decline)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = service.ServiceStatus,
+                    Message = " service is already declined",
+                    Succeeded = false,
+                    Errors = null
+                };
+
+            }
+            service.ServiceStatus = ServiceStatus.Decline;
+            _serviceRepository.Update(service);
+            AdminRepository.Save();
+            return new CustomResponseDTO<object>
+            {
+                Data = service.ServiceStatus,
+                Message = "Service declined",
+                Succeeded = true,
+                Errors = null
+            };
+
+        }
 
     }
 }
