@@ -1,15 +1,8 @@
 ﻿using Application.DTOS;
-using Application.Helpers;
 using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
-using AutoMapper.Internal;
-using Azure;
-using Core.Entities;
 using Core.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Presentation.Controllersa
 {
@@ -27,7 +20,7 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("Services")]
-        public ActionResult GetAllServices() 
+        public ActionResult GetAllServices()
         {
             AllServicesDTO services = AdminService.GetAllServices();
 
@@ -35,8 +28,8 @@ namespace Presentation.Controllersa
             return Ok(services);
         }
 
-        [HttpGet("ServiceType")]
-        public ActionResult GetServiceTypeByID(int id) 
+        [HttpGet("ServiceById")]
+        public ActionResult GetServiceTypeByID(int id)
         {
             try
             {
