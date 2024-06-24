@@ -19,9 +19,5 @@ namespace Application.DTOS
         public string PhoneNumber { get; set; }
         public string? ProfileImage { get; set; }
         public bool IsBlocked { get; set; } = false;
-        public bool IsDeleted { get; set; } = false;
-        public string YourFavirotePerson { get; set; }
-        public string IDFrontImage { get; set; }
-        public string IDBackImage { get; set; }
     }
 }

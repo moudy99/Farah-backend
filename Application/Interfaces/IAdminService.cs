@@ -24,5 +24,8 @@ namespace Application.Interfaces
         public CustomResponseDTO<object> AcceptOwner(string ownerId);
         public CustomResponseDTO<object> DeclineOwner(string ownerId);
         public CustomResponseDTO<OwnerDTO> GetOwnerById(string ownerId);
+
+        CustomResponseDTO<object> BlockCustomer(string customerId);
+        CustomResponseDTO<object> UnblockCustomer(string customerId);
     }
 }
