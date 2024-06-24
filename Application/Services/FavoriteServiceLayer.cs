@@ -73,7 +73,7 @@ namespace Application.Services
             return new CustomResponseDTO<AllServicesDTO>()
             {
                 Data = allServicesDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = null

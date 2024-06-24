@@ -22,6 +22,19 @@ namespace Infrastructure.Repositories
 
 
         }
+        public IQueryable<Customer> GetAllCustomers(bool? isBlocked)
+        {
+            var query = context.Customers.AsQueryable();
+
+
+
+            if (isBlocked.HasValue)
+            {
+                query = query.Where(o => o.IsBlocked == isBlocked.Value);
+            }
+
+            return query;
+        }
         public Owner GetOwnerById(string id)
         {
             return context.Owners
@@ -81,6 +94,12 @@ namespace Infrastructure.Repositories
             return context.Users
                            .Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name))
                            .ToList();
+        }
+
+        public Customer GetCustomerById(string id)
+        {
+            return context.Customers
+                .FirstOrDefault(c => c.Id == id);
         }
     }
 }

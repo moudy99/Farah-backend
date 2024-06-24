@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,26 +21,28 @@ namespace Infrastructure.Repositories
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IUserOTPService _userOTPService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountRepository(ApplicationDBContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration, IUserOTPService userOTPService)
+            IConfiguration configuration, IUserOTPService userOTPService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             this._userOTPService = userOTPService;
+            this._httpContextAccessor = httpContextAccessor;
         }
         public async Task<AuthUserDTO> RegisterUserAsync(ApplicationUser user, string password, string role)
         {
             if (await _userManager.FindByEmailAsync(user.Email) is not null)
             {
-                return new AuthUserDTO() { Message = "Email is already registered" };
+                return new AuthUserDTO() { Message = "البريد الإلكتروني مسجل بالفعل" };
             }
 
             if (await _context.Users.AnyAsync(u => u.SSN == user.SSN))
             {
-                return new AuthUserDTO() { Message = "SSN is already registered" };
+                return new AuthUserDTO() { Message = "رقم الهوية مسجل بالفعل" };
             }
 
             user.UserName = GenerateUsernameFromEmail(user.Email);
@@ -91,14 +94,15 @@ namespace Infrastructure.Repositories
             var isValid = await _userOTPService.VerifyOTPAsync(email, otp);
             if (!isValid)
             {
-                return new AuthUserDTO { Message = "Invalid or expired OTP. Please request a new OTP." };
+                return new AuthUserDTO { Message = "رمز التحقق غير صالح أو منتهي الصلاحية. يرجى طلب رمز تحقق جديد." };
             }
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return new AuthUserDTO { Message = "User not found" };
+                return new AuthUserDTO { Message = "المستخدم غير موجود" };
             }
+
 
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
@@ -172,6 +176,12 @@ namespace Infrastructure.Repositories
                         owner = await _context.Owners.FirstOrDefaultAsync(u => u.Id == user.Id);
                     }
                     var Token = await CreateJwtToken(user);
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(Token);
+
+
+                    SetCookie("Token", tokenString);
+                    SetCookie("Role", checkUserType);
+                    SetCookie("Username", user.FirstName + " " + user.LastName);
 
                     if (!user.EmailConfirmed)
                     {
@@ -199,14 +209,15 @@ namespace Infrastructure.Repositories
                         ExpireTIme = Token.ValidTo,
                         Token = new JwtSecurityTokenHandler().WriteToken(Token),
                         Role = checkUserType,
-                        AccountStatus = owner?.AccountStatus.ToString()
+                        AccountStatus = owner?.AccountStatus.ToString(),
+
                     };
                 }
                 else
                 {
                     return new AuthUserDTO()
                     {
-                        Message = "Login failed: Invalid email or password",
+                        Message = "فشل تسجيل الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة",
                         IsEmailConfirmed = user.EmailConfirmed,
                         Succeeded = false
                     };
@@ -215,7 +226,7 @@ namespace Infrastructure.Repositories
 
             return new AuthUserDTO()
             {
-                Message = "Login failed: User not found",
+                Message = "فشل تسجيل الدخول: المستخدم غير موجود",
                 IsEmailConfirmed = false,
                 Succeeded = false
             };
@@ -314,6 +325,17 @@ namespace Infrastructure.Repositories
             return jwtSecurityToken;
         }
 
+        private void SetCookie(string key, string value)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(key, value, cookieOptions);
+        }
 
         /// Get Profile info 
         public async Task<Owner> GetOwnerInfo(string Email)
