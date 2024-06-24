@@ -75,6 +75,8 @@ public class Program
 
         builder.Services.AddScoped<IFavoriteServiceLayer, FavoriteServiceLayer>();
         builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+        builder.Services.AddScoped<IRepository<Service>, Repository<Service>>();
+
 
 
         builder.Services.AddCors(options =>

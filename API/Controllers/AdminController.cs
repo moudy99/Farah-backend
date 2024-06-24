@@ -189,5 +189,48 @@ namespace Presentation.Controllersa
                 return BadRequest(errorResponse);
             }
         }
+        [HttpPut("AcceptService")]
+        public ActionResult AcceptService(int id)
+        {
+            try
+            {
+                var response = AdminService.AcceptService(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while accepting the service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+
+        }
+
+        [HttpPut("DeclineService")]
+        public ActionResult DeclineService(int id)
+        {
+            try
+            {
+                var response = AdminService.DeclineService(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while declining the service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+
+        }
     }
 }
