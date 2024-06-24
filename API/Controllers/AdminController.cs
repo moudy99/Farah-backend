@@ -221,5 +221,48 @@ namespace Presentation.Controllersa
                 return BadRequest(errorResponse);
             }
         }
+
+
+        [HttpPut("BlockCustomer")]
+        public IActionResult BlockCustomer(string customerId)
+        {
+            try
+            {
+                var response = AdminService.BlockCustomer(customerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء حظر العميل",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPut("UnblockCustomer")]
+        public IActionResult UnblockCustomer(string customerId)
+        {
+            try
+            {
+                var response = AdminService.UnblockCustomer(customerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء فك الحظر عن العميل",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
     }
 }

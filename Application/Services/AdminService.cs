@@ -15,13 +15,14 @@ namespace Application.Services
         private readonly ICarRepository _carRepository;
         private readonly IPhotographyRepository _photographyRepository;
         private readonly IShopDressesRepository _shopDressesRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly IMapper Mapper;
 
         public AdminService(IAdminRepository adminRepository, IMapper _mapper, IBeautyRepository beautyCenterRepository,
         IHallRepository hallRepository,
         ICarRepository carRepository,
         IPhotographyRepository photographyRepository,
-        IShopDressesRepository shopDressesRepository)
+        IShopDressesRepository shopDressesRepository, ICustomerRepository customerRepository)
         {
             _beautyCenterRepository = beautyCenterRepository;
             _hallRepository = hallRepository;
@@ -30,6 +31,7 @@ namespace Application.Services
             _shopDressesRepository = shopDressesRepository;
             AdminRepository = adminRepository;
             Mapper = _mapper;
+            _customerRepository = customerRepository;
         }
 
 
@@ -415,7 +417,83 @@ namespace Application.Services
         }
 
 
+        public CustomResponseDTO<object> BlockCustomer(string customerId)
+        {
+            Customer customer = _customerRepository.GetCustomerById(customerId);
 
+            if (customer == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "العميل غير موجود",
+                    Succeeded = false,
+                    Errors = new List<string> { "العميل غير موجود" }
+                };
+            }
+
+            if (customer.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = customer.UserName,
+                    Message = "العميل محظور بالفعل",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            customer.IsBlocked = true;
+            _customerRepository.Update(customer);
+            _customerRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = customer.UserName,
+                Message = "تم حظر العميل بنجاح",
+                Succeeded = true,
+                Errors = null
+            };
+        }
+
+        public CustomResponseDTO<object> UnblockCustomer(string customerId)
+        {
+            Customer customer = _customerRepository.GetCustomerById(customerId);
+
+            if (customer == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "العميل غير موجود",
+                    Succeeded = false,
+                    Errors = new List<string> { "العميل غير موجود" }
+                };
+            }
+
+            if (!customer.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = customer.UserName,
+                    Message = "العميل غير محظور بالفعل",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            customer.IsBlocked = false;
+            _customerRepository.Update(customer);
+            _customerRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = customer.UserName,
+                Message = "تم رفع الحظر عن العميل بنجاح",
+                Succeeded = true,
+                Errors = null
+            };
+        }
 
 
     }

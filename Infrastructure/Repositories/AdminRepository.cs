@@ -96,6 +96,10 @@ namespace Infrastructure.Repositories
                            .ToList();
         }
 
-
+        public Customer GetCustomerById(string id)
+        {
+            return context.Customers
+                .FirstOrDefault(c => c.Id == id);
+        }
     }
 }
