@@ -258,15 +258,22 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("googleLogin")]
-        public async Task<ActionResult> GoogleSignIn([FromBody] string googleToken)
+        public async Task<ActionResult> GoogleSignIn([FromBody] GoogleTokenDTO googleTokenDto)
         {
-            var result = await googleAuthService.GoogleSignIn(googleToken);
+            var result = await googleAuthService.GoogleSignIn(googleTokenDto.googleToken);
             if (result.Succeeded)
             {
-                return Ok(googleToken);
+                return Ok(result);
             }
             return BadRequest(result);
         }
+
+
+        public class GoogleTokenDTO
+        {
+            public string googleToken { get; set; }
+        }
+
 
     }
 }

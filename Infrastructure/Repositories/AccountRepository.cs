@@ -172,7 +172,7 @@ namespace Infrastructure.Repositories
                 Email = payload.Email,
                 Role = "Customer",
                 Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
-                //Token = existingUserToken,
+                Token = existingUserToken,
             };
         }
 

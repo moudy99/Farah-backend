@@ -23,7 +23,6 @@ namespace Application.Services
                     Succeeded = true,
                     Message = result.Message
                 };
-
             }
             else
             {
@@ -35,7 +34,7 @@ namespace Application.Services
                     Errors = result.Errors
                 };
             }
-
         }
+
     }
 }
