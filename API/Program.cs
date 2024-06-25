@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Presentation.Hubs;
 using System.Text;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
@@ -25,7 +26,7 @@ public class Program
 
 
 
-
+        builder.Services.AddSignalR();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -80,8 +81,16 @@ public class Program
         builder.Services.AddScoped<IHallService, HallService>();
         builder.Services.AddScoped<IHallRepository, HallRepository>();
 
+        //builder.Services.AddScoped<IChatService, ChatService>();
+        builder.Services.AddScoped<IChatRepository, ChatRepository>();
+
+        builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
+        builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+
         builder.Services.AddScoped<IFavoriteServiceLayer, FavoriteServiceLayer>();
         builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
+
         builder.Services.AddScoped<IRepository<Service>, Repository<Service>>();
 
 
@@ -93,9 +102,13 @@ public class Program
         {
             options.AddPolicy("AllowSpecificOrigin",
                 builder => builder
-                                    .AllowAnyOrigin()
-                                  .AllowAnyHeader()
-                                  .AllowAnyMethod());
+                //.WithOrigins("http://localhost:4200")
+                
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                   .SetIsOriginAllowed(alow => true));
+            
         });
 
 
@@ -208,6 +221,10 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        
+        
+            app.MapHub<ChatHub>("/chathub");
 
         app.UseCookiePolicy(new CookiePolicyOptions
         {
