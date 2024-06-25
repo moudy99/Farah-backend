@@ -16,6 +16,8 @@ namespace Application.Interfaces
 
         public Task<Owner> GetOwnerInfo(string Email);
         public Task<bool> UpdateOwnerInfo(Owner owner);
+        public Task<AuthUserDTO> GoogleSignIn(string model);
+
 
     }
 }

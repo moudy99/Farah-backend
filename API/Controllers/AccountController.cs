@@ -15,12 +15,14 @@ namespace Presentation.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration config;
         private readonly IAccountService _accountService;
+        private readonly IGoogleAuthService googleAuthService;
 
-        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService)
+        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, IGoogleAuthService googleAuthService)
         {
             userManager = _userManager;
             config = _config;
             _accountService = accountService;
+            this.googleAuthService = googleAuthService;
         }
 
         [HttpGet("OwnerServices")]
@@ -254,5 +256,17 @@ namespace Presentation.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("googleLogin")]
+        public async Task<ActionResult> GoogleSignIn([FromBody] string googleToken)
+        {
+            var result = await googleAuthService.GoogleSignIn(googleToken);
+            if (result.Succeeded)
+            {
+                return Ok(googleToken);
+            }
+            return BadRequest(result);
+        }
+
     }
 }
