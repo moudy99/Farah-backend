@@ -46,6 +46,11 @@ public class Program
         builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
         builder.Services.AddScoped<IUserOTPService, UserOTPService>();
 
+        builder.Services.Configure<GoogleAuthConfig>(builder.Configuration.GetSection("Google"));
+        builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
+
+
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddScoped<IBeautyService, BeautyService>();
         builder.Services.AddScoped<IShopDressesService, ShopDressesService>();

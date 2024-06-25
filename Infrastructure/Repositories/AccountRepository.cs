@@ -1,4 +1,5 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
@@ -6,11 +7,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 namespace Infrastructure.Repositories
 {
@@ -22,9 +25,11 @@ namespace Infrastructure.Repositories
         private readonly IConfiguration _configuration;
         private readonly IUserOTPService _userOTPService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IOptions<GoogleAuthConfig> googleAuthConfig;
 
         public AccountRepository(ApplicationDBContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration, IUserOTPService userOTPService, IHttpContextAccessor httpContextAccessor)
+            IConfiguration configuration, IUserOTPService userOTPService, IHttpContextAccessor httpContextAccessor, IOptions<GoogleAuthConfig> googleAuthConfig
+)
         {
             _context = context;
             _userManager = userManager;
@@ -32,7 +37,10 @@ namespace Infrastructure.Repositories
             _configuration = configuration;
             this._userOTPService = userOTPService;
             this._httpContextAccessor = httpContextAccessor;
+            this.googleAuthConfig = googleAuthConfig;
         }
+
+
         public async Task<AuthUserDTO> RegisterUserAsync(ApplicationUser user, string password, string role)
         {
             if (await _userManager.FindByEmailAsync(user.Email) is not null)
@@ -74,7 +82,99 @@ namespace Infrastructure.Repositories
                 };
             }
         }
+        public async Task<AuthUserDTO> GoogleSignIn(string model)
+        {
+            Payload payload = new();
 
+            try
+            {
+                payload = await ValidateAsync(model, new ValidationSettings
+                {
+                    Audience = new[] { googleAuthConfig.Value.ClientId }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return new AuthUserDTO
+                {
+                    Succeeded = false,
+                    Message = ex.Message
+                };
+            }
+
+            if (payload == null)
+            {
+                return new AuthUserDTO
+                {
+                    Succeeded = false,
+                    Message = "Google login failed"
+                };
+            }
+
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                Customer customer = new Customer
+                {
+                    FirstName = payload.Name,
+                    LastName = payload.FamilyName,
+                    Email = payload.Email,
+                    ProfileImage = payload.Picture,
+                    GovID = 0,
+                    CityID = 0,
+                    EmailConfirmed = true,
+                    SSN = "0",
+                    YourFavirotePerson = "answer",
+                    UserName = GenerateUsernameFromEmail(payload.Email),
+                };
+
+                try
+                {
+                    var result = await _userManager.CreateAsync(customer);
+                    if (!result.Succeeded)
+                    {
+                        return new AuthUserDTO
+                        {
+                            Succeeded = false,
+                            Message = "Failed to create user"
+                        };
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    string token = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(customer));
+
+                    return new AuthUserDTO
+                    {
+                        Succeeded = true,
+                        Email = payload.Email,
+                        Role = "Customer",
+                        Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
+                        Token = token,
+                    };
+                }
+                catch
+                {
+                    return new AuthUserDTO
+                    {
+                        Succeeded = false,
+                        Message = "An error occurred while creating the user"
+                    };
+                }
+            }
+
+            string existingUserToken = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user));
+
+            return new AuthUserDTO
+            {
+                Succeeded = true,
+                Email = payload.Email,
+                Role = "Customer",
+                Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
+                //Token = existingUserToken,
+            };
+        }
 
 
         public async Task<AuthUserDTO> OwnerRegisterAsync(Owner owner, OwnerRegisterDTO registerDto)
