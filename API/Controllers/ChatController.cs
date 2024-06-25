@@ -39,7 +39,7 @@ namespace Presentation.Controllers
 
             await _chatMessageService.SendMessageAsync(senderId, dto.ReceiverId, dto.Message, isSenderOwner);
 
-            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", new
+            await _chatHubContext.Clients.Users(senderId,dto.ReceiverId).SendAsync("ReceiveMessage", new
             {
                 SenderId = senderId,
                 Message = dto.Message,

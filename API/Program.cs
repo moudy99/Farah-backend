@@ -6,6 +6,7 @@ using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,7 +27,6 @@ public class Program
 
 
 
-        builder.Services.AddSignalR();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -49,6 +49,7 @@ public class Program
 
         builder.Services.Configure<GoogleAuthConfig>(builder.Configuration.GetSection("Google"));
         builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
 
 
 
@@ -98,16 +99,21 @@ public class Program
 
 
 
+        /////////////////////////////////  SignalR ////////////////////////////////
+        builder.Services.AddSignalR();
+        builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
-                builder => builder
-                //.WithOrigins("http://localhost:4200")
+                builder => builder          
                 
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
-                   .SetIsOriginAllowed(alow => true));
+                .SetIsOriginAllowed(alow => true));
             
         });
 
@@ -222,9 +228,13 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        
-        
-            app.MapHub<ChatHub>("/chathub");
+
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<ChatHub>("/chathub");
+        });
 
         app.UseCookiePolicy(new CookiePolicyOptions
         {

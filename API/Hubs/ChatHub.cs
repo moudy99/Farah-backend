@@ -1,18 +1,12 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Presentation.Hubs
 {
-    public class ChatHub: Hub
+    public class ChatHub : Hub
     {
-    }
-
-
-    public class CustomUserIdProvider : IUserIdProvider
-    {
-        public string GetUserId(HubConnectionContext connection)
-        {
-            return connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
+      
     }
 }
