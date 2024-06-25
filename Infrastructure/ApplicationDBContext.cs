@@ -11,7 +11,8 @@ namespace Infrastructure
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
         }
-
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Owner> Owners { get; set; }
