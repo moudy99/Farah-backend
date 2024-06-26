@@ -108,13 +108,12 @@ public class Program
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
-                builder => builder          
-                
+                builder => builder
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
                 .SetIsOriginAllowed(alow => true));
-            
+
         });
 
 

@@ -7,7 +7,9 @@ namespace Presentation.Hubs
     {
         public string GetUserId(HubConnectionContext connection)
         {
+            //return connection.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             return connection.User?.FindFirstValue("uid");
+
         }
     }
 }
