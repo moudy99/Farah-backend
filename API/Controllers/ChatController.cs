@@ -28,6 +28,44 @@ namespace Presentation.Controllers
             _userManager = userManager;
         }
 
+
+
+        [HttpGet("my-chats")]
+        public async Task<IActionResult> GetMyChats( int page = 1, int pageSize = 6)
+        {
+            try
+            {
+                string userId = User.FindFirstValue("uid");
+
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+                bool isOwner = user is Owner;
+
+                var response = _chatMessageService.GetMyChats(page, pageSize, userId, isOwner);
+
+                if (response.Data == null || !response.Data.Any())
+                {
+                    return NotFound(new CustomResponseDTO<List<AllChatsDTO>>
+                    {
+                        Data = null,
+                        Message = "مفيش شات ليك",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new CustomResponseDTO<List<AllChatsDTO>>
+                {
+                    Data = null,
+                    Message = $"ايرور يا معلم ابلع: {ex.Message}",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
         [HttpPost("send-message")]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageDTO dto)
         {
@@ -47,6 +85,36 @@ namespace Presentation.Controllers
             });
 
             return Ok();
+        }
+
+        [HttpGet("{chatId}")]
+        public async Task<IActionResult> GetChatById(int chatId)
+        {
+            try
+            {
+                var userId = User.FindFirstValue("uid");
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+                bool isOwner = user is Owner;
+
+                var chatDetails = await _chatMessageService.GetChatByIdAsync(chatId, userId, isOwner);
+                return Ok(new CustomResponseDTO<ChatDetailsDTO>
+                {
+                    Data = chatDetails,
+                    Message = "Chat retrieved successfully",
+                    Succeeded = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new CustomResponseDTO<ChatDetailsDTO>
+                {
+                    Data = null,
+                    Message = $"ابلع ايروووووووور: {ex.Message}",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                });
+            }
         }
 
     }

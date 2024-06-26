@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Core.Entities;
+using Application.DTOS;
+using Application.Helpers;
 
 
 namespace Application.Services
@@ -24,6 +26,87 @@ namespace Application.Services
             _mapper = mapper;
             _chatMessageRepository = chatMessageRepository;
             _chatRepository = chatRepository;
+        }
+
+        public CustomResponseDTO<List<AllChatsDTO>> GetMyChats(int page, int pageSize, string userId, bool isOwner)
+        {
+            try
+            {
+                IQueryable<AllChatsDTO> myChats = _chatRepository.GetMyChats(userId, isOwner);
+
+                var paginatedList = PaginationHelper.Paginate(myChats, page, pageSize);
+                var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+                return new CustomResponseDTO<List<AllChatsDTO>>
+                {
+                    Data = paginatedList.Items,
+                    Message = "تمااااااااااام",
+                    Succeeded = true,
+                    PaginationInfo = paginationInfo
+                };
+            }
+            catch (Exception ex)
+            {
+   
+                return new CustomResponseDTO<List<AllChatsDTO>>
+                {
+                    Data = null,
+                    Message = $"ايرور يا معلم ابلع: {ex.Message}",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+            }
+        }
+
+        public async Task<ChatDetailsDTO> GetChatByIdAsync(int chatId, string userId, bool isOwner)
+        {
+            try
+            {
+                var chat = await _chatRepository.GetChatByIdAsync(chatId);
+
+                if (chat == null || (isOwner && chat.OwnerId != userId) || (!isOwner && chat.CustomerId != userId))
+                {
+                    throw new Exception("Chat not found or user does not have access to this chat.");
+                }
+
+                // Make is Readed true
+                await _chatRepository.MarkMessagesAsReadAsync(chatId, userId);
+
+                ApplicationUser user;
+                if(isOwner)
+                {
+                    user = chat.Owner;
+                }
+                else
+                {
+                    user = chat.Customer;
+                }
+
+                var chatDetailsDTO = new ChatDetailsDTO
+                {
+                    ChatId = chat.Id,
+                    User = new UserDTO
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        ProfileImage = user.ProfileImage
+                    },
+                    Messages = chat.Messages.Select(m => new MessageDTO
+                    {
+                        SenderId = m.SenderId,
+                        ReceiverId = m.ReceiverId,
+                        Message = m.Message,
+                        SentAt = m.SentAt,
+                        IsRead = m.IsRead
+                    }).ToList()
+                };
+
+                return chatDetailsDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"ابلع ايروووووووووووور: {ex.Message}");
+            }
         }
 
         public async Task SendMessageAsync(string senderId, string receiverId, string message, bool isSenderOwner)
