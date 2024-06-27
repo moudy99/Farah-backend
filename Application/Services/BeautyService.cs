@@ -32,6 +32,17 @@ namespace Application.Services
 
 
             var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
+            if (!paginatedList.Items.Any())
+            {
+                return new CustomResponseDTO<List<BeautyCenterDTO>>
+                {
+                    Data = new List<BeautyCenterDTO>(),
+                    Message = "لا يوجد مراكز تجميل",
+                    Succeeded = false,
+                    Errors = new List<string> { "لا يوجد مراكز تجميل" },
+                    PaginationInfo = null
+                };
+            }
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
             var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
 

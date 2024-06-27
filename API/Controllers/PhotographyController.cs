@@ -24,29 +24,36 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
-        public ActionResult GetAllPhotographer(int page = 1, int pageSize = 10)
+        public IActionResult GetAllPhotographer(int page = 1, int pageSize = 6)
         {
             try
             {
                 var response = _photoService.GetAllPhotographer(page, pageSize);
-                if (response.Data.Count > 0)
+                if (response.Data == null || !response.Data.Any())
                 {
-                    return Ok(response);
+                    return NotFound(new CustomResponseDTO<List<PhotographyDTO>>
+                    {
+                        Data = null,
+                        Message = "No Photographers Found",
+                        Succeeded = false,
+                        Errors = null
+                    });
                 }
-                return StatusCode(500, "No Photographer  Added");
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "ايروووووووووووووور",
+                    Message = "Error while retrieving the photographers",
                     Succeeded = false,
-                    Errors = new List<string> { ex.Message, ex.StackTrace }
+                    Errors = new List<string> { ex.Message }
                 };
-                return StatusCode(500, errorResponse);
+                return BadRequest(errorResponse);
             }
         }
+
 
         [HttpGet("GetPhotographerById")]
         public ActionResult GetPhotographerById(int id)

@@ -27,7 +27,7 @@ namespace Presentation.Controllers
             try
             {
                 var response = carService.GetAllCars(page, pageSize, priceRange, govId, cityId);
-                if (response.Data == null)
+                if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<CarDTO>>
                     {

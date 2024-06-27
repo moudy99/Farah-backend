@@ -23,29 +23,36 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
-        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10, int govId = 0, int cityId = 0)
+      public IActionResult GetAllShopDresses(int page = 1, int pageSize = 6, int govId = 0, int cityId = 0)
+{
+    try
+    {
+        var response = _dressesService.GetAllShopDresses(page, pageSize, govId, cityId);
+        if (response.Data == null || !response.Data.Any())
         {
-            try
+            return NotFound(new CustomResponseDTO<List<ShopDressesDTo>>
             {
-                var response = _dressesService.GetAllShopDresses(page, pageSize,govId, cityId);
-                if (response.Data.Count > 0)
-                {
-                    return Ok(response);
-                }
-                return StatusCode(500, "No Beauty Center just added");
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new CustomResponseDTO<List<string>>
-                {
-                    Data = null,
-                    Message = "ايروووووووووووووور",
-                    Succeeded = false,
-                    Errors = new List<string> { ex.Message, ex.StackTrace }
-                };
-                return StatusCode(500, errorResponse);
-            }
+                Data = null,
+                Message = "No Shop Dresses Found",
+                Succeeded = false,
+                Errors = null
+            });
         }
+        return Ok(response);
+    }
+    catch (Exception ex)
+    {
+        var errorResponse = new CustomResponseDTO<List<string>>
+        {
+            Data = null,
+            Message = "Error while retrieving the shop dresses",
+            Succeeded = false,
+            Errors = new List<string> { ex.Message, ex.StackTrace }
+        };
+                return BadRequest(errorResponse);
+            }
+}
+
 
 
 
