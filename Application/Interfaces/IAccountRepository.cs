@@ -6,6 +6,8 @@ namespace Application.Interfaces
 {
     public interface IAccountRepository
     {
+        public Task<Customer> GetCustomerInfo(string email);
+        public Task<bool> UpdateCustomerInfo(Customer customer);
         public Task<AuthUserDTO> OwnerRegisterAsync(Owner owner, OwnerRegisterDTO registerDto);
         public Task<AuthUserDTO> CustomerRegisterAsync(Customer customer, CustomerRegisterDTO RegisterModel);
         public Task<AuthUserDTO> Login(LoginUserDTO loginUser);

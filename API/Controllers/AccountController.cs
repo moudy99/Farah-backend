@@ -257,6 +257,41 @@ namespace Presentation.Controllers
             return Ok(response);
         }
 
+        [HttpGet("getCustomerInfo")]
+        public async Task<ActionResult> GetCustomerInfo()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر." });
+            }
+
+            var response = await _accountService.GetCustomerInfo(email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPut("updateCustomerInfo")]
+        public async Task<ActionResult> UpdateCustomerInfo([FromForm] CustomerAccountInfoDTO updateDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest("لم يتم العثور على البريد الإلكتروني للمستخدم.");
+            }
+            var response = await _accountService.UpdateCustomerInfo(updateDto, email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response);
+        }
+
         [HttpPost("googleLogin")]
         public async Task<ActionResult> GoogleSignIn([FromBody] GoogleTokenDTO googleTokenDto)
         {

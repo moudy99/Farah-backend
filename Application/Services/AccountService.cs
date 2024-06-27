@@ -185,6 +185,69 @@ namespace Application.Services
                 Message = "تم استرداد معلومات المالك بنجاح."
             };
         }
+        public async Task<CustomResponseDTO<CustomerAccountInfoDTO>> GetCustomerInfo(string email)
+        {
+            var result = await _accountRepository.GetCustomerInfo(email);
+            if (result == null)
+            {
+                return new CustomResponseDTO<CustomerAccountInfoDTO>()
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "حدث خطأ أثناء استرداد معلومات العميل. يرجى التحقق من البريد الإلكتروني والمحاولة مرة أخرى."
+                };
+            }
+
+            var response = _mapper.Map<CustomerAccountInfoDTO>(result);
+            return new CustomResponseDTO<CustomerAccountInfoDTO>()
+            {
+                Data = response,
+                Succeeded = true,
+                Message = "تم استرداد معلومات العميل بنجاح."
+            };
+        }
+
+        public async Task<CustomResponseDTO<CustomerAccountInfoDTO>> UpdateCustomerInfo(CustomerAccountInfoDTO infoDTO, string email)
+        {
+            var customer = await _accountRepository.GetCustomerInfo(email);
+
+            if (customer == null)
+            {
+                return new CustomResponseDTO<CustomerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "لم يتم العثور على العميل بهذا البريد الإلكتروني."
+                };
+            }
+
+            _mapper.Map(infoDTO, customer);
+
+            string newProfileImage;
+            if (infoDTO.SetNewProfileImage != null)
+            {
+                newProfileImage = await ImageSavingHelper.SaveOneImageAsync(infoDTO.SetNewProfileImage, "CustomersImages");
+                customer.ProfileImage = newProfileImage;
+            }
+            var result = await _accountRepository.UpdateCustomerInfo(customer);
+
+            if (!result)
+            {
+                return new CustomResponseDTO<CustomerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "فشل تحديث معلومات العميل."
+                };
+            }
+            var returnDTO = _mapper.Map<CustomerAccountInfoDTO>(customer);
+            return new CustomResponseDTO<CustomerAccountInfoDTO>
+            {
+                Data = returnDTO,
+                Succeeded = true,
+                Message = "تم تحديث معلومات العميل بنجاح."
+            };
+        }
 
         public async Task<CustomResponseDTO<OwnerAccountInfoDTO>> UpdateOwnerInfo(OwnerAccountInfoDTO infoDTO, string Email)
         {

@@ -465,5 +465,29 @@ namespace Infrastructure.Repositories
 
         }
 
+        public async Task<Customer> GetCustomerInfo(string email)
+        {
+            Customer customer = await _context.Customers.FirstOrDefaultAsync(e => e.Email == email);
+            if (customer == null)
+            {
+                return null;
+            }
+            return customer;
+        }
+
+        public async Task<bool> UpdateCustomerInfo(Customer customer)
+        {
+            try
+            {
+                _context.Customers.Update(customer);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
