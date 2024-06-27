@@ -23,10 +23,26 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
+
+      public IActionResult GetAllShopDresses(int page = 1, int pageSize = 6, int govId = 0, int cityId = 0)
+{
+    try
+    {
+        var response = _dressesService.GetAllShopDresses(page, pageSize, govId, cityId);
+        if (response.Data == null || !response.Data.Any())
+
         public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10, int govId = 0, int cityId = 0)
+
         {
-            try
+            return NotFound(new CustomResponseDTO<List<ShopDressesDTo>>
             {
+
+                Data = null,
+                Message = "No Shop Dresses Found",
+                Succeeded = false,
+                Errors = null
+            });
+
                 var response = _dressesService.GetAllShopDresses(page, pageSize,govId, cityId);
                 if (response.Data.Count > 0)
                 {
@@ -45,7 +61,23 @@ namespace Presentation.Controllers
                 };
                 return StatusCode(500, errorResponse);
             }
+
         }
+        return Ok(response);
+    }
+    catch (Exception ex)
+    {
+        var errorResponse = new CustomResponseDTO<List<string>>
+        {
+            Data = null,
+            Message = "Error while retrieving the shop dresses",
+            Succeeded = false,
+            Errors = new List<string> { ex.Message, ex.StackTrace }
+        };
+                return BadRequest(errorResponse);
+            }
+}
+
 
 
 

@@ -25,6 +25,7 @@ namespace Application.Services
                 beautyCenters = beautyCenters.Where(p => p.Gove == govId);
             }
 
+
             if (cityId > 0)
             {
                 beautyCenters = beautyCenters.Where(p => p.City == cityId);
@@ -32,6 +33,26 @@ namespace Application.Services
 
 
             var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
+            if (!paginatedList.Items.Any())
+            {
+                return new CustomResponseDTO<List<BeautyCenterDTO>>
+                {
+                    Data = new List<BeautyCenterDTO>(),
+                    Message = "لا يوجد مراكز تجميل",
+                    Succeeded = false,
+                    Errors = new List<string> { "لا يوجد مراكز تجميل" },
+                    PaginationInfo = null
+                };
+
+
+            if (cityId > 0)
+            {
+                beautyCenters = beautyCenters.Where(p => p.City == cityId);
+            }
+
+
+            var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
+
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
             var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
 
