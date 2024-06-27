@@ -31,8 +31,9 @@ namespace Application.Services
                 beautyCenters = beautyCenters.Where(p => p.City == cityId);
             }
 
-
             var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
             if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<BeautyCenterDTO>>
@@ -43,7 +44,7 @@ namespace Application.Services
                     Errors = new List<string> { "لا يوجد مراكز تجميل" },
                     PaginationInfo = null
                 };
-
+            }
 
             if (cityId > 0)
             {
@@ -51,10 +52,7 @@ namespace Application.Services
             }
 
 
-            var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
 
-            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
 
             var response = new CustomResponseDTO<List<BeautyCenterDTO>>
             {
@@ -292,8 +290,8 @@ namespace Application.Services
         }
 
     }
-
 }
+
 
 
 

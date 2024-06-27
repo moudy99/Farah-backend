@@ -119,8 +119,6 @@ namespace Infrastructure.Repositories
                 {
                     FirstName = payload.Name,
 
-                    LastName = payload.FamilyName,
-
                     LastName = payload.FamilyName ?? " ",
 
                     Email = payload.Email,

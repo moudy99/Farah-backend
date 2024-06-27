@@ -43,9 +43,5 @@ namespace Infrastructure.Migrations
                 table: "Services");
         }
 
-            name: "ServiceStatus",
-            table: "Services");
-                }
-
     }
 }

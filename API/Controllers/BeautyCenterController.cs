@@ -24,20 +24,13 @@ namespace Presentation.Controllers
 
         [HttpGet]
 
-        public IActionResult GetAllBeautyCenters(int page = 1, int pageSize = 6, int govId = 0, int cityId = 0)
-        {
-            try
-            {
-                var response = _beautyService.GetAllBeautyCenters(page, pageSize, govId, cityId);
-                if (response.Data == null || !response.Data.Any())
 
         public ActionResult GetAllBeautyCenters(int page = 1, int pageSize = 10,int govId = 0, int cityId =0 )
         {
             try
             {
-                var response = _beautyService.GetAllBeautyCenters(page, pageSize,govId , cityId);
-                if (response.Data.Count > 0)
-
+                var response = _beautyService.GetAllBeautyCenters(page, pageSize, govId, cityId);
+                if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<BeautyCenterDTO>>
                     {
@@ -46,8 +39,9 @@ namespace Presentation.Controllers
                         Succeeded = false,
                         Errors = null
                     });
-                }
-                return Ok(response);
+                }         
+                 return Ok(response);
+
             }
             catch (Exception ex)
             {

@@ -4,43 +4,12 @@ namespace Application.Interfaces
 {
     public interface IBeautyService
     {
-
-
-
-
-       // CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
-
-        CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId);
-
-        CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO);
-
-
-      //  CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId);
-
-
-      //  CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
-
-     //  CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO);
-
-      //  CustomResponseDTO<ServiceForBeautyCenterDTO> AddBeautyService(ServiceForBeautyCenterDTO beautyDTO);
-
-
-        //CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize);
-
-      //  CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO);
-
-
-
-        CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId);
-
-        CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO);
-
-
-        CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
-        CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id);
-        Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO);
-        Task<CustomResponseDTO<AddBeautyCenterDTO>> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id);
-
-        CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id);
+        public CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO);
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId);
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetBeautyCenterByName(string name);
+        public CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id);
+        public Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO);
+        public Task<CustomResponseDTO<AddBeautyCenterDTO>> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id);
+        public CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id);
     }
 }
