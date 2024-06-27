@@ -26,7 +26,6 @@ public class Program
         builder.Services.AddControllers();
 
 
-
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -227,7 +226,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-
+        app.UseMiddleware<RequestTimingMiddleware>();
 
         app.UseEndpoints(endpoints =>
         {
