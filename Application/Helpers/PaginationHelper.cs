@@ -5,10 +5,10 @@ namespace Application.Helpers
     public static class PaginationHelper
     {
 
-        public static PaginatedList<T> Paginate<T>(List<T> items, int page, int pageSize)
+        public static PaginatedList<T> Paginate<T>(IQueryable<T> source, int page, int pageSize)
         {
-            var totalItems = items.Count;
-            var paginatedItems = items.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var totalItems = source.Count();
+            var paginatedItems = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return new PaginatedList<T>(paginatedItems, totalItems, page, pageSize);
         }
 

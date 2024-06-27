@@ -1,15 +1,19 @@
 ﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 namespace Infrastructure.Repositories
 {
@@ -20,26 +24,33 @@ namespace Infrastructure.Repositories
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IUserOTPService _userOTPService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IOptions<GoogleAuthConfig> googleAuthConfig;
 
         public AccountRepository(ApplicationDBContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration, IUserOTPService userOTPService)
+            IConfiguration configuration, IUserOTPService userOTPService, IHttpContextAccessor httpContextAccessor, IOptions<GoogleAuthConfig> googleAuthConfig
+)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
             this._userOTPService = userOTPService;
+            this._httpContextAccessor = httpContextAccessor;
+            this.googleAuthConfig = googleAuthConfig;
         }
+
+
         public async Task<AuthUserDTO> RegisterUserAsync(ApplicationUser user, string password, string role)
         {
             if (await _userManager.FindByEmailAsync(user.Email) is not null)
             {
-                return new AuthUserDTO() { Message = "Email is already registered" };
+                return new AuthUserDTO() { Message = "البريد الإلكتروني مسجل بالفعل" };
             }
 
             if (await _context.Users.AnyAsync(u => u.SSN == user.SSN))
             {
-                return new AuthUserDTO() { Message = "SSN is already registered" };
+                return new AuthUserDTO() { Message = "رقم الهوية مسجل بالفعل" };
             }
 
             user.UserName = GenerateUsernameFromEmail(user.Email);
@@ -71,7 +82,99 @@ namespace Infrastructure.Repositories
                 };
             }
         }
+        public async Task<AuthUserDTO> GoogleSignIn(string model)
+        {
+            Payload payload = new();
 
+            try
+            {
+                payload = await ValidateAsync(model, new ValidationSettings
+                {
+                    Audience = new[] { googleAuthConfig.Value.ClientId }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return new AuthUserDTO
+                {
+                    Succeeded = false,
+                    Message = ex.Message
+                };
+            }
+
+            if (payload == null)
+            {
+                return new AuthUserDTO
+                {
+                    Succeeded = false,
+                    Message = "Google login failed"
+                };
+            }
+
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                Customer customer = new Customer
+                {
+                    FirstName = payload.Name,
+                    LastName = payload.FamilyName,
+                    Email = payload.Email,
+                    ProfileImage = payload.Picture,
+                    GovID = 0,
+                    CityID = 0,
+                    EmailConfirmed = true,
+                    SSN = "0",
+                    YourFavirotePerson = "answer",
+                    UserName = GenerateUsernameFromEmail(payload.Email),
+                };
+
+                try
+                {
+                    var result = await _userManager.CreateAsync(customer);
+                    if (!result.Succeeded)
+                    {
+                        return new AuthUserDTO
+                        {
+                            Succeeded = false,
+                            Message = "Failed to create user"
+                        };
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    string token = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(customer));
+
+                    return new AuthUserDTO
+                    {
+                        Succeeded = true,
+                        Email = payload.Email,
+                        Role = "Customer",
+                        Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
+                        Token = token,
+                    };
+                }
+                catch
+                {
+                    return new AuthUserDTO
+                    {
+                        Succeeded = false,
+                        Message = "An error occurred while creating the user"
+                    };
+                }
+            }
+
+            string existingUserToken = new JwtSecurityTokenHandler().WriteToken(await CreateJwtToken(user));
+
+            return new AuthUserDTO
+            {
+                Succeeded = true,
+                Email = payload.Email,
+                Role = "Customer",
+                Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
+                Token = existingUserToken,
+            };
+        }
 
 
         public async Task<AuthUserDTO> OwnerRegisterAsync(Owner owner, OwnerRegisterDTO registerDto)
@@ -91,14 +194,15 @@ namespace Infrastructure.Repositories
             var isValid = await _userOTPService.VerifyOTPAsync(email, otp);
             if (!isValid)
             {
-                return new AuthUserDTO { Message = "Invalid or expired OTP. Please request a new OTP." };
+                return new AuthUserDTO { Message = "رمز التحقق غير صالح أو منتهي الصلاحية. يرجى طلب رمز تحقق جديد." };
             }
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return new AuthUserDTO { Message = "User not found" };
+                return new AuthUserDTO { Message = "المستخدم غير موجود" };
             }
+
 
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
@@ -172,6 +276,12 @@ namespace Infrastructure.Repositories
                         owner = await _context.Owners.FirstOrDefaultAsync(u => u.Id == user.Id);
                     }
                     var Token = await CreateJwtToken(user);
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(Token);
+
+
+                    SetCookie("Token", tokenString);
+                    SetCookie("Role", checkUserType);
+                    SetCookie("Username", user.FirstName + " " + user.LastName);
 
                     if (!user.EmailConfirmed)
                     {
@@ -199,14 +309,15 @@ namespace Infrastructure.Repositories
                         ExpireTIme = Token.ValidTo,
                         Token = new JwtSecurityTokenHandler().WriteToken(Token),
                         Role = checkUserType,
-                        AccountStatus = owner?.AccountStatus.ToString()
+                        AccountStatus = owner?.AccountStatus.ToString(),
+
                     };
                 }
                 else
                 {
                     return new AuthUserDTO()
                     {
-                        Message = "Login failed: Invalid email or password",
+                        Message = "فشل تسجيل الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة",
                         IsEmailConfirmed = user.EmailConfirmed,
                         Succeeded = false
                     };
@@ -215,7 +326,7 @@ namespace Infrastructure.Repositories
 
             return new AuthUserDTO()
             {
-                Message = "Login failed: User not found",
+                Message = "فشل تسجيل الدخول: المستخدم غير موجود",
                 IsEmailConfirmed = false,
                 Succeeded = false
             };
@@ -242,33 +353,37 @@ namespace Infrastructure.Repositories
 
 
         }
-
         public async Task<IdentityResult> ChangePasswordAsync(string userEmail, ChangePasswordDTO changePasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            //var user = await _userManager.FindByEmailAsync(userEmail);
+
+            // todo remove it .. it just for test  Cause i Change the main from the SQL 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
             if (user == null)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+                return IdentityResult.Failed(new IdentityError { Description = "المستخدم غير موجود" });
             }
 
             if (user.YourFavirotePerson != changePasswordModel.SecurityQuestionAnswer)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "Security question answer is incorrect" });
+                return IdentityResult.Failed(new IdentityError { Description = "إجابة سؤال الأمان غير صحيحة" });
             }
 
             var passwordVerificationResult = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordModel.OldPassword);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "Old password is incorrect" });
+                return IdentityResult.Failed(new IdentityError { Description = "كلمة المرور القديمة غير صحيحة" });
             }
 
             if (changePasswordModel.OldPassword == changePasswordModel.NewPassword)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "New password cannot be the same as the old password" });
+                return IdentityResult.Failed(new IdentityError { Description = "لا يمكن أن تكون كلمة المرور الجديدة مطابقة للكلمة القديمة" });
             }
 
             return await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword);
         }
+
 
         private string GenerateUsernameFromEmail(string email)
         {
@@ -309,5 +424,44 @@ namespace Infrastructure.Repositories
 
             return jwtSecurityToken;
         }
+
+        private void SetCookie(string key, string value)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(key, value, cookieOptions);
+        }
+
+        /// Get Profile info 
+        public async Task<Owner> GetOwnerInfo(string Email)
+        {
+            Owner owner = _context.Owners.FirstOrDefault(email => email.Email == Email);
+            if (owner == null)
+            {
+                return null;
+            }
+            return owner;
+        }
+
+        public async Task<bool> UpdateOwnerInfo(Owner owner)
+        {
+            try
+            {
+                _context.Owners.Update(owner);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
     }
 }

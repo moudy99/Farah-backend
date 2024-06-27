@@ -11,7 +11,8 @@ namespace Infrastructure
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
         }
-
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Owner> Owners { get; set; }
@@ -44,6 +45,19 @@ namespace Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
+
+            modelBuilder.Entity<BeautyCenter>()
+                        .HasMany(bc => bc.ServicesForBeautyCenter)
+                        .WithOne(s => s.BeautyCenter)
+                        .HasForeignKey(s => s.BeautyCenterId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BeautyCenter>()
+                    .HasMany(bc => bc.ImagesBeautyCenter)
+                    .WithOne(i => i.beautyCenter)
+                    .HasForeignKey(i => i.BeautyCenterId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Car>()
                         .HasMany(c => c.Pictures)
                         .WithOne(p => p.Car)
@@ -62,8 +76,11 @@ namespace Infrastructure
                 // configuration for Customer can go here
             });
 
-
-
+            modelBuilder.Entity<Photography>()
+                .HasMany(p => p.Images)
+                .WithOne(i => i.Photographer)
+                .HasForeignKey(i => i.PhotographerId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BeautyCenter>()
            .HasMany(b => b.ServicesForBeautyCenter)

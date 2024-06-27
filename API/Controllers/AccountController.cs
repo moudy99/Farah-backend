@@ -15,12 +15,47 @@ namespace Presentation.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration config;
         private readonly IAccountService _accountService;
+        private readonly IGoogleAuthService googleAuthService;
 
-        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService)
+        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, IGoogleAuthService googleAuthService)
         {
             userManager = _userManager;
             config = _config;
             _accountService = accountService;
+            this.googleAuthService = googleAuthService;
+        }
+
+        [HttpGet("OwnerServices")]
+        public IActionResult GetOwnerServices()
+        {
+            string ownerID = User.FindFirstValue("uid");
+
+            try
+            {
+                var ownerServices = _accountService.GetOwnerServices(ownerID);
+                return Ok(new CustomResponseDTO<AllServicesDTO>()
+                {
+                    Data = ownerServices,
+                    Message = "Services retrieved Successfully",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null,
+
+                });
+            }
+            catch
+            (Exception ex)
+            {
+                return BadRequest(new CustomResponseDTO<AllServicesDTO>()
+                {
+                    Data = null,
+                    Message = ex.Message,
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message },
+                    PaginationInfo = null,
+
+                });
+            }
         }
 
         [HttpPost("ownerRegister")]
@@ -80,7 +115,6 @@ namespace Presentation.Controllers
                 return BadRequest(result);
             }
         }
-
         [HttpPost("forgetPassword")]
         public async Task<ActionResult> ForgetPassword(string Email)
         {
@@ -162,6 +196,84 @@ namespace Presentation.Controllers
                 return BadRequest(new { message = response.Message, errors = response.Errors });
             }
         }
+
+
+        [HttpGet("getOwnerInfo")]
+        public async Task<ActionResult> GetOwnerProfileInfo()
+        {
+            var Email = User.FindFirstValue(ClaimTypes.Email);
+            if (Email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
+
+            var response = await _accountService.GetOwnerInfo(Email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpHead("getOwnerInfo")]
+
+        public async Task<IActionResult> HeadOwnerProfileInfo()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest(new { message = "البريد الإلكتروني غير متوفر ." });
+            }
+
+            var response = await _accountService.GetOwnerInfo(email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(new { message = response.Message });
+            }
+
+            Response.Headers.Add("X-Owner-Info", "Available");
+            Response.Headers.Add("X-Owner-Info-Status", "Complete");
+
+            return NoContent();
+        }
+
+
+        [HttpPut("updateOwnerInfo")]
+        public async Task<ActionResult> UpdateOwnerInfo([FromForm] OwnerAccountInfoDTO updateDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+            {
+                return BadRequest("لم يتم العثور على البريد الإلكتروني للمستخدم.");
+            }
+
+            var response = await _accountService.UpdateOwnerInfo(updateDto, email);
+            if (!response.Succeeded)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPost("googleLogin")]
+        public async Task<ActionResult> GoogleSignIn([FromBody] GoogleTokenDTO googleTokenDto)
+        {
+            var result = await googleAuthService.GoogleSignIn(googleTokenDto.googleToken);
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+
+        public class GoogleTokenDTO
+        {
+            public string googleToken { get; set; }
+        }
+
 
     }
 }

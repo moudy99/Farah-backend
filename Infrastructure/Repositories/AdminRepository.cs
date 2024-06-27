@@ -1,5 +1,4 @@
-﻿using Application.DTOS;
-using Application.Helpers;
+﻿using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
@@ -15,20 +14,33 @@ namespace Infrastructure.Repositories
         {
             this.context = context;
         }
-        public List<Owner> GetAllOwners()
+        public IQueryable<Owner> GetAllOwners()
         {
 
             return context.Owners
-                .Include(o => o.Services)
-                    .ToList();
+                .Include(o => o.Services);
+
 
         }
-        public Owner GetOwnerById(string id) 
+        public IQueryable<Customer> GetAllCustomers(bool? isBlocked)
+        {
+            var query = context.Customers.AsQueryable();
+
+
+
+            if (isBlocked.HasValue)
+            {
+                query = query.Where(o => o.IsBlocked == isBlocked.Value);
+            }
+
+            return query;
+        }
+        public Owner GetOwnerById(string id)
         {
             return context.Owners
                 .Include(o => o.Services)
-                .FirstOrDefault(o=> o.Id == id);
-            
+                .FirstOrDefault(o => o.Id == id);
+
         }
         public List<Service> GetAllServices()
         {
@@ -59,7 +71,7 @@ namespace Infrastructure.Repositories
             return context.Services
                 .FirstOrDefault(s => s.ID == id);
         }
-        public List<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
+        public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
         {
             var query = context.Owners.AsQueryable();
 
@@ -73,7 +85,7 @@ namespace Infrastructure.Repositories
                 query = query.Where(o => o.IsBlocked == isBlocked.Value);
             }
 
-            return query.ToList();
+            return query;
         }
 
 
@@ -82,6 +94,12 @@ namespace Infrastructure.Repositories
             return context.Users
                            .Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name))
                            .ToList();
+        }
+
+        public Customer GetCustomerById(string id)
+        {
+            return context.Customers
+                .FirstOrDefault(c => c.Id == id);
         }
     }
 }

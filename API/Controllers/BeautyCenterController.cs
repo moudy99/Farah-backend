@@ -23,11 +23,11 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAllBeautyCenters(int page = 1, int pageSize = 10)
+        public ActionResult GetAllBeautyCenters(int page = 1, int pageSize = 10,int govId = 0, int cityId =0 )
         {
             try
             {
-                var response = _beautyService.GetAllBeautyCenters(page, pageSize);
+                var response = _beautyService.GetAllBeautyCenters(page, pageSize,govId , cityId);
                 if (response.Data.Count > 0)
                 {
                     return Ok(response);
@@ -100,6 +100,26 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpPost("AddBeautyService")]
+        public IActionResult AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTO)
+        {
+            try
+            {
+                var response = _beautyService.AddBeautyService(beautyDTO);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "ايروووووووووووووور",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message, ex.StackTrace }
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
 
         [HttpPost]
         [Authorize]
@@ -124,6 +144,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
 
 
@@ -154,7 +175,7 @@ namespace Presentation.Controllers
 
 
         [HttpDelete]
-        [Authorize]
+        //[Authorize]
         public ActionResult DeleteBeautyCenterById(int id)
         {
             try

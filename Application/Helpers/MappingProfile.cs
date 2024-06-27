@@ -8,20 +8,10 @@ namespace Application.Helpers
     {
         public MappingProfile()
         {
-            CreateMap<Customer, CustomerRegisterDTO>();
 
-            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
-            .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
-            .ForMember(dest => dest.Images, opt => opt.Ignore())
-            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter
-                .Select(s => new ServiceForBeautyCenterDTO
-                {
-                    Name = s.Name,
-                    Description = s.Description,
-                    Price = (decimal)s.Price,
-                    Appointment = (DateTime)s.Appointment
-                }).ToList()))
-            .ReverseMap();
+
+            CreateMap<Customer, CustomerRegisterDTO>();
+            CreateMap<Customer, CustomerDTO>().ReverseMap();
 
             CreateMap<BeautyCenter, BeautyCenterDTO>()
                 .ForMember(dest => dest.BeautyCenterId, opt => opt.MapFrom(src => src.ID))
@@ -29,21 +19,33 @@ namespace Application.Helpers
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter
                     .Select(s => new ServiceForBeautyCenterDTO
                     {
+                        BeautyCenterId = s.BeautyCenterId,
                         Name = s.Name,
                         Description = s.Description,
                         Price = (decimal)s.Price,
-                        Appointment = (DateTime)s.Appointment
-                    }).ToList()))
+                        Appointment = s.Appointment
+                    })))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
                 .ReverseMap();
 
-
+            CreateMap<BeautyCenter, AddBeautyCenterDTO>()
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImagesBeautyCenter.Select(p => p.ImageUrl).ToList()))
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                //.ForMember(dest => dest.Services, opt => opt.MapFrom(src => new ServiceForBeautyCenterDTO
+                //{
+                //    Name = src.ServicesForBeautyCenter.FirstOrDefault().Name,
+                //    Description = src.ServicesForBeautyCenter.FirstOrDefault().Description,
+                //    Price = src.ServicesForBeautyCenter.FirstOrDefault().Price ?? 0,
+                //    Appointment = src.ServicesForBeautyCenter.FirstOrDefault().Appointment ?? DateTime.MinValue
+                //}))
+                .ReverseMap();
 
             CreateMap<ServiceForBeautyCenter, ServiceForBeautyCenterDTO>().ReverseMap();
 
+
             CreateMap<ShopDressesDTo, ShopDresses>()
            .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ShopDressesID))
-           .ForMember(dest => dest. Dresses, opt => opt.MapFrom(src => src.Dresses));
+           .ForMember(dest => dest.Dresses, opt => opt.MapFrom(src => src.Dresses));
 
             CreateMap<ShopDresses, ShopDressesDTo>()
                 .ForMember(dest => dest.ShopDressesID, opt => opt.MapFrom(src => src.ID))
@@ -109,7 +111,7 @@ namespace Application.Helpers
                 .ForMember(dest => dest.CarID, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
                 .ForMember(dest => dest.Pictures, opt => opt.Ignore());
-                
+
 
             // Map CarDTO to Car, converting PictureUrls to CarPicture entities
             CreateMap<CarDTO, Car>()
@@ -117,7 +119,7 @@ namespace Application.Helpers
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new CarPicture { Url = url }).ToList()));
 
 
-           /////////////////////////////////////////////////// Add Car ////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////// Add Car ////////////////////////////////////////////////////////
 
             CreateMap<Car, AddCarDTO>()
                .ForMember(dest => dest.PictureUrls, opt => opt.MapFrom(src => src.Pictures.Select(p => p.Url).ToList()))
@@ -160,6 +162,18 @@ namespace Application.Helpers
                 .ForMember(dest => dest.Features, opt => opt.MapFrom(src => src.Features.Select(f => new HallFeature { Feature = f }).ToList()))
                 .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.PictureUrls.Select(url => new HallPicture { Url = url }).ToList()));
 
+            ////////// Get Users Info
+            CreateMap<Owner, OwnerAccountInfoDTO>();
+            ////////// Set Users Info
+            CreateMap<OwnerAccountInfoDTO, Owner>()
+                    .ForMember(dest => dest.Email, opt => opt.Ignore())
+                    .ForMember(dest => dest.SSN, opt => opt.Ignore())
+                    .ForMember(dest => dest.FirstName, opt => opt.Condition(src => src.FirstName != null))
+                    .ForMember(dest => dest.LastName, opt => opt.Condition(src => src.LastName != null))
+                    .ForMember(dest => dest.GovID, opt => opt.Condition(src => src.GovID != null))
+                    .ForMember(dest => dest.CityID, opt => opt.Condition(src => src.CityID != null))
+                    .ForMember(dest => dest.YourFavirotePerson, opt => opt.Condition(src => src.YourFavirotePerson != null))
+                    .ForMember(dest => dest.ProfileImage, opt => opt.Condition(src => src.ProfileImage != null));
         }
     }
 }

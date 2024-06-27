@@ -11,12 +11,46 @@ namespace Application.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
 
-        public AccountService(IAccountRepository accountRepository, IMapper mapper)
+        private readonly IBeautyRepository _beautyCenterRepository;
+        private readonly IHallRepository _hallRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly IPhotographyRepository _photographyRepository;
+        private readonly IShopDressesRepository _shopDressesRepository;
+
+        public AccountService(IAccountRepository accountRepository, IMapper mapper,
+            IBeautyRepository beautyCenterRepository,
+            IHallRepository hallRepository,
+            ICarRepository carRepository,
+            IPhotographyRepository photographyRepository,
+            IShopDressesRepository shopDressesRepository)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
+            _beautyCenterRepository = beautyCenterRepository;
+            _hallRepository = hallRepository;
+            _carRepository = carRepository;
+            _photographyRepository = photographyRepository;
+            _shopDressesRepository = shopDressesRepository;
         }
+        public AllServicesDTO GetOwnerServices(string ownerID)
+        {
+            List<BeautyCenter> beauty = _beautyCenterRepository.GetOwnerServices(ownerID);
+            List<Hall> halls = _hallRepository.GetOwnerServices(ownerID);
+            List<Car> cars = _carRepository.GetOwnerServices(ownerID);
+            List<Photography> photographies = _photographyRepository.GetOwnerServices(ownerID);
+            List<ShopDresses> shopDresses = _shopDressesRepository.GetOwnerServices(ownerID);
 
+            var compositeDto = new AllServicesDTO
+            {
+                BeautyCenters = _mapper.Map<List<BeautyCenterDTO>>(beauty),
+                Halls = _mapper.Map<List<HallDTO>>(halls),
+                Cars = _mapper.Map<List<CarDTO>>(cars),
+                Photographys = _mapper.Map<List<PhotographyDTO>>(photographies),
+                ShopDresses = _mapper.Map<List<ShopDressesDTo>>(shopDresses)
+            };
+            return compositeDto;
+
+        }
         public async Task<CustomResponseDTO<AuthUserDTO>> OwnerRegisterAsync(OwnerRegisterDTO registerModel)
         {
             var owner = _mapper.Map<Owner>(registerModel);
@@ -101,7 +135,7 @@ namespace Application.Services
         public async Task<CustomResponseDTO<string>> ForgetPassword(string Email)
         {
             var result = await _accountRepository.ForgetPassword(Email);
-            if (result != null)
+            if (result)
             {
                 return new CustomResponseDTO<string>()
                 {
@@ -128,6 +162,74 @@ namespace Application.Services
                 Errors = result.Succeeded ? null : result.Errors.Select(e => e.Description).ToList()
             };
         }
+
+
+        public async Task<CustomResponseDTO<OwnerAccountInfoDTO>> GetOwnerInfo(string email)
+        {
+            var result = await _accountRepository.GetOwnerInfo(email);
+            if (result == null)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>()
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "حدث خطأ أثناء استرداد معلومات المالك. يرجى التحقق من البريد الإلكتروني والمحاولة مرة أخرى."
+                };
+            }
+
+            var response = _mapper.Map<OwnerAccountInfoDTO>(result);
+            return new CustomResponseDTO<OwnerAccountInfoDTO>()
+            {
+                Data = response,
+                Succeeded = true,
+                Message = "تم استرداد معلومات المالك بنجاح."
+            };
+        }
+
+        public async Task<CustomResponseDTO<OwnerAccountInfoDTO>> UpdateOwnerInfo(OwnerAccountInfoDTO infoDTO, string Email)
+        {
+
+            var owner = await _accountRepository.GetOwnerInfo(Email);
+
+            if (owner == null)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "لم يتم العثور على المالك بهذا البريد الإلكتروني."
+                };
+            }
+
+            _mapper.Map(infoDTO, owner);
+
+            string newPrfileImag;
+            if (infoDTO.SetNewProfileImage != null)
+            {
+                newPrfileImag = await ImageSavingHelper.SaveOneImageAsync(infoDTO.SetNewProfileImage, "OwnersImages");
+                owner.ProfileImage = newPrfileImag;
+            }
+            var result = await _accountRepository.UpdateOwnerInfo(owner);
+
+            if (!result)
+            {
+                return new CustomResponseDTO<OwnerAccountInfoDTO>
+                {
+                    Data = null,
+                    Succeeded = false,
+                    Message = "فشل تحديث معلومات المالك."
+                };
+            }
+            var ReturnDTO = _mapper.Map<OwnerAccountInfoDTO>(owner);
+            return new CustomResponseDTO<OwnerAccountInfoDTO>
+            {
+                Data = ReturnDTO,
+                Succeeded = true,
+                Message = "تم تحديث معلومات المالك بنجاح."
+            };
+        }
+
+
     }
 
 

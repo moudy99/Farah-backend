@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -12,12 +13,22 @@ namespace Infrastructure.Repositories
         {
             context = _context;
         }
-        public List<ShopDresses> GetAllShopDresses()
+        public IQueryable<ShopDresses> GetAllShopDresses()
         {
             return context.ShopDresses
                           .Include(b => b.Dresses)
-                          .ToList();
+                          .Where(b => b.ServiceStatus == ServiceStatus.Accepted);
         }
+
+        public List<ShopDresses> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .ShopDresses
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Dresses)
+                    .ToList();
+        }
+
         public List<ShopDresses>? GetShopDressesByName(string name)
         {
             return context.ShopDresses

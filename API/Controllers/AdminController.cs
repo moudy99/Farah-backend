@@ -1,15 +1,8 @@
 ﻿using Application.DTOS;
-using Application.Helpers;
 using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
-using AutoMapper.Internal;
-using Azure;
-using Core.Entities;
 using Core.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Presentation.Controllersa
 {
@@ -27,7 +20,7 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("Services")]
-        public ActionResult GetAllServices() 
+        public ActionResult GetAllServices()
         {
             AllServicesDTO services = AdminService.GetAllServices();
 
@@ -35,8 +28,8 @@ namespace Presentation.Controllersa
             return Ok(services);
         }
 
-        [HttpGet("ServiceType")]
-        public ActionResult GetServiceTypeByID(int id) 
+        [HttpGet("ServiceById")]
+        public ActionResult GetServiceTypeByID(int id)
         {
             try
             {
@@ -61,7 +54,7 @@ namespace Presentation.Controllersa
                     return NotFound(new CustomResponseDTO<List<OwnerDTO>>
                     {
                         Data = null,
-                        Message = "No owners found with the given criteria",
+                        Message = "حدث خطأ",
                         Succeeded = false,
                         Errors = null
                     });
@@ -74,7 +67,39 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error",
+                    Message = "حدث خطأ",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpGet("Customers")]
+        public ActionResult GetAllCustomers(int page = 1, int pageSize = 6, bool? isBlocked = null)
+        {
+            try
+            {
+                var response = AdminService.GetAllCustomers(isBlocked, page, pageSize);
+                if (response.Data == null)
+                {
+                    return NotFound(new CustomResponseDTO<List<CustomerDTO>>
+                    {
+                        Data = null,
+                        Message = "تعذر العثور علي مستخدمين",
+                        Succeeded = false,
+                        Errors = null
+                    });
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -119,7 +144,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while accepting the owner",
+                    Message = "حدث خطأ اثناء قبل المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -140,7 +165,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while declining the owner",
+                    Message = "حدث خطأ اثناء رفض المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -161,7 +186,7 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while blocking the owner",
+                    Message = "حدث خطأ اثناء حظر المالك",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
@@ -182,12 +207,98 @@ namespace Presentation.Controllersa
                 var errorResponse = new CustomResponseDTO<List<string>>
                 {
                     Data = null,
-                    Message = "Error while unblocking the owner",
+                    Message = "حدث خطأ اثناء فك الحظر",
                     Succeeded = false,
                     Errors = new List<string> { ex.Message }
                 };
                 return BadRequest(errorResponse);
             }
+        }
+
+
+        [HttpPut("BlockCustomer")]
+        public IActionResult BlockCustomer(string customerId)
+        {
+            try
+            {
+                var response = AdminService.BlockCustomer(customerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء حظر العميل",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+
+        [HttpPut("UnblockCustomer")]
+        public IActionResult UnblockCustomer(string customerId)
+        {
+            try
+            {
+                var response = AdminService.UnblockCustomer(customerId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء فك الحظر عن العميل",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+        }
+        [HttpPut("AcceptService")]
+        public ActionResult AcceptService(int id)
+        {
+            try
+            {
+                var response = AdminService.AcceptService(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while accepting the service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+
+        }
+
+        [HttpPut("DeclineService")]
+        public ActionResult DeclineService(int id)
+        {
+            try
+            {
+                var response = AdminService.DeclineService(id);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "Error while declining the service",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(errorResponse);
+            }
+
         }
     }
 }

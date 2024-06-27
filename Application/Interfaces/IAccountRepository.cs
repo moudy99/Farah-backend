@@ -12,7 +12,12 @@ namespace Application.Interfaces
         public Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDTO changePasswordModel);
         public Task<AuthUserDTO> ConfirmEmailAsync(string email, string otp);
         public Task<bool> SendNewOTPAsync(string email);
-
         public Task<bool> ForgetPassword(string Email);
+
+        public Task<Owner> GetOwnerInfo(string Email);
+        public Task<bool> UpdateOwnerInfo(Owner owner);
+        public Task<AuthUserDTO> GoogleSignIn(string model);
+
+
     }
 }

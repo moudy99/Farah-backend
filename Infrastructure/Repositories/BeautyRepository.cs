@@ -1,6 +1,9 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
+
 
 namespace Infrastructure.Repositories
 {
@@ -13,13 +16,15 @@ namespace Infrastructure.Repositories
             context = _context;
         }
 
-        public List<BeautyCenter> GetAllBeautyCenters()
+        public IQueryable<BeautyCenter> GetAllBeautyCenters()
         {
             return context.BeautyCenters
                           .Include(b => b.ImagesBeautyCenter)
                           .Include(b => b.ServicesForBeautyCenter)
                           .Include(b => b.Reviews)
-                          .ToList();
+                          .Where(b=>b.ServiceStatus == ServiceStatus.Accepted) ;
+                         
+            
         }
 
 
@@ -41,6 +46,20 @@ namespace Infrastructure.Repositories
                 .Include(b => b.ServicesForBeautyCenter)
                 .Include(b => b.Reviews)
                 .SingleOrDefault(b => b.ID == id);
+        }
+
+        public List<BeautyCenter> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .BeautyCenters
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Reviews)
+                    .ToList();
+        }
+
+        public void InsertService(ServiceForBeautyCenter service)
+        {
+            context.Add(service);
         }
     }
 }

@@ -4,12 +4,6 @@ using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
 using Core.Enums;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -21,13 +15,24 @@ namespace Application.Services
         private readonly ICarRepository _carRepository;
         private readonly IPhotographyRepository _photographyRepository;
         private readonly IShopDressesRepository _shopDressesRepository;
+
+        private readonly IRepository<Service> _serviceRepository;
+
+        private readonly ICustomerRepository _customerRepository;
+
         private readonly IMapper Mapper;
 
         public AdminService(IAdminRepository adminRepository, IMapper _mapper, IBeautyRepository beautyCenterRepository,
         IHallRepository hallRepository,
         ICarRepository carRepository,
         IPhotographyRepository photographyRepository,
-        IShopDressesRepository shopDressesRepository)
+
+       
+        IRepository<Service> serviceRepository,
+        
+
+        IShopDressesRepository shopDressesRepository, ICustomerRepository customerRepository)
+
         {
             _beautyCenterRepository = beautyCenterRepository;
             _hallRepository = hallRepository;
@@ -35,7 +40,9 @@ namespace Application.Services
             _photographyRepository = photographyRepository;
             _shopDressesRepository = shopDressesRepository;
             AdminRepository = adminRepository;
+            _serviceRepository = serviceRepository;
             Mapper = _mapper;
+            _customerRepository = customerRepository;
         }
 
 
@@ -62,8 +69,44 @@ namespace Application.Services
 
             return compositeDto;
         }
+        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
+        {
+            IQueryable<Owner> allOwners = AdminRepository.GetAllOwners();
+            var paginatedList = PaginationHelper.Paginate(allOwners, page, pageSize);
 
+            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(paginatedList.Items);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
+            var response = new CustomResponseDTO<List<OwnerDTO>>
+            {
+                Data = owners,
+                Message = "تم",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
+        }
+        public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(bool? isBlocked, int page, int pageSize)
+        {
+            IQueryable<Customer> allCustomers = AdminRepository.GetAllCustomers(isBlocked);
+            var paginatedList = PaginationHelper.Paginate(allCustomers, page, pageSize);
+
+            List<CustomerDTO> customers = Mapper.Map<List<CustomerDTO>>(paginatedList.Items);
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            var response = new CustomResponseDTO<List<CustomerDTO>>
+            {
+                Data = customers,
+                Message = "تم",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+
+            return response;
+        }
         public CustomResponseDTO<object> GetServiceTypeByID(int id)
         {
             Service Service = AdminRepository.GetServiceById(id);
@@ -74,17 +117,17 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<BeautyCenterDTO>(beautyCenter),
-                        Message = "Beauty Center",
+                        Message = "بيوتي سنتر",
                         Succeeded = true,
                         Errors = null,
                     };
-                        
+
                     break;
                 case Hall hall:
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<HallDTO>(hall),
-                        Message = "Hall",
+                        Message = "قاعه",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -93,7 +136,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<CarDTO>(car),
-                        Message = "Car",
+                        Message = "عربيه",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -102,7 +145,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<PhotographyDTO>(photography),
-                        Message = "Beauty Center",
+                        Message = "مصور",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -111,7 +154,7 @@ namespace Application.Services
                     return new CustomResponseDTO<object>()
                     {
                         Data = Mapper.Map<ShopDressesDTo>(shopDresses),
-                        Message = "ShopDresses",
+                        Message = "فساتين",
                         Succeeded = true,
                         Errors = null,
                     };
@@ -120,7 +163,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>()
             {
                 Data = null,
-                Message = "Service Not Found",
+                Message = "حدث خطأ",
                 Succeeded = false,
                 Errors = null,
             };
@@ -135,9 +178,9 @@ namespace Application.Services
                 return new CustomResponseDTO<OwnerDTO>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -146,7 +189,7 @@ namespace Application.Services
             return new CustomResponseDTO<OwnerDTO>
             {
                 Data = ownerDTO,
-                Message = "Success",
+                Message = "تم",
                 Succeeded = true,
                 Errors = null
             };
@@ -157,25 +200,7 @@ namespace Application.Services
             AdminRepository.Delete(id);
         }
 
-        public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
-        {
-            List<Owner> allOwners = AdminRepository.GetAllOwners();
-            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(allOwners);
 
-            var paginatedList = PaginationHelper.Paginate(owners, page, pageSize);
-            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-
-            var response = new CustomResponseDTO<List<OwnerDTO>>
-            {
-                Data = paginatedList.Items,
-                Message = "Success",
-                Succeeded = true,
-                Errors = null,
-                PaginationInfo = paginationInfo
-            };
-
-            return response;
-        }
         public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name)
         {
             var users = AdminRepository.SearchUsersByName(name);
@@ -184,9 +209,9 @@ namespace Application.Services
                 return new CustomResponseDTO<List<ApplicationUserDTO>>
                 {
                     Data = null,
-                    Message = "No users found",
+                    Message = "لا يوجد مستخدمين",
                     Succeeded = false,
-                    Errors = new List<string> { "No users match the search criteria" }
+                    Errors = new List<string> { "لا يوجد مستخدمين" }
                 };
             }
 
@@ -201,27 +226,27 @@ namespace Application.Services
         }
         public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
         {
-            List<Owner> filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
+            var filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
 
-            if (!filteredOwners.Any())
+            var paginatedList = PaginationHelper.Paginate(filteredOwners, page, pageSize);
+            if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<OwnerDTO>>
                 {
                     Data = null,
-                    Message = "No owners found with the given criteria",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
                     Errors = null
                 };
             }
 
-            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(filteredOwners);
-            var paginatedList = PaginationHelper.Paginate(owners, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
+            List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(paginatedList.Items);
             var response = new CustomResponseDTO<List<OwnerDTO>>
             {
-                Data = paginatedList.Items,
-                Message = "Success",
+                Data = owners,
+                Message = "تم",
                 Succeeded = true,
                 Errors = null,
                 PaginationInfo = paginationInfo
@@ -254,9 +279,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "المالك غير موجود",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "المالك غير موجود" }
                 };
             }
 
@@ -265,7 +290,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.UserName,
-                    Message = "Owner is already blocked",
+                    Message = "المالك محظور بالفعل",
                     Succeeded = false,
                     Errors = null
                 };
@@ -278,11 +303,12 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.UserName,
-                Message = "Owner is blocked",
+                Message = "تم حظر المالك بنجاح",
                 Succeeded = true,
                 Errors = null
             };
         }
+
 
         public CustomResponseDTO<object> UnblockOwner(string ownerId)
         {
@@ -293,9 +319,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "المالك غير موجود",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "المالك غير موجود" }
                 };
             }
 
@@ -304,7 +330,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.UserName,
-                    Message = "Owner is not blocked",
+                    Message = "المالك غير محظور بالفعل",
                     Succeeded = false,
                     Errors = null
                 };
@@ -317,7 +343,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.UserName,
-                Message = "Owner is unblocked",
+                Message = "تم رفع الحظر عن المالك بنجاح",
                 Succeeded = true,
                 Errors = null
             };
@@ -332,9 +358,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -343,7 +369,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.AccountStatus,
-                    Message = "Owner is already accepted",
+                    Message = "المالك تم قبوله مسبقا",
                     Succeeded = false,
                     Errors = null
                 };
@@ -356,7 +382,7 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.AccountStatus,
-                Message = "Owner accepted",
+                Message = "تم قبول المالك",
                 Succeeded = true,
                 Errors = null
             };
@@ -371,9 +397,9 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = null,
-                    Message = "Owner not found",
+                    Message = "تعذر العثور علي المالك",
                     Succeeded = false,
-                    Errors = new List<string> { "Owner not found" }
+                    Errors = new List<string> { "تعذر العثور علي المالك" }
                 };
             }
 
@@ -382,7 +408,7 @@ namespace Application.Services
                 return new CustomResponseDTO<object>
                 {
                     Data = owner.AccountStatus,
-                    Message = "Owner is already declined",
+                    Message = "المالك تم رفضه مسبقا",
                     Succeeded = false,
                     Errors = null
                 };
@@ -395,32 +421,167 @@ namespace Application.Services
             return new CustomResponseDTO<object>
             {
                 Data = owner.AccountStatus,
-                Message = "Owner declined",
+                Message = "تم رفض المالك",
                 Succeeded = true,
                 Errors = null
             };
         }
 
-        public List<ApplicationUser> GetAll()
+
+        public CustomResponseDTO<object> BlockCustomer(string customerId)
         {
-            throw new NotImplementedException();
+            Customer customer = _customerRepository.GetCustomerById(customerId);
+
+            if (customer == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "العميل غير موجود",
+                    Succeeded = false,
+                    Errors = new List<string> { "العميل غير موجود" }
+                };
+            }
+
+            if (customer.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = customer.UserName,
+                    Message = "العميل محظور بالفعل",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            customer.IsBlocked = true;
+            _customerRepository.Update(customer);
+            _customerRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = customer.UserName,
+                Message = "تم حظر العميل بنجاح",
+                Succeeded = true,
+                Errors = null
+            };
         }
 
-        public void Insert(Owner obj)
+        public CustomResponseDTO<object> UnblockCustomer(string customerId)
         {
-            throw new NotImplementedException();
+            Customer customer = _customerRepository.GetCustomerById(customerId);
+
+            if (customer == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "العميل غير موجود",
+                    Succeeded = false,
+                    Errors = new List<string> { "العميل غير موجود" }
+                };
+            }
+
+            if (!customer.IsBlocked)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = customer.UserName,
+                    Message = "العميل غير محظور بالفعل",
+                    Succeeded = false,
+                    Errors = null
+                };
+            }
+
+            customer.IsBlocked = false;
+            _customerRepository.Update(customer);
+            _customerRepository.Save();
+
+            return new CustomResponseDTO<object>
+            {
+                Data = customer.UserName,
+                Message = "تم رفع الحظر عن العميل بنجاح",
+                Succeeded = true,
+                Errors = null
+            };
         }
 
-        List<Owner> Iservices<Owner>.GetAll()
+        public CustomResponseDTO<object> AcceptService(int id)
         {
-            throw new NotImplementedException();
+            Service service = _serviceRepository.GetById(id);
+            if (service == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Service not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Service not found" }
+                };
+
+            }
+            if(service.ServiceStatus== ServiceStatus.Accepted)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = service.ServiceStatus,
+                    Message = " service is already accepted",
+                    Succeeded = false,
+                    Errors = null
+                };
+
+            }
+            service.ServiceStatus = ServiceStatus.Accepted;
+            _serviceRepository.Update(service);
+            AdminRepository.Save();
+            return new CustomResponseDTO<object>
+            {
+                Data = service.ServiceStatus,
+                Message = "Service accepted",
+                Succeeded = true,
+                Errors = null
+            };
+
         }
 
-        Owner Iservices<Owner>.GetById(int id)
+        public CustomResponseDTO<object> DeclineService(int id)
         {
-            throw new NotImplementedException();
-        }
 
+            Service service = _serviceRepository.GetById(id);
+            if (service == null)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = null,
+                    Message = "Service not found",
+                    Succeeded = false,
+                    Errors = new List<string> { "Service not found" }
+                };
+
+            }
+            if (service.ServiceStatus == ServiceStatus.Decline)
+            {
+                return new CustomResponseDTO<object>
+                {
+                    Data = service.ServiceStatus,
+                    Message = " service is already declined",
+                    Succeeded = false,
+                    Errors = null
+                };
+
+            }
+            service.ServiceStatus = ServiceStatus.Decline;
+            _serviceRepository.Update(service);
+            AdminRepository.Save();
+            return new CustomResponseDTO<object>
+            {
+                Data = service.ServiceStatus,
+                Message = "Service declined",
+                Succeeded = true,
+                Errors = null
+            };
+
+        }
 
     }
 }

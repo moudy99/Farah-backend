@@ -1,11 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -18,18 +14,27 @@ namespace Infrastructure.Repositories
             this.context = context;
         }
 
-        public List<Car> GetAll()
+        public IQueryable<Car> GetAll()
         {
             return context.Cars
                 .Where(c => c.IsDeleted == false)
                 .Include(c => c.Pictures)
-                .ToList();
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted); 
         }
         public Car GetById(int id)
         {
             return context.Cars
                 .Include(c => c.Pictures)
                 .FirstOrDefault(c => c.ID == id);
+        }
+
+        public List<Car> GetOwnerServices(string ownerID)
+        {
+            return context
+                .Cars
+                .Where(c => c.OwnerID == ownerID)
+                .Include(c => c.Pictures)
+                .Where(c => c.IsDeleted == false).ToList();
         }
     }
 }

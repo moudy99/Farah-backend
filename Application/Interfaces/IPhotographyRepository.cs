@@ -4,5 +4,7 @@ namespace Application.Interfaces
 {
     public interface IPhotographyRepository : IRepository<Photography>
     {
+        public List<Photography> GetOwnerServices(string ownerID);
+        public new IQueryable<Photography> GetAll();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Core.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -13,11 +14,11 @@ namespace Infrastructure.Repositories
             this.context = context;
         }
 
-        public List<Photography> GetAll()
+        public IQueryable<Photography> GetAll()
         {
             return context.Photographies
                 .Include(c => c.Images)
-                .ToList();
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
         }
         public Photography GetById(int id)
         {
@@ -26,7 +27,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(c => c.ID == id);
         }
 
-
-
+        public List<Photography> GetOwnerServices(string ownerID)
+        {
+            return context
+                    .Photographies
+                    .Where(c => c.OwnerID == ownerID)
+                    .Include(c => c.Images)
+                    .ToList();
+        }
     }
 }

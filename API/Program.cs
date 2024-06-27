@@ -6,9 +6,11 @@ using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Presentation.Hubs;
 using System.Text;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
@@ -25,7 +27,6 @@ public class Program
 
 
 
-
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -38,11 +39,19 @@ public class Program
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDBContext>();
 
+        builder.Services.AddHttpContextAccessor();
+
         // Map the AppSettings mailSettings into the Helper class
         builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
         builder.Services.AddScoped<IUserOTPService, UserOTPService>();
+
+        builder.Services.Configure<GoogleAuthConfig>(builder.Configuration.GetSection("Google"));
+        builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
+
+
 
         builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
         builder.Services.AddScoped<IBeautyService, BeautyService>();
@@ -73,17 +82,38 @@ public class Program
         builder.Services.AddScoped<IHallService, HallService>();
         builder.Services.AddScoped<IHallRepository, HallRepository>();
 
+        //builder.Services.AddScoped<IChatService, ChatService>();
+        builder.Services.AddScoped<IChatRepository, ChatRepository>();
+
+        builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
+        builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+
         builder.Services.AddScoped<IFavoriteServiceLayer, FavoriteServiceLayer>();
         builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+
+
+        builder.Services.AddScoped<IRepository<Service>, Repository<Service>>();
+
+
+        builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+
+
+        /////////////////////////////////  SignalR ////////////////////////////////
+        builder.Services.AddSignalR();
+        builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
 
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
                 builder => builder
-                                    .AllowAnyOrigin()
-                                  .AllowAnyHeader()
-                                  .AllowAnyMethod());
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(alow => true));
+
         });
 
 
@@ -163,11 +193,13 @@ public class Program
         var services = scope.ServiceProvider;
         var dbContext = services.GetRequiredService<ApplicationDBContext>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         try
         {
             await dbContext.Database.MigrateAsync();
             await RoleInitializer.SeedRolesAsync(roleManager);
+            await AdminInitializer.SeedAdminUserAsync(userManager);
             await GovernorateCityInitializer.AddDateSeeding(dbContext);
         }
         catch (Exception ex)
@@ -194,6 +226,19 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<ChatHub>("/chathub");
+        });
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.None,
+        });
 
         app.MapControllers();
 

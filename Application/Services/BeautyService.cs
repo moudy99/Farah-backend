@@ -17,18 +17,27 @@ namespace Application.Services
             _beautyRepository = beautyRepository;
             _mapper = mapper;
         }
-        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize)
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId)
         {
-            var beautyCenters = _beautyRepository.GetAllBeautyCenters();
+            var beautyCenters = _beautyRepository.GetAllBeautyCenters().AsQueryable();
+            if (govId > 0)
+            {
+                beautyCenters = beautyCenters.Where(p => p.Gove == govId);
+            }
 
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(beautyCenters);
+            if (cityId > 0)
+            {
+                beautyCenters = beautyCenters.Where(p => p.City == cityId);
+            }
 
-            var paginatedList = PaginationHelper.Paginate(beautyCenterDTOs, page, pageSize);
+
+            var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
 
             var response = new CustomResponseDTO<List<BeautyCenterDTO>>
             {
-                Data = paginatedList.Items,
+                Data = beautyCenterDTOs,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,
@@ -75,21 +84,28 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<CustomResponseDTO<AddBeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
+        public async Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO)
         {
             try
             {
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
+
                 var beautyCenter = _mapper.Map<BeautyCenter>(beautyCenterDTO);
                 beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
                 beautyCenterDTO.ImageUrls = imagePaths;
 
+                // Map single service object to ServicesForBeautyCenter collection
+                //beautyCenter.ServicesForBeautyCenter = new List<ServiceForBeautyCenter>
+                //    {
+                //        _mapper.Map<ServiceForBeautyCenter>(beautyCenterDTO.Services)
+                //    };
+
                 _beautyRepository.Insert(beautyCenter);
                 _beautyRepository.Save();
 
-                var resultDTO = _mapper.Map<AddBeautyCenterDTO>(beautyCenter);
+                var resultDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
 
-                var response = new CustomResponseDTO<AddBeautyCenterDTO>
+                var response = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = resultDTO,
                     Message = "تم إضافة البيوتي سنتر بنجاح",
@@ -102,10 +118,9 @@ namespace Application.Services
             }
             catch (DbUpdateException dbEx)
             {
-                // Log inner exception details
                 var innerExceptionMessage = dbEx.InnerException?.Message ?? dbEx.Message;
 
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
@@ -116,7 +131,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                var errorResponse = new CustomResponseDTO<AddBeautyCenterDTO>
+                var errorResponse = new CustomResponseDTO<BeautyCenterDTO>
                 {
                     Data = null,
                     Message = "حدث خطأ أثناء إضافة البيوتي سنتر",
@@ -126,6 +141,7 @@ namespace Application.Services
                 return errorResponse;
             }
         }
+
 
 
 
@@ -150,7 +166,7 @@ namespace Application.Services
                 beautyCenter.Description = beautyCenterDTO.Description;
                 beautyCenter.Gove = beautyCenterDTO.Gove;
                 beautyCenter.City = beautyCenterDTO.City;
-                beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
+                //beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
                 // Save new images and update image paths
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
@@ -219,6 +235,40 @@ namespace Application.Services
             }
         }
 
+        public CustomResponseDTO<List<ServiceForBeautyCenterDTO>> AddBeautyService(List<ServiceForBeautyCenterDTO> beautyDTOs)
+        {
+            try
+            {
+                var services = _mapper.Map<List<ServiceForBeautyCenter>>(beautyDTOs);
+
+                foreach (var service in services)
+                {
+                    _beautyRepository.InsertService(service);
+                }
+
+                _beautyRepository.Save();
+
+                return new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>()
+                {
+                    Data = beautyDTOs,
+                    Message = "تم اضافة الخدمه بنجاح",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<ServiceForBeautyCenterDTO>>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء اضافة الخدمه",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+        }
 
     }
 
