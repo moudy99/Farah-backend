@@ -118,7 +118,7 @@ namespace Infrastructure.Repositories
                 Customer customer = new Customer
                 {
                     FirstName = payload.Name,
-                    LastName = payload.FamilyName,
+                    LastName = payload.FamilyName ?? " ",
                     Email = payload.Email,
                     ProfileImage = payload.Picture,
                     GovID = 0,
