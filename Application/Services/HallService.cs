@@ -82,7 +82,7 @@ namespace Application.Services
             {
                 return new CustomResponseDTO<List<HallDTO>>
                 {
-                    Data = new List<HallDTO>(),
+                    Data = null,
                     Message = "لا يوجد قاعات",
                     Succeeded = false,
                     Errors = new List<string> { "لا يوجد قاعات" },

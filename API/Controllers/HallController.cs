@@ -16,7 +16,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("AllHalls")]
-        public IActionResult GetAll(int page = 1, int pageSize = 6, string priceRange = "all", int govId = 0, int cityId = 0)
+        public IActionResult GetAll(int page = 1, int pageSize = 12, string priceRange = "all", int govId = 0, int cityId = 0)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
-        [HttpGet("CarByID")]
+        [HttpGet("HallByID")]
         public IActionResult GetHallByID(int id)
         {
 

@@ -63,7 +63,7 @@ namespace Application.Services
             {
                 return new CustomResponseDTO<List<CarDTO>>
                 {
-                    Data = new List<CarDTO>(),
+                    Data = null,
                     Message = "لا يوجد سيارات",
                     Succeeded = false,
                     Errors = new List<string> { "لا يوجد سيارات" },

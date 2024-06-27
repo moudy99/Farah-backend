@@ -38,7 +38,7 @@ namespace Application.Services
             {
                 return new CustomResponseDTO<List<BeautyCenterDTO>>
                 {
-                    Data = new List<BeautyCenterDTO>(),
+                    Data = null,
                     Message = "لا يوجد مراكز تجميل",
                     Succeeded = false,
                     Errors = new List<string> { "لا يوجد مراكز تجميل" },

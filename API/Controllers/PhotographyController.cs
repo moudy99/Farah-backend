@@ -24,7 +24,7 @@ namespace Presentation.Controllers
 
 
         [HttpGet]
-        public IActionResult GetAllPhotographer(int page = 1, int pageSize = 6)
+        public IActionResult GetAllPhotographer(int page = 1, int pageSize = 12)
         {
             try
             {

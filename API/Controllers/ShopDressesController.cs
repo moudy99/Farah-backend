@@ -22,7 +22,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 10, int govId = 0, int cityId = 0)
+        public ActionResult GetAllShopDresses(int page = 1, int pageSize = 12, int govId = 0, int cityId = 0)
         {
             try
             {
