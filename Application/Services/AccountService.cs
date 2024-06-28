@@ -74,6 +74,7 @@ namespace Application.Services
         public async Task<CustomResponseDTO<AuthUserDTO>> CustomerRegisterAsync(CustomerRegisterDTO registerModel)
         {
             var customer = _mapper.Map<Customer>(registerModel);
+            customer.ProfileImage = "/images/CustomersImages/default-customer-Image.svg";
             var registrationResult = await _accountRepository.CustomerRegisterAsync(customer, registerModel);
 
             return new CustomResponseDTO<AuthUserDTO>
