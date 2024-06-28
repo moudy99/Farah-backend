@@ -90,5 +90,30 @@ namespace Application.Services
                 favoriteRepository.Save();
             }
         }
+
+
+
+        public bool ToggleFavorite(int serviceID, string CustomerID)
+        {
+            var favoriteService = favoriteRepository.GetFavService(serviceID, CustomerID);
+
+            if (favoriteService != null)
+            {
+                favoriteRepository.Delete(favoriteService.ID);
+                favoriteRepository.Save();
+                return false; // Service removed from favorites
+            }
+            else
+            {
+                favoriteService = new FavoriteService
+                {
+                    ServiceId = serviceID,
+                    CustomerId = CustomerID
+                };
+                favoriteRepository.Insert(favoriteService);
+                favoriteRepository.Save();
+                return true; // Service added to favorites
+            }
+        }
     }
 }
