@@ -24,6 +24,13 @@ namespace Infrastructure.Repositories
         {
             return context.FavoriteService
                 .Include(f => f.Service)
+                    .ThenInclude(s => (s as Hall).Pictures)
+                .Include(f => f.Service)
+                    .ThenInclude(s => (s as Car).Pictures)
+                .Include(f => f.Service)
+                    .ThenInclude(s => (s as BeautyCenter).ImagesBeautyCenter)
+                .Include(f => f.Service)
+                    .ThenInclude(s => (s as Photography).Images)
                 .Where(f => f.CustomerId == customerId)
                 .ToList();
         }
