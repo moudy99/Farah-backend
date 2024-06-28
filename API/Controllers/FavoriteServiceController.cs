@@ -88,5 +88,35 @@ namespace Presentation.Controllers
                 });
             }
         }
+
+
+
+        [HttpPost("Toggle")]
+        public IActionResult ToggleFavorite(int serviceID)
+        {
+            string CustomerID = User.FindFirstValue("uid");
+
+            try
+            {
+                bool isAdded = FavoriteService.ToggleFavorite(serviceID, CustomerID);
+                return Ok(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = isAdded ? "تم اضافة السيرفس الي المفضله" : "تم حذف السيرفس من المفضله",
+                    Succeeded = true,
+                    Errors = null
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new CustomResponseDTO<Object>
+                {
+                    Data = null,
+                    Message = "حدث خطأ ",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
     }
 }
