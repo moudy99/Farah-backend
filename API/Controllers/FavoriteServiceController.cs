@@ -101,7 +101,7 @@ namespace Presentation.Controllers
                 bool isAdded = FavoriteService.ToggleFavorite(serviceID, CustomerID);
                 return Ok(new CustomResponseDTO<Object>
                 {
-                    Data = null,
+                    Data = isAdded,
                     Message = isAdded ? "تم اضافة السيرفس الي المفضله" : "تم حذف السيرفس من المفضله",
                     Succeeded = true,
                     Errors = null
