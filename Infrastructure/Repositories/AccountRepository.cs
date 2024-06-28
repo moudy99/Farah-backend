@@ -126,7 +126,7 @@ namespace Infrastructure.Repositories
                     GovID = 0,
                     CityID = 0,
                     EmailConfirmed = true,
-                    SSN = "0",
+                    SSN = payload.Email,
                     YourFavirotePerson = "answer",
                     UserName = GenerateUsernameFromEmail(payload.Email),
                 };
@@ -154,6 +154,7 @@ namespace Infrastructure.Repositories
                         Role = "Customer",
                         Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
                         Token = token,
+                        IsBlocked = user.IsBlocked
                     };
                 }
                 catch
@@ -299,6 +300,7 @@ namespace Infrastructure.Repositories
                             AccountStatus = owner?.AccountStatus.ToString(),
                             Name = user.FirstName + " " + user.LastName,
                             Email = user.Email,
+                            IsBlocked = user.IsBlocked
                         };
                     }
                     return new AuthUserDTO()
@@ -312,6 +314,7 @@ namespace Infrastructure.Repositories
                         Token = new JwtSecurityTokenHandler().WriteToken(Token),
                         Role = checkUserType,
                         AccountStatus = owner?.AccountStatus.ToString(),
+                        IsBlocked = user.IsBlocked,
 
                     };
                 }
