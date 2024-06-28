@@ -14,5 +14,7 @@ namespace Application.Helpers
 
         public ServiceStatus ServiceStatus { get; set; } = ServiceStatus.Accepted;
 
+        public bool IsAdminSeen { get; set; }
+
     }
 }

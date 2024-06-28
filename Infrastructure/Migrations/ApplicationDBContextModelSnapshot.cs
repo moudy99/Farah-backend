@@ -30,6 +30,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("IsAdminSeen")
+                        .HasColumnType("bit");
+
                     b.Property<string>("OwnerID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -816,6 +819,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("IDFrontImage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdminSeen")
+                        .HasColumnType("bit");
 
                     b.Property<int>("UserType")
                         .HasColumnType("int");
