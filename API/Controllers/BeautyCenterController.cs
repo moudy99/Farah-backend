@@ -4,6 +4,8 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
@@ -13,19 +15,20 @@ namespace Presentation.Controllers
     public class BeautyCenterController : ControllerBase
     {
         private readonly IBeautyService _beautyService;
-
+        private readonly IHubContext<NotificationsHub> notificationHub;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public BeautyCenterController(IBeautyService beautyService, UserManager<ApplicationUser> _userManager)
+        public BeautyCenterController(IBeautyService beautyService, UserManager<ApplicationUser> _userManager, IHubContext<NotificationsHub> notificationHub)
         {
             _beautyService = beautyService;
+            this.notificationHub = notificationHub;
             _userManager = userManager;
         }
 
         [HttpGet]
 
 
-        public ActionResult GetAllBeautyCenters(int page = 1, int pageSize = 12,int govId = 0, int cityId =0 )
+        public ActionResult GetAllBeautyCenters(int page = 1, int pageSize = 12, int govId = 0, int cityId = 0)
         {
             try
             {
@@ -39,8 +42,8 @@ namespace Presentation.Controllers
                         Succeeded = false,
                         Errors = null
                     });
-                }         
-                 return Ok(response);
+                }
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -116,6 +119,7 @@ namespace Presentation.Controllers
             try
             {
                 var response = _beautyService.AddBeautyService(beautyDTO);
+
                 return Ok(response);
             }
             catch (Exception ex)
@@ -140,6 +144,8 @@ namespace Presentation.Controllers
             {
                 beautyCenterDTO.OwnerID = OwnerID;
                 var response = await _beautyService.AddBeautyCenter(beautyCenterDTO);
+                await notificationHub.Clients.All.SendAsync("newServicesAdded", "بيوتي سنتر");
+
                 return Ok(response);
             }
             catch (Exception ex)
