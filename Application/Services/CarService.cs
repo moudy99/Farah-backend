@@ -11,17 +11,23 @@ namespace Application.Services
 
         private readonly IMapper Mapper;
         private readonly ICarRepository carRepository;
+        private readonly IFavoriteRepository favoriteRepository;
 
-        public CarService(IMapper mapper, ICarRepository _carRepository)
+        public CarService(IMapper mapper, ICarRepository _carRepository, IFavoriteRepository _favoriteRepository)
         {
             Mapper = mapper;
             carRepository = _carRepository;
-
+            favoriteRepository = _favoriteRepository;
         }
 
-        public CustomResponseDTO<List<CarDTO>> GetAllCars(int page, int pageSize, string priceRange, int govId, int city)
+        public CustomResponseDTO<List<CarDTO>> GetAllCars(string customerId,int page, int pageSize, string priceRange, int govId, int city)
         {
             var allCars = carRepository.GetAll();
+            var favoriteServiceIds = favoriteRepository.GetAllFavoritesForCustomer(customerId)
+                                    .Select(f => f.ServiceId)
+                                    .ToHashSet();
+
+
             if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
             {
                 int minPrice;
@@ -73,7 +79,15 @@ namespace Application.Services
 
 
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-            var cars = Mapper.Map<List<CarDTO>>(paginatedList.Items);
+
+            var cars = paginatedList.Items.Select(car =>
+            {
+                var carDto = Mapper.Map<CarDTO>(car);
+                carDto.IsFavorite = favoriteServiceIds.Contains(car.ID);
+                return carDto;
+            }).ToList();
+
+            //var cars = Mapper.Map<List<CarDTO>>(paginatedList.Items);
 
             return new CustomResponseDTO<List<CarDTO>>
             {

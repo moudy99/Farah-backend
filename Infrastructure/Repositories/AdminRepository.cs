@@ -46,6 +46,7 @@ namespace Infrastructure.Repositories
         {
             var beautyCenterServices = context.Services
                 .OfType<BeautyCenter>()
+                .Include(b => b.ImagesBeautyCenter)
                 .Include(s => s.ServicesForBeautyCenter)
                 .ToList();
 
@@ -56,7 +57,11 @@ namespace Infrastructure.Repositories
 
             var hallServices = context.Services
                 .OfType<Hall>()
+                .Include(h => h.Features)
+                .Include(h => h.Pictures)
                 .ToList();
+
+
 
             // Combine all service types
             var allServices = new List<Service>();
@@ -69,6 +74,12 @@ namespace Infrastructure.Repositories
         public Service GetServiceById(int id)
         {
             return context.Services
+                .Include(s => (s as Hall).Pictures)
+                .Include(s => (s as Hall).Features)
+                .Include(s => (s as Car).Pictures)
+                .Include(s => (s as BeautyCenter).ImagesBeautyCenter)
+                .Include(s => (s as BeautyCenter).ServicesForBeautyCenter)
+                .Include(s => (s as Photography).Images)
                 .FirstOrDefault(s => s.ID == id);
         }
         public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)

@@ -84,7 +84,7 @@ namespace Presentation.Controllers
         }
 
 
-        [HttpGet("GetBeautyCentersById")]
+        [HttpGet("GetBeautyCentersById/{id}")]
         public ActionResult GetBeautyCentersById(int id)
         {
             try

@@ -12,6 +12,8 @@ namespace Application.DTOS
     {
         //CarID
         public int CarID { get; set; }
+
+        public bool IsFavorite { get; set; }
         public string OwnerID { get; set; }
         public string Brand { get; set; }
         public int Year { get; set; }

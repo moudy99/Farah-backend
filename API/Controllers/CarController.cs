@@ -26,7 +26,8 @@ namespace Presentation.Controllers
         {
             try
             {
-                var response = carService.GetAllCars(page, pageSize, priceRange, govId, cityId);
+                string customerId = User.FindFirstValue("uid");
+                var response = carService.GetAllCars(customerId,page, pageSize, priceRange, govId, cityId);
 
 
 
