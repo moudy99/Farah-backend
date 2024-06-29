@@ -233,6 +233,7 @@ public class Program
             endpoints.MapControllers();
             endpoints.MapHub<ChatHub>("/chathub");
         });
+        app.MapHub<NotificationsHub>("notificationHub");
 
         app.UseCookiePolicy(new CookiePolicyOptions
         {
