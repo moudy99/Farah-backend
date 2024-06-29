@@ -4,6 +4,8 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
@@ -16,13 +18,16 @@ namespace Presentation.Controllers
         private readonly IConfiguration config;
         private readonly IAccountService _accountService;
         private readonly IGoogleAuthService googleAuthService;
+        private readonly IHubContext<NotificationsHub> notificationHub;
 
-        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, IGoogleAuthService googleAuthService)
+        public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, IGoogleAuthService googleAuthService,
+            IHubContext<NotificationsHub> notificationHub)
         {
             userManager = _userManager;
             config = _config;
             _accountService = accountService;
             this.googleAuthService = googleAuthService;
+            this.notificationHub = notificationHub;
         }
 
         [HttpGet("OwnerServices")]
@@ -66,6 +71,7 @@ namespace Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
+            await notificationHub.Clients.All.SendAsync("newOwnerRegister");
             var response = await _accountService.OwnerRegisterAsync(ownerRegisterModel);
 
             if (response.Succeeded)
