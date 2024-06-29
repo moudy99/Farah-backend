@@ -1,6 +1,8 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
@@ -10,9 +12,12 @@ namespace Presentation.Controllers
     public class HallController : ControllerBase
     {
         private readonly IHallService HallService;
-        public HallController(IHallService _hallService)
+        private readonly IHubContext<NotificationsHub> notificationHub;
+
+        public HallController(IHallService _hallService, IHubContext<NotificationsHub> notificationHub)
         {
             HallService = _hallService;
+            this.notificationHub = notificationHub;
         }
 
         [HttpGet("AllHalls")]
@@ -56,6 +61,8 @@ namespace Presentation.Controllers
             {
                 hallDTO.OwnerID = OwnerID;
                 var Hall = await HallService.AddHall(hallDTO);
+                await notificationHub.Clients.All.SendAsync("newServicesAdded", "قاعة");
+
                 return Ok(new CustomResponseDTO<HallDTO>
                 {
                     Data = Hall,

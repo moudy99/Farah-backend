@@ -4,6 +4,8 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
@@ -13,12 +15,13 @@ namespace Presentation.Controllers
     public class PhotographyController : ControllerBase
     {
         private readonly IPhotographyService _photoService;
-
+        private readonly IHubContext<NotificationsHub> notificationHub;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public PhotographyController(IPhotographyService photoService, UserManager<ApplicationUser> _userManager)
+        public PhotographyController(IPhotographyService photoService, UserManager<ApplicationUser> _userManager, IHubContext<NotificationsHub> notificationHub)
         {
             _photoService = photoService;
+            this.notificationHub = notificationHub;
             _userManager = userManager;
         }
 
@@ -90,6 +93,8 @@ namespace Presentation.Controllers
             {
                 photographyDTO.OwnerID = OwnerID;
                 var response = await _photoService.AddPhotographer(photographyDTO);
+                await notificationHub.Clients.All.SendAsync("newServicesAdded", "مصور");
+
                 return Ok(response);
             }
             catch (Exception ex)
