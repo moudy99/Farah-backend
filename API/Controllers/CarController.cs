@@ -1,11 +1,8 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Azure;
-using Core.Entities;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.SignalR;
+using Presentation.Hubs;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
@@ -15,10 +12,12 @@ namespace Presentation.Controllers
     public class CarController : ControllerBase
     {
         private readonly ICarService carService;
+        private readonly IHubContext<NotificationsHub> notificationHub;
 
-        public CarController(ICarService _carService)
+        public CarController(ICarService _carService, IHubContext<NotificationsHub> notificationHub)
         {
             carService = _carService;
+            this.notificationHub = notificationHub;
         }
 
         [HttpGet("Cars")]
@@ -56,7 +55,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("AddCar")]
-        public async Task<ActionResult> AddCar( AddCarDTO carDto) // Use FromForm to handle file uploads
+        public async Task<ActionResult> AddCar(AddCarDTO carDto) // Use FromForm to handle file uploads
         {
             string OwnerID = User.FindFirstValue("uid");
 
@@ -64,6 +63,7 @@ namespace Presentation.Controllers
             {
                 carDto.OwnerID = OwnerID;
                 var car = await carService.AddCar(carDto);
+                await notificationHub.Clients.All.SendAsync("newServicesAdded", "عربية");
 
                 return Ok(new CustomResponseDTO<CarDTO>
                 {
@@ -87,7 +87,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> EditCar( CarDTO carDto,int id)
+        public async Task<ActionResult> EditCar(CarDTO carDto, int id)
         {
             string OwnerID = User.FindFirstValue("uid");
 
@@ -97,13 +97,13 @@ namespace Presentation.Controllers
                 carDto.CarID = id;
                 var car = await carService.EditCar(id, carDto);
 
-            return Ok(new CustomResponseDTO<CarDTO>
-            {
-                Data = car,
-                Message = "Car updated successfully",
-                Succeeded = true,
-                Errors = null
-            });
+                return Ok(new CustomResponseDTO<CarDTO>
+                {
+                    Data = car,
+                    Message = "Car updated successfully",
+                    Succeeded = true,
+                    Errors = null
+                });
             }
             catch (Exception ex)
             {
@@ -156,7 +156,7 @@ namespace Presentation.Controllers
                 return NotFound(Car);
             }
             return Ok(Car);
-       
+
         }
     }
 }
