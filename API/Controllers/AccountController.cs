@@ -71,11 +71,11 @@ namespace Presentation.Controllers
                 return BadRequest(ModelState);
             }
 
-            await notificationHub.Clients.All.SendAsync("newOwnerRegister");
             var response = await _accountService.OwnerRegisterAsync(ownerRegisterModel);
 
             if (response.Succeeded)
             {
+                await notificationHub.Clients.All.SendAsync("newOwnerRegister");
                 return Ok(response);
             }
             else
