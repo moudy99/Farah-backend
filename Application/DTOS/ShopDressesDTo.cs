@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Core.Enums;
 
 namespace Application.DTOS
 {
@@ -12,5 +13,6 @@ namespace Application.DTOS
         public int City { get; set; }
         public DateTime OpeningHours { get; set; }
         public List<DressDto> Dresses { get; set; } = new List<DressDto>();
+        public ServiceStatus ServiceStatus { get; set; }
     }
 }

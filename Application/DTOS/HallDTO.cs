@@ -1,10 +1,6 @@
 ﻿using Application.Interfaces;
+using Core.Enums;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.DTOS
 {
@@ -21,6 +17,8 @@ namespace Application.DTOS
         public int City { get; set; }
         public List<IFormFile> Pictures { get; set; } // For receiving image files
         public List<string>? PictureUrls { get; set; } // For storing image URLs
+        public ServiceStatus ServiceStatus { get; set; }
+
 
     }
 }

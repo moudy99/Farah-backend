@@ -27,9 +27,9 @@ namespace Application.Services
         ICarRepository carRepository,
         IPhotographyRepository photographyRepository,
 
-       
+
         IRepository<Service> serviceRepository,
-        
+
 
         IShopDressesRepository shopDressesRepository, ICustomerRepository customerRepository)
 
@@ -536,7 +536,7 @@ namespace Application.Services
                 };
 
             }
-            if(service.ServiceStatus== ServiceStatus.Accepted)
+            if (service.ServiceStatus == ServiceStatus.Accepted)
             {
                 return new CustomResponseDTO<object>
                 {
