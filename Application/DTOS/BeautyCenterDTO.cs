@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Core.Enums;
 
 namespace Application.DTOS
 {
@@ -15,6 +16,7 @@ namespace Application.DTOS
         public List<string>? ImageUrls { get; set; } // For storing image URLs
         public List<ServiceForBeautyCenterDTO> Services { get; set; }
         public List<ReviewForBeautyCenterDTO> Reviews { get; set; }
+        public ServiceStatus ServiceStatus { get; set; }
 
 
     }
