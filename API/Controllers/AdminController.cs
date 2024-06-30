@@ -20,9 +20,9 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("Services")]
-        public ActionResult GetAllServices()
+        public ActionResult GetAllServices(ServiceStatus ServiceStatus = ServiceStatus.Accepted)
         {
-            AllServicesDTO services = AdminService.GetAllServices();
+            AllServicesDTO services = AdminService.GetAllServices(ServiceStatus);
 
 
             return Ok(services);

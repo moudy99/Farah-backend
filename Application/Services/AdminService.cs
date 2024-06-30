@@ -48,26 +48,42 @@ namespace Application.Services
 
 
 
-        public AllServicesDTO GetAllServices()
+        public AllServicesDTO GetAllServices(ServiceStatus ServiceStatus)
         {
-            var beautyCenters = _beautyCenterRepository.GetAll();
-            var halls = _hallRepository.GetAll();
-            var cars = _carRepository.GetAll();
-            var photographies = _photographyRepository.GetAll();
-            var shopDresses = _shopDressesRepository.GetAll();
 
-            var compositeDto = new AllServicesDTO
+            var allServices = AdminRepository.GetAllServices(ServiceStatus);
+
+            var allServicesDTO = new AllServicesDTO
             {
-                BeautyCenters = Mapper.Map<List<BeautyCenterDTO>>(beautyCenters),
-                Halls = Mapper.Map<List<HallDTO>>(halls),
-                Cars = Mapper.Map<List<CarDTO>>(cars),
-                Photographys = Mapper.Map<List<PhotographyDTO>>(photographies),
-                ShopDresses = Mapper.Map<List<ShopDressesDTo>>(shopDresses)
+                BeautyCenters = new List<BeautyCenterDTO>(),
+                Halls = new List<HallDTO>(),
+                Cars = new List<CarDTO>(),
+                Photographys = new List<PhotographyDTO>(),
+                ShopDresses = new List<ShopDressesDTo>()
             };
 
-
-
-            return compositeDto;
+            foreach (var Service in allServices)
+            {
+                switch (Service)
+                {
+                    case BeautyCenter beautyCenter:
+                        allServicesDTO.BeautyCenters.Add(Mapper.Map<BeautyCenterDTO>(beautyCenter));
+                        break;
+                    case Hall hall:
+                        allServicesDTO.Halls.Add(Mapper.Map<HallDTO>(hall));
+                        break;
+                    case Car car:
+                        allServicesDTO.Cars.Add(Mapper.Map<CarDTO>(car));
+                        break;
+                    case Photography photography:
+                        allServicesDTO.Photographys.Add(Mapper.Map<PhotographyDTO>(photography));
+                        break;
+                    case ShopDresses shopDresses:
+                        allServicesDTO.ShopDresses.Add(Mapper.Map<ShopDressesDTo>(shopDresses));
+                        break;
+                }
+            }
+            return allServicesDTO;
         }
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
