@@ -11,7 +11,12 @@ namespace Application.Helpers
             var paginatedItems = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             return new PaginatedList<T>(paginatedItems, totalItems, page, pageSize);
         }
-
+        public static PaginatedList<T> Paginate<T>(IEnumerable<T> source, int page, int pageSize)
+        {
+            var totalItems = source.Count();
+            var paginatedItems = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return new PaginatedList<T>(paginatedItems, totalItems, page, pageSize);
+        }
         public static PaginationInfoDTO GetPaginationInfo<T>(PaginatedList<T> paginatedList)
         {
             return new PaginationInfoDTO

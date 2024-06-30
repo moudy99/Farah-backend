@@ -48,10 +48,12 @@ namespace Application.Services
 
 
 
-        public AllServicesDTO GetAllServices(ServiceStatus ServiceStatus)
+        public CustomResponseDTO<AllServicesDTO> GetAllServices(ServiceStatus ServiceStatus, int page, int pageSize)
         {
 
             var allServices = AdminRepository.GetAllServices(ServiceStatus);
+            var paginatedList = PaginationHelper.Paginate(allServices, page, pageSize);
+
 
             var allServicesDTO = new AllServicesDTO
             {
@@ -62,7 +64,7 @@ namespace Application.Services
                 ShopDresses = new List<ShopDressesDTo>()
             };
 
-            foreach (var Service in allServices)
+            foreach (var Service in paginatedList.Items)
             {
                 switch (Service)
                 {
@@ -83,7 +85,17 @@ namespace Application.Services
                         break;
                 }
             }
-            return allServicesDTO;
+            var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
+
+            var response = new CustomResponseDTO<AllServicesDTO>
+            {
+                Data = allServicesDTO,
+                Message = "تم",
+                Succeeded = true,
+                Errors = null,
+                PaginationInfo = paginationInfo
+            };
+            return response;
         }
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
