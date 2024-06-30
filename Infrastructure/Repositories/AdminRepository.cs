@@ -1,4 +1,5 @@
-﻿using Application.Helpers;
+﻿using Application.DTOS;
+using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
@@ -42,32 +43,48 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(o => o.Id == id);
 
         }
-        public List<Service> GetAllServices()
+        public List<Service> GetAllServices(ServiceStatus ServiceStatus)
         {
             var beautyCenterServices = context.Services
                 .OfType<BeautyCenter>()
+                .Where(b => b.ServiceStatus == ServiceStatus)
                 .Include(b => b.ImagesBeautyCenter)
                 .Include(s => s.ServicesForBeautyCenter)
                 .ToList();
 
-            //var shopDressesServices = context.Services
-            //    .OfType<ShopDresses>()
-            //    .Include(s => s.Dresses)
-            //    .ToList();
+            var shopDressesServices = context.Services
+                .OfType<ShopDresses>()
+                .Where(b => b.ServiceStatus == ServiceStatus)
+                .Include(s => s.Dresses)
+                .ToList();
 
             var hallServices = context.Services
                 .OfType<Hall>()
+                .Where(b => b.ServiceStatus == ServiceStatus)
                 .Include(h => h.Features)
                 .Include(h => h.Pictures)
                 .ToList();
 
+            var carServices = context.Services
+                        .OfType<Car>()
+                        .Where(b => b.ServiceStatus == ServiceStatus)
+                        .Include(c => c.Pictures)
+                        .ToList();
 
+            var photographerServices = context.Services
+                                .OfType<Photography>()
+                                .Where(b => b.ServiceStatus == ServiceStatus)
+                                .Include(c => c.Images)
+                                .ToList();
 
             // Combine all service types
             var allServices = new List<Service>();
             allServices.AddRange(beautyCenterServices);
-            //allServices.AddRange(shopDressesServices);
+            allServices.AddRange(shopDressesServices);
             allServices.AddRange(hallServices);
+            allServices.AddRange(carServices);
+            allServices.AddRange(photographerServices);
+
 
             return allServices;
         }

@@ -6,7 +6,7 @@ namespace Application.Interfaces
 {
     public interface IAdminRepository : IRepository<Owner> 
     {
-        public List<Service> GetAllServices();
+        public List<Service> GetAllServices(ServiceStatus ServiceStatus);
         public IQueryable<Owner> GetAllOwners();
         public IQueryable<Customer> GetAllCustomers(bool? isBlocked);
 
