@@ -610,6 +610,82 @@ namespace Application.Services
             };
 
         }
+        public void DeleteImage(int serviceId, string imageName)
+        {
+            var service = AdminRepository.GetServiceById(serviceId);
+            if (service == null) throw new Exception("Service not found");
 
+            string imagePath = null;
+
+            switch (service)
+            {
+                case Car car:
+                    if (car.Pictures != null)
+                    {
+                        var carImage = car.Pictures.FirstOrDefault(p => p.Url.Contains(imageName));
+                        if (carImage != null)
+                        {
+                            imagePath = carImage.Url;
+                            car.Pictures.Remove(carImage);
+                            _carRepository.Update(car);
+                        }
+                    }
+                    break;
+
+                case Hall hall:
+                    if (hall.Pictures != null)
+                    {
+                        var hallImage = hall.Pictures.FirstOrDefault(p => p.Url.Contains(imageName));
+                        if (hallImage != null)
+                        {
+                            imagePath = hallImage.Url;
+                            hall.Pictures.Remove(hallImage);
+                            _hallRepository.Update(hall);
+                        }
+                    }
+                    break;
+
+                case BeautyCenter beautyCenter:
+                    if (beautyCenter.ImagesBeautyCenter != null)
+                    {
+                        var beautyImage = beautyCenter.ImagesBeautyCenter.FirstOrDefault(p => p.ImageUrl.Contains(imageName));
+                        if (beautyImage != null)
+                        {
+                            imagePath = beautyImage.ImageUrl;
+                            beautyCenter.ImagesBeautyCenter.Remove(beautyImage);
+                            _beautyCenterRepository.Update(beautyCenter);
+                        }
+                    }
+                    break;
+
+                case Photography photography:
+                    if (photography.Images != null)
+                    {
+                        var photoImage = photography.Images.FirstOrDefault(p => p.ImageURL.Contains(imageName));
+                        if (photoImage != null)
+                        {
+                            imagePath = photoImage.ImageURL;
+                            photography.Images.Remove(photoImage);
+                            _photographyRepository.Update(photography);
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new Exception("Unknown service type");
+            }
+
+            if (imagePath != null)
+            {
+                string basePath = "wwwroot";
+                var fullPath = Path.Combine(basePath, imagePath.TrimStart('/'));
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+
+            AdminRepository.Save();
+        }
     }
 }

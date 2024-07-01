@@ -1,5 +1,6 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using Core.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -299,6 +300,20 @@ namespace Presentation.Controllersa
                 return BadRequest(errorResponse);
             }
 
+        }
+
+        [HttpDelete("DeleteImage")]
+        public IActionResult DeleteImage(int serviceId, string imageName)
+        {
+            try
+            {
+                AdminService.DeleteImage(serviceId, imageName);
+                return Ok(new { message = "تم حذف الصوره" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "حدث خطأ اثناء حذف الصوره" });
+            }
         }
     }
 }

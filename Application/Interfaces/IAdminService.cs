@@ -31,6 +31,6 @@ namespace Application.Interfaces
 
         CustomResponseDTO<object> BlockCustomer(string customerId);
         CustomResponseDTO<object> UnblockCustomer(string customerId);
-
+        void DeleteImage(int serviceId, string imageName);
     }
 }
