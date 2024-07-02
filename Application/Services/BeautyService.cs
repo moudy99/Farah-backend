@@ -289,6 +289,37 @@ namespace Application.Services
             }
         }
 
+        public CustomResponseDTO<ServiceForBeautyCenterDTO> RemoveBeautyService(int beautyID, int ServiceID)
+        {
+            try
+            {
+                ServiceForBeautyCenter serviceForBeautyCenter = _beautyRepository.GetBeautyService(beautyID, ServiceID);
+
+                _beautyRepository.RemoveService(serviceForBeautyCenter);
+                _beautyRepository.Save();
+                var service = _mapper.Map<ServiceForBeautyCenterDTO>(serviceForBeautyCenter);
+
+                return new CustomResponseDTO<ServiceForBeautyCenterDTO>()
+                {
+                    Data = service,
+                    Message = "تم حذف الخدمه بنجاح",
+                    Succeeded = true,
+                    Errors = null,
+                    PaginationInfo = null
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<ServiceForBeautyCenterDTO>
+                {
+                    Data = null,
+                    Message = "حدث خطأ اثناء حذف الخدمه",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return errorResponse;
+            }
+        }
     }
 }
 

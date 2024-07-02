@@ -61,5 +61,17 @@ namespace Infrastructure.Repositories
         {
             context.Add(service);
         }
+
+        public void RemoveService(ServiceForBeautyCenter service)
+        {
+            context.Remove(service);
+        }
+
+        public ServiceForBeautyCenter GetBeautyService(int beautyID, int serviceID)
+        {
+            return context.servicesForBeautyCenter
+                .Where(sb => sb.BeautyCenterId == beautyID && sb.Id == serviceID)
+                .FirstOrDefault();
+        }
     }
 }

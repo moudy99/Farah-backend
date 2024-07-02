@@ -11,5 +11,6 @@ namespace Application.Interfaces
         public Task<CustomResponseDTO<BeautyCenterDTO>> AddBeautyCenter(AddBeautyCenterDTO beautyCenterDTO);
         public Task<CustomResponseDTO<AddBeautyCenterDTO>> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id);
         public CustomResponseDTO<AddBeautyCenterDTO> DeleteBeautyCenterById(int id);
+        public CustomResponseDTO<ServiceForBeautyCenterDTO> RemoveBeautyService(int beautyID, int ServiceID);
     }
 }

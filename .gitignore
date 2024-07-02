@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /Infrastructure/Migrations
 /API/wwwroot/Images/OwnersImages
 /API/wwwroot/Images/BeautyCenterImages
+/API/wwwroot/Images/Halls
+/.gitignore
