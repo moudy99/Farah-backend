@@ -27,7 +27,16 @@ namespace Infrastructure.Repositories
             
         }
 
+        public BeautyCenter GetServiceById(int id) 
+        {
+            return context.BeautyCenters
+                .Include(b => b.ImagesBeautyCenter)
+                .Include(b => b.ServicesForBeautyCenter)
+                .Include(b => b.FavoriteServices)
+                .Where(b => b.ID == id)
+                .FirstOrDefault();
 
+        }
 
         public List<BeautyCenter> GetBeautyCenterByName(string name)
         {

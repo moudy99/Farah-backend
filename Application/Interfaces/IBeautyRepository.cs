@@ -12,5 +12,6 @@ namespace Application.Interfaces
 
         public void RemoveService(ServiceForBeautyCenter service);
         public ServiceForBeautyCenter GetBeautyService(int beautyID, int serviceID);
+        public BeautyCenter GetServiceById(int id);
     }
 }

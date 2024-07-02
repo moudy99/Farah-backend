@@ -25,7 +25,8 @@ namespace Presentation.Controllers
         {
             try
             {
-                var response = HallService.GetAllHalls(page, pageSize, priceRange, govId, cityId);
+                string customerId = User.FindFirstValue("uid");
+                var response = HallService.GetAllHalls(customerId,page, pageSize, priceRange, govId, cityId);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<HallDTO>>

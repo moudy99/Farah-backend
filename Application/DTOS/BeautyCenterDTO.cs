@@ -18,6 +18,6 @@ namespace Application.DTOS
         public List<ReviewForBeautyCenterDTO> Reviews { get; set; }
         public ServiceStatus ServiceStatus { get; set; }
 
-
+        public bool IsFavorite { get; set; }
     }
 }
