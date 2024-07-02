@@ -135,6 +135,28 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpDelete("RemoveBeautyService")]
+        public IActionResult RemoveBeautyService(int beautyID, int ServiceID)
+        {
+            try
+            {
+                var response = _beautyService.RemoveBeautyService(beautyID, ServiceID);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new CustomResponseDTO<List<string>>
+                {
+                    Data = null,
+                    Message = "ايروووووووووووووور",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message, ex.StackTrace }
+                };
+                return StatusCode(500, errorResponse);
+            }
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> AddBeautyCenter([FromForm] AddBeautyCenterDTO beautyCenterDTO)

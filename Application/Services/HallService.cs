@@ -135,11 +135,40 @@ namespace Application.Services
                 hallDto.PictureUrls = imagePaths;
             }
 
+            UpdateHallFeatures(existingHall, hallDto.Features);
+
             HallRepository.Update(existingHall);
             HallRepository.Save();
             return Mapper.Map<HallDTO>(existingHall);
         }
+        private void UpdateHallFeatures(Hall existingHall, List<string> newFeatures)
+        {
+            var existingFeatures = existingHall.Features.ToList();
 
+            var featuresToAdd = newFeatures
+                .Where(nf => !existingFeatures.Any(ef => ef.Feature == nf))
+                .Select(nf => new HallFeature
+                {
+                    Feature = nf,
+                    HallId = existingHall.ID,
+                }).ToList();
+
+            var featuresToDelete = existingFeatures
+                .Where(ef => !newFeatures.Any(nf => nf == ef.Feature))
+                .ToList();
+
+            // Remove deleted features
+            foreach (var feature in featuresToDelete)
+            {
+                existingHall.Features.Remove(feature);
+            }
+
+            // Add new features
+            foreach (var feature in featuresToAdd)
+            {
+                existingHall.Features.Add(feature);
+            }
+        }
         public CustomResponseDTO<HallDTO> GetHallById(int id)
         {
             Hall hall = HallRepository.GetById(id);
