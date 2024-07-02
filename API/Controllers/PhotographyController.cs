@@ -31,7 +31,8 @@ namespace Presentation.Controllers
         {
             try
             {
-                var response = _photoService.GetAllPhotographer(page, pageSize);
+                string customerId = User.FindFirstValue("uid");
+                var response = _photoService.GetAllPhotographer(customerId,page, pageSize);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<PhotographyDTO>>

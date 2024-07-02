@@ -24,6 +24,7 @@ namespace Infrastructure.Repositories
         {
             return context.Photographies
                 .Include(c => c.Images)
+                .Include(c => c.FavoriteServices)
                 .FirstOrDefault(c => c.ID == id);
         }
 

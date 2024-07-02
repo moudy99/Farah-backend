@@ -11,26 +11,36 @@ namespace Application.Services
     {
         private readonly IMapper Mapper;
         private readonly IPhotographyRepository photoRepository;
-
-        public PhotographyService(IMapper mapper, IPhotographyRepository _photoRepository)
+        private readonly IFavoriteRepository _favoriteRepository;
+        public PhotographyService(IMapper mapper, IPhotographyRepository _photoRepository, IFavoriteRepository favoriteRepository)
         {
             Mapper = mapper;
             photoRepository = _photoRepository;
-
+            _favoriteRepository = favoriteRepository;
         }
 
-        public CustomResponseDTO<List<PhotographyDTO>> GetAllPhotographer(int page, int pageSize)
+        public CustomResponseDTO<List<PhotographyDTO>> GetAllPhotographer(string customerId,int page, int pageSize)
         {
             var photographies = photoRepository.GetAll();
+            var favoriteServiceIds = _favoriteRepository.GetAllFavoritesForCustomer(customerId)
+                        .Select(f => f.ServiceId)
+                        .ToHashSet();
 
             var paginatedList = PaginationHelper.Paginate(photographies, page, pageSize);
-            var photographyDTOs = Mapper.Map<List<PhotographyDTO>>(paginatedList.Items);
+            //var photographyDTOs = Mapper.Map<List<PhotographyDTO>>(paginatedList.Items);
 
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
 
+            var photographers = paginatedList.Items.Select(photographer =>
+            {
+                var photographerDto = Mapper.Map<PhotographyDTO>(photographer);
+                photographerDto.IsFavorite = favoriteServiceIds.Contains(photographer.ID);
+                return photographerDto;
+            }).ToList();
+
             var response = new CustomResponseDTO<List<PhotographyDTO>>
             {
-                Data = photographyDTOs,
+                Data = photographers,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,
@@ -82,7 +92,10 @@ namespace Application.Services
         public CustomResponseDTO<PhotographyDTO> GetPhotographerById(int id)
         {
             var photography = photoRepository.GetById(id);
+
             var photographyDTO = Mapper.Map<PhotographyDTO>(photography);
+            if (photography.FavoriteServices != null)
+                photographyDTO.IsFavorite = true;
 
             var response = new CustomResponseDTO<PhotographyDTO>
             {

@@ -159,6 +159,8 @@ namespace Application.Services
         {
             Car car = carRepository.GetById(id);
 
+
+
             if (car == null)
             {
                 return new CustomResponseDTO<CarDTO>()
@@ -171,6 +173,8 @@ namespace Application.Services
             }
 
             CarDTO carDTO = Mapper.Map<CarDTO>(car);
+            if (car.FavoriteServices != null)
+                carDTO.IsFavorite = true;
             return new CustomResponseDTO<CarDTO>
             {
                 Data = carDTO,

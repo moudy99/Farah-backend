@@ -32,7 +32,8 @@ namespace Presentation.Controllers
         {
             try
             {
-                var response = _beautyService.GetAllBeautyCenters(page, pageSize, govId, cityId);
+                string customerId = User.FindFirstValue("uid");
+                var response = _beautyService.GetAllBeautyCenters(customerId,page, pageSize, govId, cityId);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<BeautyCenterDTO>>

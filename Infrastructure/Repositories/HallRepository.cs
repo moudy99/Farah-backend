@@ -28,6 +28,7 @@ namespace Infrastructure.Repositories
             return context.Halls
                 .Include(c => c.Pictures)
                 .Include(c => c.Features)
+                .Include(c => c.FavoriteServices)
                 .FirstOrDefault(c => c.ID == id);
         }
 

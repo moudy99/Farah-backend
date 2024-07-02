@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IPhotographyService
     {
-        CustomResponseDTO<List<PhotographyDTO>> GetAllPhotographer(int page, int pageSize);
+        CustomResponseDTO<List<PhotographyDTO>> GetAllPhotographer(string customerId,int page, int pageSize);
 
 
         CustomResponseDTO<PhotographyDTO> GetPhotographerById(int id);

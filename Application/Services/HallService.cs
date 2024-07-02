@@ -10,10 +10,12 @@ namespace Application.Services
     {
         private readonly IMapper Mapper;
         private readonly IHallRepository HallRepository;
-        public HallService(IMapper _Mapper, IHallRepository _HallRepository)
+        private readonly IFavoriteRepository _favoriteRepository;
+        public HallService(IMapper _Mapper, IHallRepository _HallRepository, IFavoriteRepository favoriteRepository)
         {
             HallRepository = _HallRepository;
             Mapper = _Mapper;
+            _favoriteRepository = favoriteRepository;
         }
         public void Delete(int id)
         {
@@ -35,9 +37,12 @@ namespace Application.Services
             }
         }
 
-        public CustomResponseDTO<List<HallDTO>> GetAllHalls(int page, int pageSize, string priceRange, int govId, int cityId)
+        public CustomResponseDTO<List<HallDTO>> GetAllHalls(string customerId,int page, int pageSize, string priceRange, int govId, int cityId)
         {
             var query = HallRepository.GetAll();
+            var favoriteServiceIds = _favoriteRepository.GetAllFavoritesForCustomer(customerId)
+                        .Select(f => f.ServiceId)
+                        .ToHashSet();
 
             // Apply price range filter
             if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
@@ -90,13 +95,18 @@ namespace Application.Services
                 };
             }
 
-            var HallsDTO = Mapper.Map<List<HallDTO>>(paginatedList.Items);
+            //var HallsDTO = Mapper.Map<List<HallDTO>>(paginatedList.Items);
 
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-
+            var halls = paginatedList.Items.Select(hall =>
+            {
+                var hallDto = Mapper.Map<HallDTO>(hall);
+                hallDto.IsFavorite = favoriteServiceIds.Contains(hall.ID);
+                return hallDto;
+            }).ToList();
             return new CustomResponseDTO<List<HallDTO>>
             {
-                Data = HallsDTO,
+                Data = halls,
                 Message = "تم",
                 Succeeded = true,
                 Errors = null,
@@ -185,6 +195,10 @@ namespace Application.Services
             }
 
             HallDTO hallDTO = Mapper.Map<HallDTO>(hall);
+
+            if (hall.FavoriteServices != null)
+                hallDTO.IsFavorite = true;
+
             return new CustomResponseDTO<HallDTO>
             {
                 Data = hallDTO,

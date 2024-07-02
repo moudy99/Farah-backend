@@ -19,6 +19,6 @@ namespace Application.DTOS
         public List<string>? PictureUrls { get; set; } // For storing image URLs
         public ServiceStatus ServiceStatus { get; set; }
 
-
+        public bool IsFavorite { get; set; }
     }
 }

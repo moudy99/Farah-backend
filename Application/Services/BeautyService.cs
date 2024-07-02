@@ -4,22 +4,29 @@ using Application.Interfaces;
 using AutoMapper;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Application.Services
 {
     public class BeautyService : IBeautyService
     {
         private readonly IBeautyRepository _beautyRepository;
+        private readonly IFavoriteRepository _favoriteRepository;
         private readonly IMapper _mapper;
 
-        public BeautyService(IBeautyRepository beautyRepository, IMapper mapper)
+        public BeautyService(IBeautyRepository beautyRepository, IMapper mapper, IFavoriteRepository favoriteRepository)
         {
             _beautyRepository = beautyRepository;
             _mapper = mapper;
+            _favoriteRepository = favoriteRepository;
         }
-        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(int page, int pageSize, int govId, int cityId)
+        public CustomResponseDTO<List<BeautyCenterDTO>> GetAllBeautyCenters(string customerId, int page, int pageSize, int govId, int cityId)
         {
             var beautyCenters = _beautyRepository.GetAllBeautyCenters().AsQueryable();
+            var favoriteServiceIds = _favoriteRepository.GetAllFavoritesForCustomer(customerId)
+                        .Select(f => f.ServiceId)
+                        .ToHashSet();
+
             if (govId > 0)
             {
                 beautyCenters = beautyCenters.Where(p => p.Gove == govId);
@@ -33,7 +40,7 @@ namespace Application.Services
 
             var paginatedList = PaginationHelper.Paginate(beautyCenters, page, pageSize);
             var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);
-            var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
+            //var beautyCenterDTOs = _mapper.Map<List<BeautyCenterDTO>>(paginatedList.Items);
             if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<BeautyCenterDTO>>
@@ -51,12 +58,17 @@ namespace Application.Services
                 beautyCenters = beautyCenters.Where(p => p.City == cityId);
             }
 
-
+            var BeautyCenters = paginatedList.Items.Select(beauty =>
+            {
+                var beautyDto = _mapper.Map<BeautyCenterDTO>(beauty);
+                beautyDto.IsFavorite = favoriteServiceIds.Contains(beauty.ID);
+                return beautyDto;
+            }).ToList();
 
 
             var response = new CustomResponseDTO<List<BeautyCenterDTO>>
             {
-                Data = beautyCenterDTOs,
+                Data = BeautyCenters,
                 Message = "عـــــــــاش  الله ينور",
                 Succeeded = true,
                 Errors = null,
@@ -88,8 +100,12 @@ namespace Application.Services
 
         public CustomResponseDTO<BeautyCenterDTO> GetBeautyCenterById(int id)
         {
-            var beautyCenter = _beautyRepository.GetById(id);
+            var beautyCenter = _beautyRepository.GetServiceById(id);
+
             var beautyCenterDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
+
+            if (beautyCenter.FavoriteServices != null)
+                beautyCenterDTO.IsFavorite = true;
 
             var response = new CustomResponseDTO<BeautyCenterDTO>
             {
