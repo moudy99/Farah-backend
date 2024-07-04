@@ -99,6 +99,14 @@ namespace Infrastructure.Repositories
                 context.Update(service);
             }
         }
+        public void updateOwners(List<Owner> owners)
+        {
+            foreach (var owner in owners)
+            {
+                owner.IsAdminSeen = true;
+                context.Update(owner);
+            }
+        }
         public Service GetServiceById(int id)
         {
             return context.Services

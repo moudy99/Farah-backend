@@ -263,6 +263,8 @@ namespace Infrastructure.Repositories
 
             //var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
+            int NotSeenService = _context.Services.Count(s => !s.IsAdminSeen);
+            int NotSeenOwner = _context.Owners.Count(u => !u.IsAdminSeen);
             //It work with the new mail 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginUser.Email);
 
@@ -315,7 +317,8 @@ namespace Infrastructure.Repositories
                         Role = checkUserType,
                         AccountStatus = owner?.AccountStatus.ToString(),
                         IsBlocked = user.IsBlocked,
-
+                        NotSeenServicesCount = NotSeenService,
+                        NotSeenRegisteredOwners = NotSeenOwner,
                     };
                 }
                 else

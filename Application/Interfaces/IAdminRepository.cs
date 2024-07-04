@@ -16,6 +16,6 @@ namespace Application.Interfaces
         public List<ApplicationUser> SearchUsersByName(string name);
         public Service GetServiceById(int id);
         public void updateServices(List<Service> obj);
-
+        public void updateOwners(List<Owner> obj);
     }
 }

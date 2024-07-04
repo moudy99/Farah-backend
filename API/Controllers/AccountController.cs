@@ -19,15 +19,16 @@ namespace Presentation.Controllers
         private readonly IAccountService _accountService;
         private readonly IGoogleAuthService googleAuthService;
         private readonly IHubContext<NotificationsHub> notificationHub;
-
+        private readonly IAdminService AdminService;
         public AccountController(UserManager<ApplicationUser> _userManager, IConfiguration _config, IAccountService accountService, IGoogleAuthService googleAuthService,
-            IHubContext<NotificationsHub> notificationHub)
+            IHubContext<NotificationsHub> notificationHub, IAdminService adminService)
         {
             userManager = _userManager;
             config = _config;
             _accountService = accountService;
             this.googleAuthService = googleAuthService;
             this.notificationHub = notificationHub;
+            AdminService = adminService;
         }
 
         [HttpGet("OwnerServices")]

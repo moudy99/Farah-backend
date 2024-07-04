@@ -102,6 +102,10 @@ namespace Application.Services
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize)
         {
             IQueryable<Owner> allOwners = AdminRepository.GetAllOwners();
+
+            AdminRepository.updateOwners(allOwners.ToList());
+            AdminRepository.Save();
+
             var paginatedList = PaginationHelper.Paginate(allOwners, page, pageSize);
 
             List<OwnerDTO> owners = Mapper.Map<List<OwnerDTO>>(paginatedList.Items);
@@ -257,6 +261,9 @@ namespace Application.Services
         public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
         {
             var filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
+            AdminRepository.updateOwners(filteredOwners.ToList());
+            AdminRepository.Save();
+
 
             var paginatedList = PaginationHelper.Paginate(filteredOwners, page, pageSize);
             if (!paginatedList.Items.Any())
