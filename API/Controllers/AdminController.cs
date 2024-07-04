@@ -50,6 +50,7 @@ namespace Presentation.Controllersa
             {
                 var response = AdminService.GetFilteredOwners(status, isBlocked, page, pageSize);
 
+
                 if (response.Data == null)
                 {
                     return NotFound(new CustomResponseDTO<List<OwnerDTO>>

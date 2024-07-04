@@ -123,6 +123,7 @@ namespace Application.Services
         public async Task<CustomResponseDTO<AuthUserDTO>> Login(LoginUserDTO loginUser)
         {
             var LoginResult = await _accountRepository.Login(loginUser);
+
             return new CustomResponseDTO<AuthUserDTO>
             {
                 Data = LoginResult,
