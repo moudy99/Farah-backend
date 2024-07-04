@@ -129,13 +129,25 @@ namespace Application.Services
                     };
                 }
 
+                var AllPhotoImages = photoRepository.getAllImages(id);
                 // Update basic details
                 photographer.Description = PhotographerDto.Description;
 
-                // Save new images and update image paths
-                var imagePaths = await ImageSavingHelper.SaveImagesAsync(PhotographerDto.Pictures, "PhotographerImages");
-                photographer.Images = imagePaths.Select(path => new Portfolio { ImageURL = path }).ToList();
-                PhotographerDto.PictureUrls = imagePaths;
+
+                if (PhotographerDto.Pictures != null && PhotographerDto.Pictures.Any())
+                {
+                    var imagePaths = await ImageSavingHelper.SaveImagesAsync(PhotographerDto.Pictures, "PhotographerImages");
+                    foreach (var img in imagePaths)
+                    {
+                        AllPhotoImages.Add(img);
+                    }
+                    PhotographerDto.PictureUrls = AllPhotoImages;
+                    photographer.Images.Clear();
+                    foreach (var item in AllPhotoImages)
+                    {
+                        photographer.Images.Add(new Portfolio { ImageURL = item, PhotographerId = photographer.ID });
+                    }
+                }
 
                 photoRepository.Update(photographer);
                 photoRepository.Save();

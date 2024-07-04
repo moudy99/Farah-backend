@@ -22,6 +22,8 @@ namespace Infrastructure
         public DbSet<BeautyCenter> BeautyCenters { get; set; }
         public DbSet<ServiceForBeautyCenter> servicesForBeautyCenter { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<HallPicture> HallPicture {get; set;}
+        public DbSet<ImagesBeautyCenter> BeautyCenterPicture { get; set; }
 
         public DbSet<Photography> Photographies { get; set; }
         public DbSet<Portfolio> ImagePhotography { get; set; }

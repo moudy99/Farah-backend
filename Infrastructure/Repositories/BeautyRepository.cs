@@ -82,5 +82,13 @@ namespace Infrastructure.Repositories
                 .Where(sb => sb.BeautyCenterId == beautyID && sb.Id == serviceID)
                 .FirstOrDefault();
         }
+
+        public  List<string> getAllImages(int id)
+        {
+            return context.BeautyCenterPicture
+            .Where(s => s.BeautyCenterId == id)
+            .Select(s => s.ImageUrl)
+            .ToList();
+        }
     }
 }

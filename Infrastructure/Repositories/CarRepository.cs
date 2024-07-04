@@ -21,6 +21,15 @@ namespace Infrastructure.Repositories
                 .Include(c => c.Pictures)
                 .Where(c => c.ServiceStatus == ServiceStatus.Accepted); 
         }
+
+        public List<string> getAllImages(int id)
+        {
+            return context.CarPictures
+                        .Where(s => s.CarID == id)
+                        .Select(s => s.Url)
+                        .ToList();
+        }
+
         public Car GetById(int id)
         {
             return context.Cars
