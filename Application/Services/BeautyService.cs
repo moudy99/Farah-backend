@@ -184,7 +184,7 @@ namespace Application.Services
         {
             try
             {
-                var beautyCenter = _beautyRepository.GetById(id);
+                var beautyCenter = _beautyRepository.GetServiceById(id);
                 if (beautyCenter == null)
                 {
                     return new CustomResponseDTO<AddBeautyCenterDTO>
@@ -196,6 +196,9 @@ namespace Application.Services
                     };
                 }
 
+
+                var AllBeautyImages = _beautyRepository.getAllImages(id);
+
                 // Update the existing beautyCenter entity with new values from the DTO
                 beautyCenter.Name = beautyCenterDTO.Name;
                 beautyCenter.Description = beautyCenterDTO.Description;
@@ -203,10 +206,25 @@ namespace Application.Services
                 beautyCenter.City = beautyCenterDTO.City;
                 //beautyCenter.ServicesForBeautyCenter = _mapper.Map<List<ServiceForBeautyCenter>>(beautyCenterDTO.Services);
 
-                // Save new images and update image paths
-                var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
-                beautyCenter.ImagesBeautyCenter = imagePaths.Select(path => new ImagesBeautyCenter { ImageUrl = path }).ToList();
-                beautyCenterDTO.ImageUrls = imagePaths;
+
+
+                if (beautyCenterDTO.Images != null && beautyCenterDTO.Images.Any())
+                {
+                    var imagePaths = await ImageSavingHelper.SaveImagesAsync(beautyCenterDTO.Images, "BeautyCenterImages");
+                    foreach (var img in imagePaths)
+                    {
+                        AllBeautyImages.Add(img);
+                    }
+                    beautyCenterDTO.ImageUrls = AllBeautyImages;
+                    beautyCenter.ImagesBeautyCenter.Clear();
+
+                    foreach (var item in AllBeautyImages)
+                    {
+                        beautyCenter.ImagesBeautyCenter.Add(new ImagesBeautyCenter { ImageUrl = item, BeautyCenterId = beautyCenter.ID });
+                    }
+
+                }
+               
 
                 _beautyRepository.Update(beautyCenter);
                 _beautyRepository.Save();

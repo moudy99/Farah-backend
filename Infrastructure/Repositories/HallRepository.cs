@@ -22,7 +22,15 @@ namespace Infrastructure.Repositories
                 .Include(c => c.Features)
                 .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
         }
+        public async Task<List<string>> getAllImages(int id)
+        {
+            var pics = context.HallPicture
+            .Where(s => s.HallID == id)
+            .Select(s => s.Url)
+            .ToList();
 
+            return pics;
+        }
         public Hall GetById(int id)
         {
             return context.Halls
