@@ -113,5 +113,13 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public Chat GetChatBetweenOwnerandCustomer(string customerId, string ownerID)
+        {
+            return  _context.Chats
+                    .Include(c => c.Messages)
+                    .Include(c => c.Owner)
+                    .Include(c => c.Customer)
+                    .FirstOrDefault(c => c.CustomerId == customerId && c.OwnerId == ownerID);
+        }
     }
 }

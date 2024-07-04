@@ -139,6 +139,40 @@ namespace Application.Services
             await _chatMessageRepository.SaveChangesAsync();
         }
 
+        public async Task<ChatDetailsDTO> GetChatBetweenOwnerandCustomer(string customerId, string ownerID)
+        {
+            var chat = _chatRepository.GetChatBetweenOwnerandCustomer(customerId,ownerID);
 
+            if (chat == null)
+            {
+                throw new Exception("Chat not found or user does not have access to this chat.");
+            }
+
+            // Make is Readed true
+            await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
+            ApplicationUser user = chat.Customer;
+            
+
+            var chatDetailsDTO = new ChatDetailsDTO
+            {
+                ChatId = chat.Id,
+                User = new UserDTO
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    ProfileImage = user.ProfileImage
+                },
+                Messages = chat.Messages.Select(m => new MessageDTO
+                {
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    Message = m.Message,
+                    SentAt = m.SentAt,
+                    IsRead = m.IsRead
+                }).ToList()
+            };
+
+            return chatDetailsDTO;
+        }
     }
 }

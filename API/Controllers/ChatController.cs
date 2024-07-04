@@ -117,5 +117,37 @@ namespace Presentation.Controllers
             }
         }
 
+        [HttpGet("GetChatBetweenOwnerandCustomer")]
+        public async Task<ActionResult> GetChatBetweenOwnerandCustomer(string ownerID)
+        {
+            try
+            {
+                var customerId = User.FindFirstValue("uid");
+                ApplicationUser user = await _userManager.FindByIdAsync(customerId);
+
+                bool isCustomer = user is Customer;
+
+                if (!isCustomer) 
+                    return BadRequest();
+
+                var chatDetails = await _chatMessageService.GetChatBetweenOwnerandCustomer(customerId, ownerID);
+                return Ok(new CustomResponseDTO<ChatDetailsDTO>
+                {
+                    Data = chatDetails,
+                    Message = "جالك الشات تمام",
+                    Succeeded = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new CustomResponseDTO<ChatDetailsDTO>
+                {
+                    Data = null,
+                    Message = $"ابلع ايروووووووور: {ex.Message}",
+                    Succeeded = false,
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
     }
 }
