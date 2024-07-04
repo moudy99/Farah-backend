@@ -68,16 +68,16 @@ namespace Infrastructure.Repositories
                 .ToList();
 
             var carServices = context.Services
-                        .OfType<Car>()
-                        .Where(b => b.ServiceStatus == ServiceStatus)
-                        .Include(c => c.Pictures)
-                        .ToList();
+                .OfType<Car>()
+                .Where(b => b.ServiceStatus == ServiceStatus)
+                .Include(c => c.Pictures)
+                .ToList();
 
             var photographerServices = context.Services
-                                .OfType<Photography>()
-                                .Where(b => b.ServiceStatus == ServiceStatus)
-                                .Include(c => c.Images)
-                                .ToList();
+                .OfType<Photography>()
+                .Where(b => b.ServiceStatus == ServiceStatus)
+                .Include(c => c.Images)
+                .ToList();
 
             // Combine all service types
             var allServices = new List<Service>();
@@ -86,6 +86,10 @@ namespace Infrastructure.Repositories
             allServices.AddRange(hallServices);
             allServices.AddRange(carServices);
             allServices.AddRange(photographerServices);
+
+            allServices = allServices.OrderBy(s => s.CreatedAt)
+                                     .ThenBy(s => !s.IsAdminSeen)
+                                        .ToList();
 
             context.SaveChanges();
             return allServices;

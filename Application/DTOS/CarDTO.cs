@@ -20,6 +20,6 @@ namespace Application.DTOS
         public List<IFormFile> Pictures { get; set; } // For receiving image files
         public List<string>? PictureUrls { get; set; } // For storing image URLs3
         public ServiceStatus ServiceStatus { get; set; }
-
+        public DateOnly CreatedAt { get; set; }
     }
 }
