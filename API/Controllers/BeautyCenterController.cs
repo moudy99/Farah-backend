@@ -189,13 +189,13 @@ namespace Presentation.Controllers
 
         [HttpPut]
         [Authorize]
-        public ActionResult UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
+        public async Task<ActionResult> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
                 beautyCenterDTO.OwnerID = OwnerID;
-                var response = _beautyService.UpdateBeautyCenter(beautyCenterDTO, id);
+                var response = await _beautyService.UpdateBeautyCenter(beautyCenterDTO, id);
                 return Ok(response);
             }
             catch (Exception ex)

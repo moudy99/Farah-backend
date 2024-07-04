@@ -128,6 +128,30 @@ namespace Application.Services
             return Mapper.Map<HallDTO>(hall);
         }
 
+        //public async Task<HallDTO> EditHall(int id, HallDTO hallDto)
+        //{
+        //    var existingHall = HallRepository.GetById(id);
+        //    if (existingHall == null)
+        //    {
+        //        throw new Exception("تعذر العثور علي القاعه");
+        //    }
+
+        //    Mapper.Map(hallDto, existingHall);
+
+        //    if (hallDto.Pictures != null && hallDto.Pictures.Any())
+        //    {
+        //        var imagePaths = await ImageSavingHelper.SaveImagesAsync(hallDto.Pictures, "Halls");
+        //        existingHall.Pictures = imagePaths.Select(path => new HallPicture { Url = path }).ToList();
+        //        hallDto.PictureUrls = imagePaths;
+        //    }
+
+        //    UpdateHallFeatures(existingHall, hallDto.Features);
+
+        //    HallRepository.Update(existingHall);
+        //    HallRepository.Save();
+        //    return Mapper.Map<HallDTO>(existingHall);
+        //}
+
         public async Task<HallDTO> EditHall(int id, HallDTO hallDto)
         {
             var existingHall = HallRepository.GetById(id);
@@ -136,17 +160,28 @@ namespace Application.Services
                 throw new Exception("تعذر العثور علي القاعه");
             }
 
+            var AllHallImages = await HallRepository.getAllImages(id);
             Mapper.Map(hallDto, existingHall);
 
             if (hallDto.Pictures != null && hallDto.Pictures.Any())
             {
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(hallDto.Pictures, "Halls");
-                existingHall.Pictures = imagePaths.Select(path => new HallPicture { Url = path }).ToList();
-                hallDto.PictureUrls = imagePaths;
+
+                //existingHall.Pictures = imagePaths.Select(path => new HallPicture { Url = path }).ToList();
+                foreach (var img in imagePaths)
+                {
+                    AllHallImages.Add(img);
+                }
+                hallDto.PictureUrls = AllHallImages;
+                existingHall.Pictures.Clear();
+
+                foreach (var item in AllHallImages)
+                {
+                    existingHall.Pictures.Add(new HallPicture { Url = item, HallID = existingHall.ID });
+                }
             }
 
             UpdateHallFeatures(existingHall, hallDto.Features);
-
             HallRepository.Update(existingHall);
             HallRepository.Save();
             return Mapper.Map<HallDTO>(existingHall);

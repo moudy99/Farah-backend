@@ -20,6 +20,15 @@ namespace Infrastructure.Repositories
                 .Include(c => c.Images)
                 .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
         }
+
+        public List<string> getAllImages(int id)
+        {
+            return context.ImagePhotography
+                        .Where(s => s.PhotographerId == id)
+                        .Select(s => s.ImageURL)
+                        .ToList();
+        }
+
         public Photography GetById(int id)
         {
             return context.Photographies

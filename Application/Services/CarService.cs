@@ -122,13 +122,24 @@ namespace Application.Services
                 throw new Exception("تعذر العثور علي السياره");
             }
 
+
+            var AllCarImages = carRepository.getAllImages(id);
             Mapper.Map(carDto, existingCar);
 
             if (carDto.Pictures != null && carDto.Pictures.Any())
             {
                 var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
-                existingCar.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
-                carDto.PictureUrls = imagePaths;
+
+                foreach (var img in imagePaths)
+                {
+                    AllCarImages.Add(img);
+                }
+                carDto.PictureUrls = AllCarImages;
+                existingCar.Pictures.Clear();
+                foreach (var item in AllCarImages)
+                {
+                    existingCar.Pictures.Add(new CarPicture { Url = item, CarID = existingCar.ID });
+                }
             }
 
             carRepository.Update(existingCar);

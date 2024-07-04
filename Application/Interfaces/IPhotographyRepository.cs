@@ -6,5 +6,7 @@ namespace Application.Interfaces
     {
         public List<Photography> GetOwnerServices(string ownerID);
         public new IQueryable<Photography> GetAll();
+
+        public List<string> getAllImages(int id);
     }
 }

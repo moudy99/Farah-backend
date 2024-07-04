@@ -115,13 +115,13 @@ namespace Presentation.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public ActionResult UpdatePhotographer(int id, [FromForm] AddPhotographyDTO photographyDTO)
+        public async Task<ActionResult> UpdatePhotographer(int id, [FromForm] AddPhotographyDTO photographyDTO)
         {
             string OwnerID = User.FindFirstValue("uid");
             try
             {
                 photographyDTO.OwnerID = OwnerID;
-                var response = _photoService.UpdatePhotographer(id, photographyDTO);
+                var response =await _photoService.UpdatePhotographer(id, photographyDTO);
                 return Ok(response);
             }
             catch (Exception ex)
