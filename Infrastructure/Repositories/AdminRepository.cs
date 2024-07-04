@@ -1,5 +1,4 @@
-﻿using Application.DTOS;
-using Application.Helpers;
+﻿using Application.Helpers;
 using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
@@ -43,6 +42,9 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(o => o.Id == id);
 
         }
+
+
+
         public List<Service> GetAllServices(ServiceStatus ServiceStatus)
         {
             var beautyCenterServices = context.Services
@@ -85,8 +87,17 @@ namespace Infrastructure.Repositories
             allServices.AddRange(carServices);
             allServices.AddRange(photographerServices);
 
-
+            context.SaveChanges();
             return allServices;
+        }
+
+        public void updateServices(List<Service> obj)
+        {
+            foreach (var service in obj)
+            {
+                service.IsAdminSeen = true;
+                context.Update(service);
+            }
         }
         public Service GetServiceById(int id)
         {

@@ -4,7 +4,7 @@ using Core.Enums;
 
 namespace Application.Interfaces
 {
-    public interface IAdminRepository : IRepository<Owner> 
+    public interface IAdminRepository : IRepository<Owner>
     {
         public List<Service> GetAllServices(ServiceStatus ServiceStatus);
         public IQueryable<Owner> GetAllOwners();
@@ -15,5 +15,7 @@ namespace Application.Interfaces
         public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
         public List<ApplicationUser> SearchUsersByName(string name);
         public Service GetServiceById(int id);
+        public void updateServices(List<Service> obj);
+
     }
 }

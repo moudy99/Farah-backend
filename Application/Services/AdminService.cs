@@ -52,6 +52,8 @@ namespace Application.Services
         {
 
             var allServices = AdminRepository.GetAllServices(ServiceStatus);
+            AdminRepository.updateServices(allServices);
+            AdminRepository.Save();
             var paginatedList = PaginationHelper.Paginate(allServices, page, pageSize);
 
 
