@@ -16,5 +16,8 @@ namespace Application.Helpers
 
         public bool IsAdminSeen { get; set; }
 
+        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+
+
     }
 }

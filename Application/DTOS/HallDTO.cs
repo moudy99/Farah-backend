@@ -20,5 +20,6 @@ namespace Application.DTOS
         public ServiceStatus ServiceStatus { get; set; }
 
         public bool IsFavorite { get; set; }
+        public DateOnly CreatedAt { get; set; }
     }
 }

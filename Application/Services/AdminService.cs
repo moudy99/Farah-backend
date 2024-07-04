@@ -52,10 +52,15 @@ namespace Application.Services
         {
 
             var allServices = AdminRepository.GetAllServices(ServiceStatus);
+
+            var orderedServices = allServices.OrderBy(s => s.CreatedAt).ThenBy(s => !s.IsAdminSeen).ToList();
+
+
+            
+
             AdminRepository.updateServices(allServices);
             AdminRepository.Save();
-            var paginatedList = PaginationHelper.Paginate(allServices, page, pageSize);
-
+            var paginatedList = PaginationHelper.Paginate(orderedServices, page, pageSize);
 
             var allServicesDTO = new AllServicesDTO
             {

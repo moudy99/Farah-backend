@@ -30,6 +30,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
                     b.Property<bool>("IsAdminSeen")
                         .HasColumnType("bit");
 
