@@ -14,5 +14,6 @@ namespace Application.Interfaces
         public CustomResponseDTO<List<AllChatsDTO>> GetMyChats(int page, int pageSize,string userId,bool isOwner);
 
         public Task<ChatDetailsDTO> GetChatByIdAsync(int chatId, string userId, bool isOwner);
+        public Task<ChatDetailsDTO> GetChatBetweenOwnerandCustomer(string customerId,string ownerID);
     }
 }

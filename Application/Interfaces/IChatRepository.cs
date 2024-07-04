@@ -15,6 +15,7 @@ namespace Application.Interfaces
         public Task<Chat> GetChatByIdAsync(int chatId);
         public Task MarkMessagesAsReadAsync(int chatId, string userId);
         Task AddAsync(Chat chat);
+        public Chat GetChatBetweenOwnerandCustomer(string customerId,string ownerID);
         Task SaveChangesAsync();
     }
 }
