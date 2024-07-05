@@ -12,7 +12,7 @@ namespace Application.Helpers
 
         public List<FavoriteService> FavoriteServices { get; set; }
 
-        public ServiceStatus ServiceStatus { get; set; } = ServiceStatus.Accepted;
+        public ServiceStatus ServiceStatus { get; set; } = ServiceStatus.Pending;
 
         public bool IsAdminSeen { get; set; }
 
