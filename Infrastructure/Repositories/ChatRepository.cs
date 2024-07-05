@@ -57,7 +57,7 @@ namespace Infrastructure.Repositories
                         User = new UserDTO
                         {
                             Id = c.Customer.Id,
-                            UserName = c.Customer.UserName,
+                            UserName = $"{c.Customer.FirstName} {c.Customer.LastName}",
                             ProfileImage = c.Customer.ProfileImage
                         },
                         lastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().Message,
@@ -77,7 +77,7 @@ namespace Infrastructure.Repositories
                         User = new UserDTO
                         {
                             Id = c.Owner.Id,
-                            UserName = c.Owner.UserName,
+                            UserName = $"{c.Owner.FirstName} {c.Owner.LastName}",
                             ProfileImage = c.Owner.ProfileImage
                         },
                         lastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().Message,
