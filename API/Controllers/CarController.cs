@@ -26,7 +26,7 @@ namespace Presentation.Controllers
             try
             {
                 string customerId = User.FindFirstValue("uid");
-                var response = carService.GetAllCars(customerId,page, pageSize, priceRange, govId, cityId);
+                var response = carService.GetAllCars(customerId, page, pageSize, priceRange, govId, cityId);
 
 
 
@@ -87,7 +87,7 @@ namespace Presentation.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> EditCar(CarDTO carDto, int id)
         {
             string OwnerID = User.FindFirstValue("uid");

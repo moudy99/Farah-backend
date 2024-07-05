@@ -1,6 +1,5 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Hubs;
@@ -27,7 +26,7 @@ namespace Presentation.Controllers
             try
             {
                 string customerId = User.FindFirstValue("uid");
-                var response = HallService.GetAllHalls(customerId,page, pageSize, priceRange, govId, cityId);
+                var response = HallService.GetAllHalls(customerId, page, pageSize, priceRange, govId, cityId);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<HallDTO>>
@@ -86,16 +85,17 @@ namespace Presentation.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> EditHall(HallDTO HallDto, int id)
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> EditHall([FromForm] HallDTO hallDto, int id)
         {
-            string OwnerID = User.FindFirstValue("uid");
+            string ownerID = User.FindFirstValue("uid");
 
             try
             {
-                HallDto.OwnerID = OwnerID;
-                HallDto.HallID = id;
-                var hall = await HallService.EditHall(id, HallDto);
+                hallDto.OwnerID = ownerID;
+                hallDto.HallID = id;
+                var hall = await HallService.EditHall(id, hallDto);
 
                 return Ok(new CustomResponseDTO<HallDTO>
                 {
@@ -117,6 +117,7 @@ namespace Presentation.Controllers
                 return BadRequest(errorResponse);
             }
         }
+
 
         [HttpDelete]
         public IActionResult DeleteHall(int id)

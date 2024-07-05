@@ -31,7 +31,7 @@ namespace Presentation.Controllers
             try
             {
                 string customerId = User.FindFirstValue("uid");
-                var response = _beautyService.GetAllBeautyCenters(customerId,page, pageSize, govId, cityId);
+                var response = _beautyService.GetAllBeautyCenters(customerId, page, pageSize, govId, cityId);
                 if (response.Data == null || !response.Data.Any())
                 {
                     return NotFound(new CustomResponseDTO<List<BeautyCenterDTO>>
@@ -185,7 +185,7 @@ namespace Presentation.Controllers
 
 
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
         public async Task<ActionResult> UpdateBeautyCenter(AddBeautyCenterDTO beautyCenterDTO, int id)
         {
