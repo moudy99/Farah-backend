@@ -20,6 +20,7 @@ namespace Application.Helpers
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServicesForBeautyCenter
                     .Select(s => new ServiceForBeautyCenterDTO
                     {
+                        ID = s.Id,
                         BeautyCenterId = s.BeautyCenterId,
                         Name = s.Name,
                         Description = s.Description,
