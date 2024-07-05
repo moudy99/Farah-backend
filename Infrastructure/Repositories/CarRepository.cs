@@ -30,7 +30,7 @@ namespace Infrastructure.Repositories
                         .ToList();
         }
 
-        public Car GetById(int id)
+        public Car GetCarById(int id)
         {
             return context.Cars
                 .Include(c => c.Pictures)

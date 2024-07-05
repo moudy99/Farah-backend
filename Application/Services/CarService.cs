@@ -104,6 +104,8 @@ namespace Application.Services
         {
             var car = Mapper.Map<Car>(carDto);
 
+
+
             var imagePaths = await ImageSavingHelper.SaveImagesAsync(carDto.Pictures, "Cars");
             car.Pictures = imagePaths.Select(path => new CarPicture { Url = path }).ToList();
             carDto.PictureUrls = imagePaths;
@@ -116,7 +118,7 @@ namespace Application.Services
 
         public async Task<CarDTO> EditCar(int id, CarDTO carDto)
         {
-            var existingCar = carRepository.GetById(id);
+            var existingCar = carRepository.GetCarById(id);
             if (existingCar == null)
             {
                 throw new Exception("تعذر العثور علي السياره");
@@ -150,7 +152,7 @@ namespace Application.Services
         {
             try
             {
-                Car car = carRepository.GetById(id);
+                Car car = carRepository.GetCarById(id);
                 if (car == null)
                 {
                     throw new Exception("تعذر العثور علي السياره");
@@ -168,7 +170,7 @@ namespace Application.Services
 
         public CustomResponseDTO<CarDTO> GetCarById(int id)
         {
-            Car car = carRepository.GetById(id);
+            Car car = carRepository.GetCarById(id);
 
 
 
@@ -184,8 +186,12 @@ namespace Application.Services
             }
 
             CarDTO carDTO = Mapper.Map<CarDTO>(car);
-            if (car.FavoriteServices != null)
+
+            if (car.FavoriteServices.Count == 0)
+                carDTO.IsFavorite = false;
+            else
                 carDTO.IsFavorite = true;
+
             return new CustomResponseDTO<CarDTO>
             {
                 Data = carDTO,

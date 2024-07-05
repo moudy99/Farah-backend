@@ -94,7 +94,9 @@ namespace Application.Services
             var photography = photoRepository.GetById(id);
 
             var photographyDTO = Mapper.Map<PhotographyDTO>(photography);
-            if (photography.FavoriteServices != null)
+            if (photography.FavoriteServices.Count == 0)
+                photographyDTO.IsFavorite = false;
+            else
                 photographyDTO.IsFavorite = true;
 
             var response = new CustomResponseDTO<PhotographyDTO>

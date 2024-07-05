@@ -231,7 +231,9 @@ namespace Application.Services
 
             HallDTO hallDTO = Mapper.Map<HallDTO>(hall);
 
-            if (hall.FavoriteServices != null)
+            if (hall.FavoriteServices.Count == 0)
+                hallDTO.IsFavorite = false;
+            else
                 hallDTO.IsFavorite = true;
 
             return new CustomResponseDTO<HallDTO>
