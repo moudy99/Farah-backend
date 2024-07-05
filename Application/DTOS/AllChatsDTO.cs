@@ -14,6 +14,7 @@ namespace Application.DTOS
         public  string lastMessage { get; set; }
         public DateTime lastMessageSentAt { get; set; }
         public bool isRead { get; set; }
+        public bool IamTheLastMessageSender { get; set; }
 
     }
 }

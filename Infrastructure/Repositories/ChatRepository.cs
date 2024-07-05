@@ -45,47 +45,56 @@ namespace Infrastructure.Repositories
 
         public IQueryable<AllChatsDTO> GetMyChats(string userId, bool isOwner)
         {
-            if (isOwner)
-            {
-                return _context.Chats
+            var chatsQuery = isOwner ?
+
+                _context.Chats
+                    .Where(c => c.OwnerId == userId)
                     .Include(c => c.Messages)
                     .Include(c => c.Customer)
-                    .Where(c => c.OwnerId == userId)
-                    .Select(c => new AllChatsDTO
+                    .Select(c => new
                     {
-                        chatId = c.Id,
-                        User = new UserDTO
-                        {
-                            Id = c.Customer.Id,
-                            UserName = $"{c.Customer.FirstName} {c.Customer.LastName}",
-                            ProfileImage = c.Customer.ProfileImage
-                        },
-                        lastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().Message,
-                        lastMessageSentAt = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().SentAt,
-                        isRead = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().IsRead
-                    });
-            }
-            else
-            {
-                return _context.Chats
+                        Chat = c,
+                        LastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault()
+                    }) :
+
+                _context.Chats
                     .Include(c => c.Messages)
                     .Include(c => c.Owner)
                     .Where(c => c.CustomerId == userId)
-                    .Select(c => new AllChatsDTO
+                    .Select(c => new
                     {
-                        chatId = c.Id,
-                        User = new UserDTO
-                        {
-                            Id = c.Owner.Id,
-                            UserName = $"{c.Owner.FirstName} {c.Owner.LastName}",
-                            ProfileImage = c.Owner.ProfileImage
-                        },
-                        lastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().Message,
-                        lastMessageSentAt = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().SentAt,
-                        isRead = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault().IsRead
+                        Chat = c,
+                        LastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault()
                     });
-            }
+
+            var chatsDTO = chatsQuery.Select(c => new AllChatsDTO
+            {
+                chatId = c.Chat.Id,
+                User = isOwner ?
+
+                    new UserDTO
+                    {
+                        Id = c.Chat.Customer.Id,
+                        UserName = $"{c.Chat.Customer.FirstName} {c.Chat.Customer.LastName}",
+                        ProfileImage = c.Chat.Customer.ProfileImage
+                    } :
+
+                    new UserDTO
+                    {
+                        Id = c.Chat.Owner.Id,
+                        UserName = $"{c.Chat.Owner.FirstName} {c.Chat.Owner.LastName}",
+                        ProfileImage = c.Chat.Owner.ProfileImage
+                    },
+
+                lastMessage = c.LastMessage.Message,
+                IamTheLastMessageSender = c.LastMessage.SenderId == userId ? true : false,
+                lastMessageSentAt = c.LastMessage.SentAt,
+                isRead = c.LastMessage.IsRead
+            });
+
+            return chatsDTO;
         }
+      
 
         public async Task<Chat> GetChatByIdAsync(int chatId)
         {
