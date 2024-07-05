@@ -5,6 +5,7 @@ using AutoMapper;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Runtime.ConstrainedExecution;
 
 namespace Application.Services
 {
@@ -104,7 +105,9 @@ namespace Application.Services
 
             var beautyCenterDTO = _mapper.Map<BeautyCenterDTO>(beautyCenter);
 
-            if (beautyCenter.FavoriteServices != null)
+            if (beautyCenter.FavoriteServices.Count == 0)
+                beautyCenterDTO.IsFavorite = false;
+            else
                 beautyCenterDTO.IsFavorite = true;
 
             var response = new CustomResponseDTO<BeautyCenterDTO>

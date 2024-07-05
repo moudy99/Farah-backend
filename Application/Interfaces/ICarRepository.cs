@@ -7,5 +7,6 @@ namespace Application.Interfaces
         public List<Car> GetOwnerServices(string ownerID);
         public new IQueryable<Car> GetAll();
         public List<string> getAllImages(int id);
+        public Car GetCarById(int id);
     }
 }
