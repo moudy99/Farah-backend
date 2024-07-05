@@ -263,10 +263,15 @@ namespace Infrastructure.Repositories
 
             //var user = await _userManager.FindByEmailAsync(loginUser.Email);
 
-            int NotSeenService = _context.Services.Count(s => !s.IsAdminSeen);
-            int NotSeenOwner = _context.Owners.Count(u => !u.IsAdminSeen);
+
+
             //It work with the new mail 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginUser.Email);
+
+            // For Notification
+            int NotSeenService = _context.Services.Count(s => !s.IsAdminSeen);
+            int NotSeenOwner = _context.Owners.Count(u => !u.IsAdminSeen);
+            int NotSeenMessages = _context.ChatMessages.Where(m => !m.IsRead && m.SenderId != user.Id).Count();
 
             if (user != null)
             {
@@ -319,6 +324,7 @@ namespace Infrastructure.Repositories
                         IsBlocked = user.IsBlocked,
                         NotSeenServicesCount = NotSeenService,
                         NotSeenRegisteredOwners = NotSeenOwner,
+                        NotSeenMessages = NotSeenMessages,
                     };
                 }
                 else
