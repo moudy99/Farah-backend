@@ -10,27 +10,42 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // ImagesBeautyCenter -> BeautyCenters
+            migrationBuilder.DropForeignKey(
+                name: "FK_ImagesBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "ImagesBeautyCenter");
+
             migrationBuilder.AddForeignKey(
-                name: "FK_ImagesBeautyCenter_BeautyCenter_BeautyCenterId",
+                name: "FK_ImagesBeautyCenter_BeautyCenters_BeautyCenterId",
                 table: "ImagesBeautyCenter",
                 column: "BeautyCenterId",
-                principalTable: "BeautyCenter",
+                principalTable: "BeautyCenters",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
+            // servicesForBeautyCenter -> BeautyCenters
+            migrationBuilder.DropForeignKey(
+                name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "servicesForBeautyCenter");
+
             migrationBuilder.AddForeignKey(
-                name: "FK_ServiceForBeautyCenter_BeautyCenter_BeautyCenterId",
-                table: "ServiceForBeautyCenter",
+                name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "servicesForBeautyCenter",
                 column: "BeautyCenterId",
-                principalTable: "BeautyCenter",
+                principalTable: "BeautyCenters",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
+            // FavoriteService -> Services
+            migrationBuilder.DropForeignKey(
+                name: "FK_FavoriteService_Services_ServiceId",
+                table: "FavoriteService");
+
             migrationBuilder.AddForeignKey(
-                name: "FK_FavoriteService_Service_ServiceId",
+                name: "FK_FavoriteService_Services_ServiceId",
                 table: "FavoriteService",
                 column: "ServiceId",
-                principalTable: "Service",
+                principalTable: "Services",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -39,16 +54,39 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-    name: "FK_ImagesBeautyCenter_BeautyCenter_BeautyCenterId",
-    table: "ImagesBeautyCenter");
+                name: "FK_ImagesBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "ImagesBeautyCenter");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_ServiceForBeautyCenter_BeautyCenter_BeautyCenterId",
-                table: "ServiceForBeautyCenter");
+            migrationBuilder.AddForeignKey(
+                name: "FK_ImagesBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "ImagesBeautyCenter",
+                column: "BeautyCenterId",
+                principalTable: "BeautyCenters",
+                principalColumn: "Id");
 
+            // servicesForBeautyCenter -> BeautyCenters
             migrationBuilder.DropForeignKey(
-                name: "FK_FavoriteService_Service_ServiceId",
+                name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "servicesForBeautyCenter");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_servicesForBeautyCenter_BeautyCenters_BeautyCenterId",
+                table: "servicesForBeautyCenter",
+                column: "BeautyCenterId",
+                principalTable: "BeautyCenters",
+                principalColumn: "Id");
+
+            // FavoriteService -> Services
+            migrationBuilder.DropForeignKey(
+                name: "FK_FavoriteService_Services_ServiceId",
                 table: "FavoriteService");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_FavoriteService_Services_ServiceId",
+                table: "FavoriteService",
+                column: "ServiceId",
+                principalTable: "Services",
+                principalColumn: "Id");
         }
     }
 }

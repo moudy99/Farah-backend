@@ -60,6 +60,12 @@ namespace Infrastructure
                     .HasForeignKey(i => i.BeautyCenterId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Service>()
+                        .HasMany(s => s.FavoriteServices)
+                        .WithOne(f => f.Service)
+                        .HasForeignKey(f => f.ServiceId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Car>()
                         .HasMany(c => c.Pictures)
                         .WithOne(p => p.Car)
