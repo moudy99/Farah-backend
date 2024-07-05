@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.SignalR;
 using Core.Entities;
 using Application.DTOS;
 using Application.Helpers;
+using MimeKit;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Application.Services
@@ -18,14 +20,15 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IChatMessageRepository _chatMessageRepository;
         private readonly IChatRepository _chatRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
-
-        public ChatMessageService(IMapper mapper, IChatMessageRepository chatMessageRepository, IChatRepository chatRepository)
+        public ChatMessageService(IMapper mapper, IChatMessageRepository chatMessageRepository, IChatRepository chatRepository, UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
             _chatMessageRepository = chatMessageRepository;
             _chatRepository = chatRepository;
+            _userManager = userManager;
         }
 
         public CustomResponseDTO<List<AllChatsDTO>> GetMyChats(int page, int pageSize, string userId, bool isOwner)
@@ -143,11 +146,25 @@ namespace Application.Services
         {
             var chat = _chatRepository.GetChatBetweenOwnerandCustomer(customerId,ownerID);
 
-            if (chat == null)
+            ApplicationUser customer =   await _userManager.FindByIdAsync(customerId);
+            ApplicationUser owner = await _userManager.FindByIdAsync(ownerID);
+
+            if ( customer is not Customer || owner is not Owner)
             {
-                throw new Exception("Chat not found or user does not have access to this chat.");
+                throw new Exception("IDS فيها حاجه غلط ");
             }
 
+            if (chat == null)
+            {
+                chat = new Chat
+                {
+                    OwnerId = ownerID,
+                    CustomerId = customerId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _chatRepository.AddAsync(chat);
+                await _chatRepository.SaveChangesAsync();
+            }
             // Make is Readed true
             await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
             ApplicationUser user = chat.Customer;
