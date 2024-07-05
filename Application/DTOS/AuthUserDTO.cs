@@ -4,6 +4,7 @@
     {
         public int NotSeenServicesCount { get; set; }
         public int NotSeenRegisteredOwners {  get; set; }
+        public int NotSeenMessages { get; set; }
         public string Message { get; set; }
         public bool IsEmailConfirmed { get; set; }
         public bool Succeeded { get; set; } = false;
