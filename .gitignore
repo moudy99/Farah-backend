@@ -366,3 +366,5 @@ FodyWeavers.xsd
 /API/wwwroot/Images/BeautyCenterImages
 /API/wwwroot/Images/Halls
 /.gitignore
+/Infrastructure/Migrations/20240705182150_fix_delete.cs
+/Infrastructure/Migrations/20240705182150_fix_delete.Designer.cs
