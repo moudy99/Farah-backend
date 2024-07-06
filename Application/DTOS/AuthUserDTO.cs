@@ -3,7 +3,7 @@
     public class AuthUserDTO
     {
         public int NotSeenServicesCount { get; set; }
-        public int NotSeenRegisteredOwners {  get; set; }
+        public int NotSeenRegisteredOwners { get; set; }
         public int NotSeenMessages { get; set; }
         public string Message { get; set; }
         public bool IsEmailConfirmed { get; set; }
@@ -16,5 +16,6 @@
         public bool IsBlocked { get; set; }
         public DateTime ExpireTIme { get; set; }
         public List<string> Errors { get; set; }
+        public string FullName { get; set; }
     }
 }

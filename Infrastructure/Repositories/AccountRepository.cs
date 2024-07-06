@@ -129,6 +129,7 @@ namespace Infrastructure.Repositories
                     SSN = payload.Email,
                     YourFavirotePerson = "answer",
                     UserName = GenerateUsernameFromEmail(payload.Email),
+
                 };
 
                 try
@@ -154,7 +155,9 @@ namespace Infrastructure.Repositories
                         Role = "Customer",
                         Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
                         Token = token,
-                        IsBlocked = user.IsBlocked
+                        IsBlocked = user.IsBlocked,
+                        FullName = user.FirstName + " " + user.LastName,
+
                     };
                 }
                 catch
@@ -176,6 +179,8 @@ namespace Infrastructure.Repositories
                 Role = "Customer",
                 Message = "تم تسجيل الدخول بواسطة جوجل بنجاح",
                 Token = existingUserToken,
+                FullName = user.FirstName + " " + user.LastName,
+
             };
         }
 
