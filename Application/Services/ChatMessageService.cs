@@ -50,7 +50,7 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-   
+
                 return new CustomResponseDTO<List<AllChatsDTO>>
                 {
                     Data = null,
@@ -76,7 +76,7 @@ namespace Application.Services
                 await _chatRepository.MarkMessagesAsReadAsync(chatId, userId);
 
                 ApplicationUser user;
-                if(isOwner)
+                if (isOwner)
                 {
                     user = chat.Owner;
                 }
@@ -144,12 +144,12 @@ namespace Application.Services
 
         public async Task<ChatDetailsDTO> GetChatBetweenOwnerandCustomer(string customerId, string ownerID)
         {
-            var chat = _chatRepository.GetChatBetweenOwnerandCustomer(customerId,ownerID);
+            var chat = _chatRepository.GetChatBetweenOwnerandCustomer(customerId, ownerID);
 
-            ApplicationUser customer =   await _userManager.FindByIdAsync(customerId);
+            ApplicationUser customer = await _userManager.FindByIdAsync(customerId);
             ApplicationUser owner = await _userManager.FindByIdAsync(ownerID);
 
-            if ( customer is not Customer || owner is not Owner)
+            if (customer is not Customer || owner is not Owner)
             {
                 throw new Exception("IDS فيها حاجه غلط ");
             }
@@ -164,31 +164,40 @@ namespace Application.Services
                 };
                 await _chatRepository.AddAsync(chat);
                 await _chatRepository.SaveChangesAsync();
+
+                return new ChatDetailsDTO
+                {
+                    ChatId = chat.Id,
+                    User = new UserDTO
+                    {
+                        Id = chat.Customer.Id,
+                        UserName = chat.Customer.UserName,
+                        ProfileImage = chat.Customer.ProfileImage
+                    },
+                    Messages = null
+                };
             }
-            // Make is Readed true
-            await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
-            ApplicationUser user = chat.Customer;
-            
 
-            var chatDetailsDTO = new ChatDetailsDTO
+        await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
+        ApplicationUser user = chat.Customer;
+        var chatDetailsDTO = new ChatDetailsDTO
+        {
+            ChatId = chat.Id,
+            User = new UserDTO
             {
-                ChatId = chat.Id,
-                User = new UserDTO
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    ProfileImage = user.ProfileImage
-                },
-                Messages = chat.Messages.Select(m => new MessageDTO
-                {
-                    SenderId = m.SenderId,
-                    ReceiverId = m.ReceiverId,
-                    Message = m.Message,
-                    SentAt = m.SentAt,
-                    IsRead = m.IsRead
-                }).ToList()
-            };
-
+                Id = user.Id,
+                UserName = user.UserName,
+                ProfileImage = user.ProfileImage
+            },
+            Messages = chat.Messages.Select(m => new MessageDTO
+            {
+                SenderId = m.SenderId,
+                ReceiverId = m.ReceiverId,
+                Message = m.Message,
+                SentAt = m.SentAt,
+                IsRead = m.IsRead
+            }).ToList()
+        };
             return chatDetailsDTO;
         }
     }

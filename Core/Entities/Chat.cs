@@ -3,7 +3,7 @@
     public class Chat
     {
         public int Id { get; set; }
-        public List<ChatMessage> Messages { get; set; }
+        public List<ChatMessage>? Messages { get; set; }
 
         public string OwnerId { get; set; }
         public Owner Owner { get; set; }
