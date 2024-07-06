@@ -16,7 +16,7 @@ namespace Core.Entities
         public ApplicationUser Receiver { get; set; }
 
         public string Message { get; set; }
-        public DateTime SentAt { get; set; } = DateTime.UtcNow;
+        public DateTime SentAt { get; set; } = DateTime.Now;
         public bool IsRead { get; set; } = false;
 
         public int ChatId { get; set; }

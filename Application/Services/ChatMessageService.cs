@@ -122,7 +122,7 @@ namespace Application.Services
                 {
                     OwnerId = isSenderOwner ? senderId : receiverId,
                     CustomerId = isSenderOwner ? receiverId : senderId,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.Now
                 };
                 await _chatRepository.AddAsync(chat);
                 await _chatRepository.SaveChangesAsync();
@@ -134,7 +134,7 @@ namespace Application.Services
                 SenderId = senderId,
                 ReceiverId = receiverId,
                 Message = message,
-                SentAt = DateTime.UtcNow,
+                SentAt = DateTime.Now,
                 IsRead = false
             };
 
