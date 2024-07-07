@@ -44,11 +44,11 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("owners")]
-        public ActionResult GetAllOwners(int page = 1, int pageSize = 6, UserType? userType = null, OwnerAccountStatus? status = null, bool? isBlocked = null)
+        public ActionResult GetAllOwners(int page = 1, int pageSize = 6, string? ownerName = null, UserType? userType = null, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try
             {
-                var response = AdminService.GetFilteredOwners( userType,status, isBlocked, page, pageSize);
+                var response = AdminService.GetFilteredOwners(ownerName, userType,status, isBlocked, page, pageSize);
 
 
                 if (response.Data == null)
@@ -78,11 +78,11 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("Customers")]
-        public ActionResult GetAllCustomers(int page = 1, int pageSize = 6, bool? isBlocked = null)
+        public ActionResult GetAllCustomers(string? customerName = null,int page = 1, int pageSize = 6, bool? isBlocked = null)
         {
             try
             {
-                var response = AdminService.GetAllCustomers(isBlocked, page, pageSize);
+                var response = AdminService.GetAllCustomers(customerName,isBlocked, page, pageSize);
                 if (response.Data == null)
                 {
                     return NotFound(new CustomResponseDTO<List<CustomerDTO>>

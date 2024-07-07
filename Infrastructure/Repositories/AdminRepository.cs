@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Core.Entities;
 using Core.Enums;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace Infrastructure.Repositories
 {
@@ -22,10 +23,13 @@ namespace Infrastructure.Repositories
 
 
         }
-        public IQueryable<Customer> GetAllCustomers(bool? isBlocked)
+        public IQueryable<Customer> GetAllCustomers(string? customerName, bool? isBlocked)
         {
             var query = context.Customers.AsQueryable();
-
+            if (customerName != null)
+            {
+                query = query.Where(o => o.FirstName.Contains(customerName) || o.LastName.Contains(customerName));
+            }
 
 
             if (isBlocked.HasValue)
@@ -122,10 +126,14 @@ namespace Infrastructure.Repositories
                 .Include(s => (s as Photography).Images)
                 .FirstOrDefault(s => s.ID == id);
         }
-        public IQueryable<Owner> GetOwnersByStatus(UserType? userType, OwnerAccountStatus? status, bool? isBlocked)
+        public IQueryable<Owner> GetOwnersByStatus(string? ownerName, UserType? userType, OwnerAccountStatus? status, bool? isBlocked)
         {
             var query = context.Owners.AsQueryable();
 
+            if(ownerName != null)
+            {
+                query = query.Where(o => o.FirstName.Contains(ownerName) || o.LastName.Contains(ownerName));
+            }
             if(userType.HasValue)
             {
                 query = query.Where(o => o.UserType == userType);
