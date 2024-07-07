@@ -163,9 +163,9 @@ namespace Application.Services
                     ChatId = chat.Id,
                     User = new UserDTO
                     {
-                        Id = chat.Customer.Id,
-                        UserName = chat.Customer.UserName,
-                        ProfileImage = chat.Customer.ProfileImage
+                        Id = chat.Owner.Id,
+                        UserName = $"{chat.Owner.FirstName} {chat.Owner.LastName}",
+                        ProfileImage = chat.Owner.ProfileImage
                     },
                     Messages = null
                 };
