@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<AllChatsDTO> GetMyChats(string userId, bool isOwner)
+        public IEnumerable<AllChatsDTO> GetMyChats(string userId, bool isOwner)
         {
             var chatsQuery = isOwner ?
 
@@ -55,7 +55,7 @@ namespace Infrastructure.Repositories
                     {
                         Chat = c,
                         LastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault()
-                    }) :
+                    }).ToList() :
 
                 _context.Chats
                     .Include(c => c.Messages)
@@ -65,7 +65,7 @@ namespace Infrastructure.Repositories
                     {
                         Chat = c,
                         LastMessage = c.Messages.OrderByDescending(m => m.SentAt).FirstOrDefault()
-                    });
+                    }).ToList();
 
             var chatsDTO = chatsQuery.Select(c => new AllChatsDTO
             {
@@ -86,11 +86,11 @@ namespace Infrastructure.Repositories
                         ProfileImage = c.Chat.Owner.ProfileImage
                     },
 
-                lastMessage = c.LastMessage.Message,
-                IamTheLastMessageSender = c.LastMessage.SenderId == userId ? true : false,
-                lastMessageSentAt = c.LastMessage.SentAt,
-                isRead = c.LastMessage.IsRead
-            });
+                lastMessage = c.LastMessage?.Message,
+                IamTheLastMessageSender = c.LastMessage != null && c.LastMessage.SenderId == userId ? true : false,
+                lastMessageSentAt = c.LastMessage?.SentAt,
+                isRead = c.LastMessage?.IsRead ?? false
+            }).ToList();
 
             return chatsDTO;
         }

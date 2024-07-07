@@ -35,7 +35,7 @@ namespace Application.Services
         {
             try
             {
-                IQueryable<AllChatsDTO> myChats = _chatRepository.GetMyChats(userId, isOwner);
+                IEnumerable<AllChatsDTO> myChats = _chatRepository.GetMyChats(userId, isOwner);
 
                 var paginatedList = PaginationHelper.Paginate(myChats, page, pageSize);
                 var paginationInfo = PaginationHelper.GetPaginationInfo(paginatedList);

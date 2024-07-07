@@ -208,7 +208,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ChatId")
+                    b.Property<int?>("ChatId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsRead")
@@ -877,9 +877,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Core.Entities.Chat", "Chat")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChatId");
 
                     b.HasOne("Core.Entities.ApplicationUser", "Receiver")
                         .WithMany()
