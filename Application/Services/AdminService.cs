@@ -127,9 +127,9 @@ namespace Application.Services
 
             return response;
         }
-        public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(bool? isBlocked, int page, int pageSize)
+        public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(string? customerName,bool? isBlocked, int page, int pageSize)
         {
-            IQueryable<Customer> allCustomers = AdminRepository.GetAllCustomers(isBlocked);
+            IQueryable<Customer> allCustomers = AdminRepository.GetAllCustomers(customerName,isBlocked);
             var paginatedList = PaginationHelper.Paginate(allCustomers, page, pageSize);
 
             List<CustomerDTO> customers = Mapper.Map<List<CustomerDTO>>(paginatedList.Items);
@@ -263,9 +263,9 @@ namespace Application.Services
                 Errors = null
             };
         }
-        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(UserType? userType,OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
+        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(string? ownerName, UserType? userType,OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
         {
-            var filteredOwners = AdminRepository.GetOwnersByStatus(userType,status, isBlocked);
+            var filteredOwners = AdminRepository.GetOwnersByStatus(ownerName,userType,status, isBlocked);
             AdminRepository.updateOwners(filteredOwners.ToList());
             AdminRepository.Save();
 
