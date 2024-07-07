@@ -1,13 +1,9 @@
 ﻿using Application.DTOS;
 using Application.Interfaces;
-using Application.Services;
 using Core.Entities;
-using Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Presentation.Hubs;
 using System.Security.Claims;
 
@@ -20,18 +16,21 @@ namespace Presentation.Controllers
         private readonly IChatMessageService _chatMessageService;
         private readonly IHubContext<ChatHub> _chatHubContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHubContext<NotificationsHub> notificationHub;
 
-        public ChatController(IChatMessageService chatMessageService, IHubContext<ChatHub> chatHubContext, UserManager<ApplicationUser> userManager)
+        public ChatController(IChatMessageService chatMessageService, IHubContext<ChatHub> chatHubContext, UserManager<ApplicationUser> userManager,
+            IHubContext<NotificationsHub> notificationHub)
         {
             _chatMessageService = chatMessageService;
             _chatHubContext = chatHubContext;
             _userManager = userManager;
+            this.notificationHub = notificationHub;
         }
 
 
 
         [HttpGet("my-chats")]
-        public async Task<IActionResult> GetMyChats( int page = 1, int pageSize = 6)
+        public async Task<IActionResult> GetMyChats(int page = 1, int pageSize = 6)
         {
             try
             {
@@ -77,6 +76,10 @@ namespace Presentation.Controllers
 
             await _chatMessageService.SendMessageAsync(senderId, dto.ReceiverId, dto.Message, isSenderOwner);
 
+
+
+
+            await notificationHub.Clients.All.SendAsync("newMessageReceived");
             await _chatHubContext.Clients.User(dto.ReceiverId).SendAsync("ReceiveMessage", new
             {
                 SenderId = senderId,
@@ -127,7 +130,7 @@ namespace Presentation.Controllers
 
                 bool isCustomer = user is Customer;
 
-                if (!isCustomer) 
+                if (!isCustomer)
                     return BadRequest();
 
                 var chatDetails = await _chatMessageService.GetChatBetweenOwnerandCustomer(customerId, ownerID);
