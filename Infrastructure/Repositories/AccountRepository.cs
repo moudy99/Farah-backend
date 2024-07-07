@@ -312,7 +312,8 @@ namespace Infrastructure.Repositories
                             AccountStatus = owner?.AccountStatus.ToString(),
                             Name = user.FirstName + " " + user.LastName,
                             Email = user.Email,
-                            IsBlocked = user.IsBlocked
+                            IsBlocked = user.IsBlocked,
+                            ProfileImage = user.ProfileImage,
                         };
                     }
                     return new AuthUserDTO()
@@ -330,6 +331,7 @@ namespace Infrastructure.Repositories
                         NotSeenServicesCount = NotSeenService,
                         NotSeenRegisteredOwners = NotSeenOwner,
                         NotSeenMessages = NotSeenMessages,
+                        ProfileImage = user.ProfileImage,
                     };
                 }
                 else

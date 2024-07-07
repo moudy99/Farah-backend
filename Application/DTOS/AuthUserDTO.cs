@@ -17,5 +17,7 @@
         public DateTime ExpireTIme { get; set; }
         public List<string> Errors { get; set; }
         public string FullName { get; set; }
+
+        public string? ProfileImage { get; set; }
     }
 }
