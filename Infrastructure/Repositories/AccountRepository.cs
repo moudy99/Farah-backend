@@ -276,7 +276,7 @@ namespace Infrastructure.Repositories
             // For Notification
             int NotSeenService = _context.Services.Count(s => !s.IsAdminSeen);
             int NotSeenOwner = _context.Owners.Count(u => !u.IsAdminSeen);
-            int NotSeenMessages = _context.ChatMessages.Where(m => !m.IsRead && m.SenderId != user.Id).Count();
+            int NotSeenMessages = _context.ChatMessages.Where(m => !m.IsRead && m.ReceiverId == user.Id).Count();
 
             if (user != null)
             {
