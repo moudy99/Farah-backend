@@ -19,7 +19,7 @@ namespace Core.Entities
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
         public bool IsRead { get; set; } = false;
 
-        public int ChatId { get; set; }
-        public Chat Chat { get; set; }
+        public int? ChatId { get; set; }
+        public Chat? Chat { get; set; }
     }
 }

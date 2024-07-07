@@ -11,8 +11,8 @@ namespace Application.DTOS
     {
         public int chatId { get; set; }
         public UserDTO User { get; set; }
-        public  string lastMessage { get; set; }
-        public DateTime lastMessageSentAt { get; set; }
+        public  string? lastMessage { get; set; }
+        public DateTime? lastMessageSentAt { get; set; }
         public bool isRead { get; set; }
         public bool IamTheLastMessageSender { get; set; }
 
