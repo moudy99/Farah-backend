@@ -1,15 +1,8 @@
-﻿using Application.Interfaces;
-using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
-using Core.Entities;
-using Application.DTOS;
+﻿using Application.DTOS;
 using Application.Helpers;
-using MimeKit;
+using Application.Interfaces;
+using AutoMapper;
+using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -78,11 +71,11 @@ namespace Application.Services
                 ApplicationUser user;
                 if (isOwner)
                 {
-                    user = chat.Owner;
+                    user = chat.Customer;
                 }
                 else
                 {
-                    user = chat.Customer;
+                    user = chat.Owner;
                 }
 
                 var chatDetailsDTO = new ChatDetailsDTO
@@ -91,7 +84,7 @@ namespace Application.Services
                     User = new UserDTO
                     {
                         Id = user.Id,
-                        UserName = user.UserName,
+                        UserName = $"{user.FirstName} {user.LastName}",
                         ProfileImage = user.ProfileImage
                     },
                     Messages = chat.Messages.Select(m => new MessageDTO
@@ -178,26 +171,26 @@ namespace Application.Services
                 };
             }
 
-        await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
-        ApplicationUser user = chat.Customer;
-        var chatDetailsDTO = new ChatDetailsDTO
-        {
-            ChatId = chat.Id,
-            User = new UserDTO
+            await _chatRepository.MarkMessagesAsReadAsync(chat.Id, customerId);
+            ApplicationUser user = chat.Customer;
+            var chatDetailsDTO = new ChatDetailsDTO
             {
-                Id = user.Id,
-                UserName = user.UserName,
-                ProfileImage = user.ProfileImage
-            },
-            Messages = chat.Messages.Select(m => new MessageDTO
-            {
-                SenderId = m.SenderId,
-                ReceiverId = m.ReceiverId,
-                Message = m.Message,
-                SentAt = m.SentAt,
-                IsRead = m.IsRead
-            }).ToList()
-        };
+                ChatId = chat.Id,
+                User = new UserDTO
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    ProfileImage = user.ProfileImage
+                },
+                Messages = chat.Messages.Select(m => new MessageDTO
+                {
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    Message = m.Message,
+                    SentAt = m.SentAt,
+                    IsRead = m.IsRead
+                }).ToList()
+            };
             return chatDetailsDTO;
         }
     }
