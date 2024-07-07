@@ -18,7 +18,7 @@ namespace Application.Interfaces
         public CustomResponseDTO<List<OwnerDTO>> GetAllOwners(int page, int pageSize);
         public CustomResponseDTO<List<CustomerDTO>> GetAllCustomers(bool? isBlocked, int page, int pageSize);
         public CustomResponseDTO<List<ApplicationUserDTO>> SearchUsersByName(string name);
-        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize);
+        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(UserType? userType,OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize);
         public CustomResponseDTO<object> BlockOwner(string  ownerId);
         public CustomResponseDTO<object> UnblockOwner(string ownerId);
         public CustomResponseDTO<object> AcceptOwner(string ownerId);

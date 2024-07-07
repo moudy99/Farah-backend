@@ -263,9 +263,9 @@ namespace Application.Services
                 Errors = null
             };
         }
-        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
+        public CustomResponseDTO<List<OwnerDTO>> GetFilteredOwners(UserType? userType,OwnerAccountStatus? status, bool? isBlocked, int page, int pageSize)
         {
-            var filteredOwners = AdminRepository.GetOwnersByStatus(status, isBlocked);
+            var filteredOwners = AdminRepository.GetOwnersByStatus(userType,status, isBlocked);
             AdminRepository.updateOwners(filteredOwners.ToList());
             AdminRepository.Save();
 
