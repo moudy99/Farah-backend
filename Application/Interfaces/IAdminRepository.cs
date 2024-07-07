@@ -12,7 +12,7 @@ namespace Application.Interfaces
 
         public Owner GetOwnerById(string id);
         public Customer GetCustomerById(string id);
-        public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked);
+        public IQueryable<Owner> GetOwnersByStatus(UserType? userType, OwnerAccountStatus? status, bool? isBlocked);
         public List<ApplicationUser> SearchUsersByName(string name);
         public Service GetServiceById(int id);
         public void updateServices(List<Service> obj);

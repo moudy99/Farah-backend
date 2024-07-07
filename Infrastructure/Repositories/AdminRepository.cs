@@ -122,10 +122,14 @@ namespace Infrastructure.Repositories
                 .Include(s => (s as Photography).Images)
                 .FirstOrDefault(s => s.ID == id);
         }
-        public IQueryable<Owner> GetOwnersByStatus(OwnerAccountStatus? status, bool? isBlocked)
+        public IQueryable<Owner> GetOwnersByStatus(UserType? userType, OwnerAccountStatus? status, bool? isBlocked)
         {
             var query = context.Owners.AsQueryable();
 
+            if(userType.HasValue)
+            {
+                query = query.Where(o => o.UserType == userType);
+            }
             if (status.HasValue)
             {
                 query = query.Where(o => o.AccountStatus == status.Value);

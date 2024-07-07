@@ -44,11 +44,11 @@ namespace Presentation.Controllersa
         }
 
         [HttpGet("owners")]
-        public ActionResult GetAllOwners(int page = 1, int pageSize = 6, OwnerAccountStatus? status = null, bool? isBlocked = null)
+        public ActionResult GetAllOwners(int page = 1, int pageSize = 6, UserType? userType = null, OwnerAccountStatus? status = null, bool? isBlocked = null)
         {
             try
             {
-                var response = AdminService.GetFilteredOwners(status, isBlocked, page, pageSize);
+                var response = AdminService.GetFilteredOwners( userType,status, isBlocked, page, pageSize);
 
 
                 if (response.Data == null)

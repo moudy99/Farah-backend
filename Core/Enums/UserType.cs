@@ -2,10 +2,9 @@
 {
     public enum UserType
     {
-        HallOwner = 1,
+        HallOwner,
         Photographer,
         CarOwner,
         BeautyCenterOwner,
-        DressesOwner,
     }
 }
