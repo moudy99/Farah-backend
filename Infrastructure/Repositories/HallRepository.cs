@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using Core.Entities;
-using Microsoft.EntityFrameworkCore;
 using Core.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -20,7 +20,8 @@ namespace Infrastructure.Repositories
                 .Where(c => c.IsDeleted == false)
                 .Include(c => c.Pictures)
                 .Include(c => c.Features)
-                .Where(c => c.ServiceStatus == ServiceStatus.Accepted);
+                .Include(c => c.Owner)
+                .Where(c => c.ServiceStatus == ServiceStatus.Accepted && c.Owner.IsBlocked == false);
         }
         public async Task<List<string>> getAllImages(int id)
         {
