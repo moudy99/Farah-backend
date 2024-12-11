@@ -65,6 +65,7 @@ namespace Application.Services
             }
 
             var paginatedList = PaginationHelper.Paginate(allCars, page, pageSize);
+
             if (!paginatedList.Items.Any())
             {
                 return new CustomResponseDTO<List<CarDTO>>
